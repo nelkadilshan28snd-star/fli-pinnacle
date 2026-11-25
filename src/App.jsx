@@ -30,6 +30,7 @@ import {
   Layers,
   Lightbulb,
   LogOut,
+  Menu,
   MessageSquare,
   Moon,
   Pin,
@@ -1022,6 +1023,7 @@ export default function App() {
   const [activeNav, setActiveNav] = useState('dashboard');
   const [isSidebarHovered, setIsSidebarHovered] = useState(false);
   const [isSidebarPinned, setIsSidebarPinned] = useState(false);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [openCategories, setOpenCategories] = useState({
     core: true,
     ops: true,
@@ -1204,7 +1206,7 @@ export default function App() {
   const [waterGlassesByUser, setWaterGlassesByUser] = useState({});
 
   const currentUser = users.find(u => u.id === currentUserId) || null;
-  const isSidebarOpen = isSidebarHovered || isSidebarPinned;
+  const isSidebarOpen = isMobileNavOpen || isSidebarHovered || isSidebarPinned;
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -1216,6 +1218,15 @@ export default function App() {
     const t = setInterval(() => setNowTime(new Date()), 30000);
     return () => clearInterval(t);
   }, []);
+
+  useEffect(() => {
+    if (!isMobileNavOpen) return undefined;
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') setIsMobileNavOpen(false);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isMobileNavOpen]);
 
   // Fetch Current Location Weather (Kadawatha / Colombo, Sri Lanka)
   useEffect(() => {
@@ -1471,14 +1482,14 @@ export default function App() {
     : 'bg-[#F6F8FB] text-slate-900';
 
   return (
-    <div className={`min-h-screen transition-colors duration-200 ${rootBgClass}`}>
+    <div className={`app-root min-h-screen transition-colors duration-200 ${rootBgClass} ${darkMode ? 'dark' : ''}`}>
       {/* Left Hover-Expandable Icon-Rail Sidebar (No Bulky Scrollbar) */}
       <aside
         onMouseEnter={() => setIsSidebarHovered(true)}
         onMouseLeave={() => setIsSidebarHovered(false)}
-        className={`fixed top-0 left-0 bottom-0 z-40 flex flex-col bg-[#0D2B5B] text-white border-r border-blue-950 shadow-xl transition-all duration-200 ${
+        className={`app-sidebar fixed top-0 left-0 bottom-0 z-40 flex flex-col bg-[#0D2B5B] text-white border-r border-blue-950 shadow-xl transition-all duration-200 ${
           isSidebarOpen ? 'w-72' : 'w-[68px]'
-        }`}
+        } ${isMobileNavOpen ? 'mobile-open' : ''}`}
       >
         {/* Brand Header with Crisp White Badge & Royal Blue "FLi" Letters */}
         <div className="h-16 px-3.5 flex items-center justify-between border-b border-blue-800/70 shrink-0">
@@ -1531,7 +1542,11 @@ export default function App() {
                   return (
                     <button
                       key={item.id}
-                      onClick={() => setActiveNav(item.id)}
+                      onClick={() => {
+                        setActiveNav(item.id);
+                        setIsMobileNavOpen(false);
+                      }}
+                      aria-current={active ? 'page' : undefined}
                       title={!isSidebarOpen ? item.label : undefined}
                       className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition ${
                         active
@@ -1562,7 +1577,10 @@ export default function App() {
         {/* Sign Out */}
         <div className="p-2.5 border-t border-blue-800/70 shrink-0">
           <button
-            onClick={() => setCurrentUserId(null)}
+            onClick={() => {
+              setCurrentUserId(null);
+              setIsMobileNavOpen(false);
+            }}
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-rose-200 hover:bg-rose-500/20 transition"
           >
             <LogOut className="w-4 h-4 shrink-0" />
@@ -1571,11 +1589,20 @@ export default function App() {
         </div>
       </aside>
 
+      {isMobileNavOpen && (
+        <button
+          type="button"
+          className="app-mobile-backdrop"
+          aria-label="Close navigation menu"
+          onClick={() => setIsMobileNavOpen(false)}
+        />
+      )}
+
       {/* Main Content Container (Auto-fits smoothly when sidebar expands) */}
-      <div className={`transition-all duration-200 ${isSidebarOpen ? 'pl-72' : 'pl-[68px]'}`}>
+      <div className={`app-main-shell transition-all duration-200 ${isSidebarOpen ? 'pl-72' : 'pl-[68px]'}`}>
         {/* Top Utility Header */}
         <header
-          className={`sticky top-0 z-30 h-16 px-5 border-b backdrop-blur-md flex items-center justify-between gap-3 ${
+          className={`app-header sticky top-0 z-30 h-16 px-5 border-b backdrop-blur-md flex items-center justify-between gap-3 ${
             darkMode
               ? 'bg-[#0B1528]/90 border-slate-800'
               : eyeCareMode
@@ -1584,6 +1611,15 @@ export default function App() {
           }`}
         >
           <div className="flex items-center gap-3 min-w-0">
+            <button
+              type="button"
+              onClick={() => setIsMobileNavOpen(true)}
+              aria-label="Open navigation menu"
+              aria-expanded={isMobileNavOpen}
+              className="lg:hidden shrink-0 p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            >
+              <Menu className="w-5 h-5 text-[#0D2B5B] dark:text-amber-300" />
+            </button>
             <div className="bg-white border-2 border-[#0D2B5B] px-3 py-1 rounded-xl flex items-center gap-2 shadow-sm">
               <span className="font-black text-sm text-[#0D2B5B] tracking-tight">FLi Pinnacle</span>
               <span className="text-[10px] font-bold text-blue-700 hidden sm:inline">
@@ -1628,9 +1664,10 @@ export default function App() {
             {/* Top-Right Icon-Only Wi-Fi LAN File Drop Trigger */}
             <div className="relative">
               <button
+                className={`app-header-wifi p-2.5 rounded-xl bg-blue-50 dark:bg-slate-800 text-[#0D2B5B] dark:text-amber-300 border border-blue-200/70 dark:border-slate-700 hover:bg-amber-400 hover:text-[#0D2B5B] transition relative`}
                 onClick={() => setShowWifiPopover(!showWifiPopover)}
                 title="Office Wi-Fi Speed File Drop"
-                className="p-2.5 rounded-xl bg-blue-50 dark:bg-slate-800 text-[#0D2B5B] dark:text-amber-300 border border-blue-200/70 dark:border-slate-700 hover:bg-amber-400 hover:text-[#0D2B5B] transition relative"
+                aria-label="Open office file sharing"
               >
                 <Wifi className="w-4 h-4" />
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500" />
@@ -1725,7 +1762,7 @@ export default function App() {
         )}
 
         {/* Active View Content */}
-        <main className="p-5 max-w-[1440px] mx-auto">
+        <main className="px-3 py-4 sm:p-5 max-w-[1440px] mx-auto">
           {activeNav === 'dashboard' && (
             <BentoDashboardHub
               currentUser={currentUser}

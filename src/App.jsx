@@ -1,2448 +1,3055 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import * as XLSX from 'xlsx';
 import {
-  LayoutGrid,
-  CheckCircle2,
-  Clock,
-  AlertCircle,
-  Send,
-  FileSpreadsheet,
-  Users,
-  ShieldCheck,
-  TrendingUp,
-  Bell,
-  Search,
-  ChevronRight,
-  ChevronDown,
-  Plus,
-  Filter,
-  Download,
-  Upload,
-  Eye,
-  EyeOff,
-  Sparkles,
-  Award,
-  MessageSquare,
-  Lightbulb,
-  ThumbsUp,
-  Heart,
-  Smile,
-  Flame,
-  Calendar as CalendarIcon,
-  UserCheck,
-  FileCheck2,
-  ArrowUpRight,
-  ArrowDownLeft,
-  Building2,
-  Briefcase,
-  Lock,
-  Unlock,
-  RefreshCw,
-  CheckSquare,
-  Square,
-  SlidersHorizontal,
-  Info,
-  X,
-  LogOut,
-  UserPlus,
-  Layers,
   Activity,
-  BarChart3,
-  PieChart,
-  Star,
-  HelpCircle,
-  ExternalLink,
-  Copy,
+  AlertTriangle,
+  ArrowRight,
+  Award,
+  Bell,
+  Calendar,
   Check,
-  Wifi,
-  FileText,
-  Printer,
-  Gamepad2,
-  Droplets,
-  Moon,
-  Sun,
-  User as UserIcon,
-  Edit3,
-  Flag,
-  StickyNote,
-  FolderOpen,
+  CheckCircle2,
+  ChevronDown,
+  ChevronRight,
+  Clock,
   CloudSun,
-  Trophy,
+  Download,
+  Droplets,
+  Edit3,
+  ExternalLink,
+  Eye,
+  FileSpreadsheet,
+  FileText,
+  Filter,
+  Gamepad2,
+  Globe,
+  Heart,
+  HelpCircle,
+  Home,
+  Inbox,
+  Landmark,
+  Layers,
+  Lightbulb,
+  LogOut,
+  MessageSquare,
+  Moon,
+  Pin,
+  Plus,
+  Printer,
   RotateCcw,
-  ArrowRightLeft,
-  Maximize2,
-  ListChecks,
-  AlertTriangle
+  Search,
+  Send,
+  Shield,
+  Sparkles,
+  Star,
+  StickyNote,
+  Sun,
+  Tag,
+  Trophy,
+  Upload,
+  User,
+  UserCheck,
+  Users,
+  Wifi,
+  X
 } from 'lucide-react';
 
 // ============================================================================
-// FUTURE LIFE INVESTMENTS LIMITED - FINANCE DEPARTMENT WORKSPACE (FLi PINNACLE)
+// 1. INITIAL DATA: FUTURE LIFE INVESTMENTS LIMITED (FLi Pinnacle) TEAM & TREE
 // ============================================================================
 
-const INITIAL_EMPLOYEES = [
+const INITIAL_USERS = [
   {
-    id: 'emp-rangika',
-    name: 'Rangika [HOD Name]',
-    shortName: 'Rangika',
-    role: 'Head of Department - Finance',
-    grade: 'HOD',
+    id: 'rangika',
+    empCode: 'FLI-FIN-001',
+    name: 'Rangika Edirisooriya',
+    roleTitle: 'Finance Manager (HOD)',
+    phone: '070-4320181',
+    email: 'rangikae@fli.lk',
+    pin: '1234',
     supervisorId: null,
-    avatar: 'RG',
-    brainColor: 'Blue',
-    status: 'Online',
-    shift: '8:30 AM - 5:00 PM',
-    email: 'rangika.hod@futurelife.lk',
-    heightCm: 172,
-    weightKg: 74,
-    bloodGroup: 'O+',
-    healthNotes: 'Ergonomic chair setup; prefers brief morning stand-up check-ins.',
-    waterGlassesToday: 5,
-    lastRestAt: Date.now() - 45 * 60000
+    isAdmin: true,
+    brainColor: 'Red',
+    joiningDate: '2018-04-02',
+    onLeave: false,
+    coveringUserId: '',
+    photoUrl: '',
+    bio: 'Head of Finance Department — Future Life Investments Limited.',
+    health: { heightCm: 162, weightKg: 58, bloodGroup: 'O+', notes: 'Morning hydration active' },
+    experiences: [
+      { id: 'exp-r1', company: 'Future Life Investments Limited', role: 'Finance Manager', period: '2018 - Present', status: 'approved' }
+    ],
+    qualifications: [
+      { id: 'q-r1', title: 'FCA / B.Sc. Accountancy & Finance', institute: 'CA Sri Lanka', year: '2017', status: 'approved' }
+    ]
   },
   {
-    id: 'emp-mahasen',
+    id: 'mahasen',
+    empCode: 'FLI-FIN-002',
     name: 'Mahasen Wijesooriya',
-    shortName: 'Mahasen',
-    role: 'Assistant Manager',
-    grade: 'AM',
-    supervisorId: 'emp-rangika',
-    avatar: 'MW',
+    roleTitle: 'Assistant Manager',
+    phone: '070-5407459',
+    email: 'mahasenw@fli.lk',
+    pin: '1234',
+    supervisorId: 'rangika',
+    isAdmin: false,
     brainColor: 'Green',
-    status: 'Online',
-    shift: '8:30 AM - 5:00 PM',
-    email: 'mahasen.w@futurelife.lk',
-    heightCm: 175,
-    weightKg: 78,
-    bloodGroup: 'B+',
-    healthNotes: 'Monitors afternoon review queue; stretch break every 90 mins.',
-    waterGlassesToday: 6,
-    lastRestAt: Date.now() - 30 * 60000
+    joiningDate: '2019-06-10',
+    onLeave: false,
+    coveringUserId: '',
+    photoUrl: '',
+    bio: 'Assistant Manager overseeing daily treasury, compliance & reconciliations.',
+    health: { heightCm: 174, weightKg: 72, bloodGroup: 'B+', notes: '' },
+    experiences: [],
+    qualifications: [{ id: 'q-m1', title: 'CIMA Passed Finalist', institute: 'CIMA UK', year: '2019', status: 'approved' }]
   },
   {
-    id: 'emp-nelka',
-    name: 'Nelka Dilshan',
-    shortName: 'Nelka',
-    role: 'Senior Executive - Finance',
-    grade: 'SE',
-    supervisorId: 'emp-mahasen',
-    avatar: 'ND',
-    brainColor: 'Red',
-    status: 'Online',
-    shift: '8:30 AM - 5:00 PM',
-    email: 'nelka.d@futurelife.lk',
-    heightCm: 171,
-    weightKg: 69,
-    bloodGroup: 'A+',
-    healthNotes: 'Active commuter; tracks hydration & eye rest during GL/branch reviews.',
-    waterGlassesToday: 6,
-    lastRestAt: Date.now() - 25 * 60000
+    id: 'kanishka',
+    empCode: 'FLI-FIN-003',
+    name: 'Kanishka Chathuranga',
+    roleTitle: 'Senior Finance Executive',
+    phone: '070-5407333',
+    email: 'kanishkac@fli.lk',
+    pin: '1234',
+    supervisorId: 'mahasen',
+    isAdmin: false,
+    brainColor: 'Purple',
+    joiningDate: '2020-02-15',
+    onLeave: false,
+    coveringUserId: '',
+    photoUrl: '',
+    bio: 'Senior Finance Executive supervising operational accounting teams.',
+    health: { heightCm: 172, weightKg: 68, bloodGroup: 'A+', notes: '' },
+    experiences: [],
+    qualifications: []
   },
   {
-    id: 'emp-shani',
-    name: 'Shani Peterson',
-    shortName: 'Shani',
-    role: 'Senior Executive - Finance',
-    grade: 'SE',
-    supervisorId: 'emp-mahasen',
-    avatar: 'SP',
-    brainColor: 'Yellow',
-    status: 'Online',
-    shift: '8:30 AM - 5:00 PM',
-    email: 'shani.p@futurelife.lk',
-    heightCm: 162,
-    weightKg: 58,
-    bloodGroup: 'O+',
-    healthNotes: 'Keeps water bottle at desk during morning statement allocation.',
-    waterGlassesToday: 5,
-    lastRestAt: Date.now() - 40 * 60000
-  },
-  {
-    id: 'emp-dinithi',
-    name: 'Dinithi Perera',
-    shortName: 'Dinithi',
-    role: 'Junior Finance Executive',
-    grade: 'JFE',
-    supervisorId: 'emp-shani',
-    avatar: 'DP',
-    brainColor: 'Green',
-    status: 'Online',
-    shift: '8:30 AM - 5:00 PM',
-    email: 'dinithi.p@futurelife.lk',
-    heightCm: 160,
-    weightKg: 55,
-    bloodGroup: 'AB+',
-    healthNotes: 'Early morning slip attachment & petty cash float routine.',
-    waterGlassesToday: 4,
-    lastRestAt: Date.now() - 35 * 60000
-  },
-  {
-    id: 'emp-charuka',
-    name: 'Charuka Mihiranga',
-    shortName: 'Charuka',
-    role: 'Junior Finance Executive',
-    grade: 'JFE',
-    supervisorId: 'emp-shani',
-    avatar: 'CM',
+    id: 'hansi',
+    empCode: 'FLI-FIN-004',
+    name: 'Thamasha Hansi',
+    roleTitle: 'Senior Finance Executive',
+    phone: '070-4765939',
+    email: 'thamashah@fli.lk',
+    pin: '1234',
+    supervisorId: 'kanishka',
+    isAdmin: false,
     brainColor: 'Blue',
-    status: 'Online',
-    shift: '8:30 AM - 5:00 PM',
-    email: 'charuka.m@futurelife.lk',
-    heightCm: 173,
-    weightKg: 71,
-    bloodGroup: 'B-',
-    healthNotes: 'Focused voucher entry & reconciliation blocks.',
-    waterGlassesToday: 5,
-    lastRestAt: Date.now() - 50 * 60000
+    joiningDate: '2020-08-01',
+    onLeave: false,
+    coveringUserId: '',
+    photoUrl: '',
+    bio: 'Senior Finance Executive leading HO reconciliations & interest operations.',
+    health: { heightCm: 160, weightKg: 55, bloodGroup: 'O+', notes: '' },
+    experiences: [],
+    qualifications: []
   },
   {
-    id: 'emp-gayodya',
-    name: 'Gayodya Athugala',
-    shortName: 'Gayodya',
-    role: 'Executive - Finance',
-    grade: 'EF',
-    supervisorId: 'emp-nelka',
-    avatar: 'GA',
-    brainColor: 'Yellow',
-    status: 'Online',
-    shift: '8:30 AM - 5:00 PM',
-    email: 'gayodya.a@futurelife.lk',
-    heightCm: 164,
-    weightKg: 60,
-    bloodGroup: 'A-',
-    healthNotes: 'Daily cashflow & temporary receipt verification.',
-    waterGlassesToday: 4,
-    lastRestAt: Date.now() - 20 * 60000
+    id: 'nayomi',
+    empCode: 'FLI-FIN-005',
+    name: 'Nayomi Ekanayake',
+    roleTitle: 'Finance Executive',
+    phone: '070-47709654',
+    email: 'nayomie@fli.lk',
+    pin: '1234',
+    supervisorId: 'kanishka',
+    isAdmin: false,
+    brainColor: 'Blue',
+    joiningDate: '2021-01-12',
+    onLeave: false,
+    coveringUserId: '',
+    photoUrl: '',
+    bio: 'Finance Executive coordinating branch reconciliations & daily entries.',
+    health: { heightCm: 158, weightKg: 53, bloodGroup: 'B+', notes: '' },
+    experiences: [],
+    qualifications: []
   },
   {
-    id: 'emp-nikeshala',
+    id: 'dilshan',
+    empCode: 'FLI-FIN-006',
+    name: 'Dilshan Kularathne',
+    roleTitle: 'Finance Executive',
+    phone: '070-4770964',
+    email: 'dilshank@fli.lk',
+    pin: '1234',
+    supervisorId: 'kanishka',
+    isAdmin: false,
+    brainColor: 'Purple',
+    joiningDate: '2021-05-18',
+    onLeave: false,
+    coveringUserId: '',
+    photoUrl: '',
+    bio: 'Finance Executive handling Loan Cash, Allocation Plan & FLICO entries.',
+    health: { heightCm: 175, weightKg: 74, bloodGroup: 'A+', notes: '' },
+    experiences: [],
+    qualifications: []
+  },
+  {
+    id: 'nikeshala',
+    empCode: 'FLI-FIN-007',
     name: 'Nikeshala Chandrasiri',
-    shortName: 'Nikeshala',
-    role: 'Executive - Finance',
-    grade: 'EF',
-    supervisorId: 'emp-nelka',
-    avatar: 'NC',
+    roleTitle: 'Junior Finance Executive',
+    phone: '070-4770917',
+    email: 'nikeshalac@fli.lk',
+    pin: '1234',
+    supervisorId: 'hansi',
+    isAdmin: false,
     brainColor: 'Green',
-    status: 'Online',
-    shift: '8:30 AM - 5:00 PM',
-    email: 'nikeshala.c@futurelife.lk',
-    heightCm: 163,
-    weightKg: 59,
-    bloodGroup: 'O-',
-    healthNotes: 'Morning bank balance & HO reconciliation focus.',
-    waterGlassesToday: 5,
-    lastRestAt: Date.now() - 38 * 60000
+    joiningDate: '2022-03-01',
+    onLeave: false,
+    coveringUserId: '',
+    photoUrl: '',
+    bio: 'Junior Finance Executive managing Head Office Reconciliations & Branch PNL.',
+    health: { heightCm: 161, weightKg: 54, bloodGroup: 'O+', notes: '' },
+    experiences: [],
+    qualifications: []
   },
   {
-    id: 'emp-dilshan',
-    name: 'Dilshan Chamara',
-    shortName: 'Dilshan',
-    role: 'Junior Executive - Finance',
-    grade: 'JEF',
-    supervisorId: 'emp-nelka',
-    avatar: 'DC',
+    id: 'shani',
+    empCode: 'FLI-FIN-008',
+    name: 'Shani Peterson',
+    roleTitle: 'Junior Finance Executive',
+    phone: '070-4765873',
+    email: 'shanip@fli.lk',
+    pin: '1234',
+    supervisorId: 'hansi',
+    isAdmin: false,
     brainColor: 'Red',
-    status: 'On Leave',
-    shift: '8:30 AM - 5:00 PM',
-    email: 'dilshan.c@futurelife.lk',
-    heightCm: 170,
-    weightKg: 68,
-    bloodGroup: 'B+',
-    healthNotes: 'Scheduled recovery leave; duties covered by assigned backup.',
-    waterGlassesToday: 3,
-    lastRestAt: Date.now() - 120 * 60000
+    joiningDate: '2022-07-11',
+    onLeave: false,
+    coveringUserId: '',
+    photoUrl: '',
+    bio: 'Junior Finance Executive coordinating Daily Entries Sharing, Corporate & Interest.',
+    health: { heightCm: 159, weightKg: 52, bloodGroup: 'AB+', notes: '' },
+    experiences: [],
+    qualifications: []
   },
   {
-    id: 'emp-dhanushka',
-    name: 'Dhanushka Madushan',
-    shortName: 'Dhanushka',
-    role: 'Accounts Assistant',
-    grade: 'AA',
-    supervisorId: 'emp-shani',
-    avatar: 'DM',
+    id: 'dinithi',
+    empCode: 'FLI-FIN-009',
+    name: 'Dinithi Perera',
+    roleTitle: 'Junior Finance Executive',
+    phone: '070-4777742',
+    email: 'dinithip@fli.lk',
+    pin: '1234',
+    supervisorId: 'hansi',
+    isAdmin: false,
+    brainColor: 'Red',
+    joiningDate: '2022-09-05',
+    onLeave: false,
+    coveringUserId: '',
+    photoUrl: '',
+    bio: 'Junior Finance Executive managing Payment Slips, Petty Cash & BOC 962 Rec.',
+    health: { heightCm: 157, weightKg: 56, bloodGroup: 'O+', notes: '' },
+    experiences: [],
+    qualifications: []
+  },
+  {
+    id: 'charuka',
+    empCode: 'FLI-FIN-010',
+    name: 'Charuka Mihiranga',
+    roleTitle: 'Finance Executive',
+    phone: '070-4770907',
+    email: 'charukaw@fli.lk',
+    pin: '1234',
+    supervisorId: 'nayomi',
+    isAdmin: false,
+    brainColor: 'Green',
+    joiningDate: '2021-11-15',
+    onLeave: false,
+    coveringUserId: '',
+    photoUrl: '',
+    bio: 'Finance Executive handling 14 Branch Reconciliations, OPD & Staff Loans.',
+    health: { heightCm: 176, weightKg: 78, bloodGroup: 'B+', notes: '' },
+    experiences: [],
+    qualifications: []
+  },
+  {
+    id: 'gayodya',
+    empCode: 'FLI-FIN-011',
+    name: 'Gayodya Athugala',
+    roleTitle: 'Junior Finance Executive',
+    phone: '070-4770955',
+    email: 'gayodhyaa@fli.lk',
+    pin: '1234',
+    supervisorId: 'nayomi',
+    isAdmin: false,
     brainColor: 'Blue',
-    status: 'Online',
-    shift: '8:30 AM - 5:00 PM',
-    email: 'dhanushka.m@futurelife.lk',
-    heightCm: 169,
-    weightKg: 66,
-    bloodGroup: 'A+',
-    healthNotes: 'Supporting voucher batches & ledger tallying.',
-    waterGlassesToday: 5,
-    lastRestAt: Date.now() - 28 * 60000
+    joiningDate: '2023-01-16',
+    onLeave: false,
+    coveringUserId: '',
+    photoUrl: '',
+    bio: 'Junior Finance Executive managing Temporary Receipts, Tax & 13 Reconciliations.',
+    health: { heightCm: 160, weightKg: 59, bloodGroup: 'A+', notes: '' },
+    experiences: [],
+    qualifications: []
+  },
+  {
+    id: 'nelka',
+    empCode: 'FLI-FIN-012',
+    name: 'Nelka Dilshan',
+    roleTitle: 'Senior Finance Executive',
+    phone: '070-5407412',
+    email: 'dilshann@fli.lk',
+    pin: '1234',
+    supervisorId: 'nayomi',
+    isAdmin: false,
+    brainColor: 'Blue',
+    joiningDate: '2020-10-05',
+    onLeave: false,
+    coveringUserId: '',
+    photoUrl: '',
+    bio: 'Senior Finance Executive handling BOC/Seylan Recs, Depreciation & Cash Flows.',
+    health: { heightCm: 173, weightKg: 70, bloodGroup: 'O+', notes: '' },
+    experiences: [],
+    qualifications: []
+  },
+  {
+    id: 'dhanushka',
+    empCode: 'FLI-FIN-013',
+    name: 'Dhanushka Chamod',
+    roleTitle: 'Accounts Assistant',
+    phone: '070-4777841',
+    email: 'dhanushkac@fli.lk',
+    pin: '1234',
+    supervisorId: 'nayomi',
+    isAdmin: false,
+    brainColor: 'Green',
+    joiningDate: '2024-02-01',
+    onLeave: false,
+    coveringUserId: '',
+    photoUrl: '',
+    bio: 'Accounts Assistant handling Cheques, 13 Seylan/Sampath Recs & Daily Vouchers.',
+    health: { heightCm: 171, weightKg: 66, bloodGroup: 'B+', notes: '' },
+    experiences: [],
+    qualifications: []
   }
 ];
 
-const PLEDGE_PRINCIPLES = [
-  { id: 1, title: 'Integrity & Financial Accuracy', desc: 'Zero compromise on ledger accuracy, audit trails, and truthful reporting.' },
-  { id: 2, title: 'Timeliness & Cut-Off Discipline', desc: 'Meeting daily, weekly, and month-end deadlines with precision.' },
-  { id: 3, title: 'Ownership & Accountability', desc: 'Taking full responsibility for assigned reconciliations, entries, and outcomes.' },
-  { id: 4, title: 'Collaborative Handover', desc: 'Seamless document handover, clear notes, and timely acknowledgments.' },
-  { id: 5, title: 'Proactive Risk & Variance Alerting', desc: 'Flagging discrepancies, unusual debits, or bottlenecks early.' },
-  { id: 6, title: 'Continuous Process Improvement', desc: 'Simplifying workflows, reducing manual rework, and sharing smart ideas.' },
-  { id: 7, title: 'Respectful & Directive Communication', desc: 'Clear, constructive, and empathetic teamwork across all grades.' },
-  { id: 8, title: 'Confidentiality & Governance', desc: 'Safeguarding sensitive financial data, bank details, and company policies.' }
-];
-
-const INITIAL_DUTY_IN = {
-  'emp-rangika': '08:18 AM',
-  'emp-mahasen': '08:22 AM',
-  'emp-nelka': '08:25 AM',
-  'emp-shani': '08:24 AM',
-  'emp-dinithi': '08:26 AM',
-  'emp-charuka': '08:28 AM',
-  'emp-gayodya': '08:27 AM',
-  'emp-nikeshala': '08:29 AM',
-  'emp-dilshan': 'On Leave',
-  'emp-dhanushka': '08:28 AM'
+const BRAIN_COLOR_STYLES = {
+  Red: { badge: 'bg-rose-50 text-rose-700 border-rose-200', dot: 'bg-rose-500', label: 'Red • Action & Results' },
+  Green: { badge: 'bg-emerald-50 text-emerald-700 border-emerald-200', dot: 'bg-emerald-500', label: 'Green • Precision & Process' },
+  Purple: { badge: 'bg-purple-50 text-purple-700 border-purple-200', dot: 'bg-purple-500', label: 'Purple • Vision & Strategy' },
+  Blue: { badge: 'bg-blue-50 text-blue-700 border-blue-200', dot: 'bg-blue-500', label: 'Blue • People & Harmony' }
 };
 
-const INITIAL_TASKS = [
+const INITIAL_QUICK_LINKS = [
+  { id: 'ql-1', name: 'Fused Core System', desc: 'ERP & Core Ledger', url: 'https://fused.fli.lk/auth/login', tag: 'Core' },
+  { id: 'ql-2', name: 'FLI Webmail', desc: 'Corporate Zimbra Mail', url: 'https://mail.fli.lk/?loginOp=logout', tag: 'Mail' },
+  { id: 'ql-3', name: 'Wealth2 Portal', desc: 'Investment & FD Portal', url: 'https://wealth2.fli.lk/', tag: 'Wealth' },
   {
-    id: 'task-dinithi-1',
-    employeeId: 'emp-dinithi',
+    id: 'ql-4',
+    name: 'GalleryHR',
+    desc: 'Attendance & Leave HRIS',
+    url: 'https://login.galleryhr.com/Account/Login?ReturnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fclient_id%3D653efba3-9884-4e26-8228-2b1f0bfe32e1%26redirect_uri%3Dhttps%253A%252F%252Fapp.galleryhr.com%252Fsignin-oidc%26response_type%3Dcode%26scope%3Dopenid%2520profile%2520email%2520tenant_code%2520employee_code%2520employeeid%2520user_code%2520userid%2520IdentityServerApi%2520name%26code_challenge%3Dtb4253m9FaBEy24YSBElHwTWqnqwS2Z2_f3CJB-QeNo%26code_challenge_method%3DS256%26response_mode%3Dform_post%26nonce%3D639307555150238291.YzdiOWEyYjEtNjAxNC00Nzg3LWI0ODItZTQ2NjNlODdlMjQ2YWJmOGVlMmEtZjVjNy00MzlmLWFhZGEtZjIzMzdlNmNjMTgx%26state%3DCfDJ8IxPFlY4ycZPv8bFAcrzkFoKL_cI_-WGzjXDgJF9NtMN8G02z-oNDZCOsfb64cmCu_VBcTomJxcaPy5xq871jTzS1Ln5l-IFyefcWaERuszNPjHEbfTQZ_nlaGx1RwYGj2bxAu8eGyK_GjS50Yc1xXCm5o4yN1ui6zj9KSEV8f486Nf5mMXKo-uV6uIsWOuyB9v67XBEEqlBeE0KMBJEkme6YXc4YZ3iCo8Cd0fWve-JQfRzeFxo-uiow7CYEuiBpPmIzPS4o7Vg6IG9U1jLu69djC7hVdbkQ1FImyHdGR7eSoTzNYKIEYZVAJSUpNOEqnHcpbma7oMwGg0IZoRKSqkimQMYVwZErvDJ5-gpuhhqfK494a0_1FCUK3ysbqkqsypCmDFxMAbZyePxgAJ_S9xd90YkRRySX64t5ODy_ikQsM9lN19IVh51M3z4Zz6vnw%26x-client-SKU%3DID_NET10_0%26x-client-ver%3D8.0.1.0',
+    tag: 'HRIS'
+  },
+  { id: 'ql-5', name: 'Nexo API Client', desc: 'API Testing & Webhooks', url: 'https://nexo-api-client.vercel.app/', tag: 'Tools' }
+];
+
+const FLI_GUIDING_PRINCIPLES = [
+  { id: 1, title: 'Win Together', subtitle: 'Grow Together' },
+  { id: 2, title: 'Chase Progress', subtitle: 'Not Perfection' },
+  { id: 3, title: 'Earn Trust', subtitle: 'Not just Business' },
+  { id: 4, title: 'See it. Own it. Solve it.', subtitle: 'Proactive Accountability' },
+  { id: 5, title: 'Keep Your Word.', subtitle: 'Own Your Action' },
+  { id: 6, title: 'Power comes from trust,', subtitle: 'Not Positions' },
+  { id: 7, title: 'Empower with word,', subtitle: 'Coach with open heart' },
+  { id: 8, title: 'Feedback is a gift,', subtitle: 'Not an Attack' }
+];
+
+const DAILY_QUOTES = [
+  { text: 'Precision in numbers builds trust in every decision we make.', author: 'FLi Pinnacle Finance' },
+  { text: 'Win together, grow together — every reconciliation balanced is a milestone earned.', author: 'Future Life Investments' },
+  { text: 'Chase progress, not perfection. Small disciplined steps close every ledger cleanly.', author: 'FLI Our Pledge #2' },
+  { text: 'See it, own it, solve it — proactive ownership turns routine entries into excellence.', author: 'FLI Our Pledge #4' }
+];
+
+const REC_VARIANCE_TAGS = ['Matched', 'Timing Difference', 'Missing Slip', 'CRO / Bank Query'];
+
+const INITIAL_BANK_RECS = [
+  // Nikeshala (6)
+  ...[
+    'SAMPATH - 009810004042-HO 1',
+    'SEYLAN - 13012776905002 - HO2',
+    'Sampath - 011611002972 - HO TG',
+    'Sampath - 111615001611 - HO TG MM',
+    'Sampath - 109815001677 -HO JE MM',
+    'Sampath - 109815001818 - JE MM 1818'
+  ].map((acc, i) => ({
+    id: `rec-nik-${i}`,
+    account: acc,
+    userId: 'nikeshala',
+    status: i === 0 ? 'completed' : 'pending',
+    tag: i === 0 ? 'Matched' : 'Timing Difference',
+    remark: i === 0 ? 'Matched with HO cashbook' : ''
+  })),
+  // Dinithi (1)
+  { id: 'rec-din-0', account: 'BOC - 0080127962 - HO', userId: 'dinithi', status: 'pending', tag: 'Timing Difference', remark: '' },
+  // Nayomi (8)
+  ...[
+    'HNB -CA-701010018411',
+    'HNB -MM-WEALTH-701020143217',
+    'HNB-MM-Finance-701020143208',
+    'NDB - 101000661121 - HO',
+    'PANASIA-105211000653-HO',
+    'SEYLAN - 13012776905001 - HO1',
+    'SEYLAN - 13012776905034 - HO HR',
+    'SEYLAN - 13012776905027- AI'
+  ].map((acc, i) => ({
+    id: `rec-nay-${i}`,
+    account: acc,
+    userId: 'nayomi',
+    status: i < 2 ? 'completed' : 'pending',
+    tag: i < 2 ? 'Matched' : 'Missing Slip',
+    remark: i < 2 ? 'Balanced' : ''
+  })),
+  // Charuka (14)
+  ...[
+    'SAMPATH - 021210003166 - NK',
+    'SEYLAN - 13012776905023-TR',
+    'SAMPATH -021210004111 - KR',
+    'SAMPATH-006010009993-PU',
+    'Sampath-009810006320-ML',
+    'SAMPATH-009810007084 - BE',
+    'SAMPATH-009810007092 - AP',
+    'SAMPATH-009810007106 - MG',
+    'SEYLAN - 13012776905021- RP',
+    'SEYLAN - 13012776905037-BW',
+    'SEYLAN - 13012776905007 - T and D',
+    'SEYLAN - 13012776905008 - KG',
+    'SEYLAN - 13012776905009 - CH',
+    'SEYLAN - 13012776905010 -NG'
+  ].map((acc, i) => ({
+    id: `rec-cha-${i}`,
+    account: acc,
+    userId: 'charuka',
+    status: i < 3 ? 'completed' : 'pending',
+    tag: i < 3 ? 'Matched' : 'Timing Difference',
+    remark: ''
+  })),
+  // Dhanushka (13)
+  ...[
+    'SEYLAN - 13012776905024-BG',
+    'SEYLAN - 13012776905029 - MD',
+    'SEYLAN -13012776905012 - WP',
+    'SAMPATH-9810007513-DG',
+    'SAMPATH-9810007572-NW',
+    'SAMPATH-9810007637-MA',
+    'SEYLAN - 13012776905003 - KP',
+    'SEYLAN - 13012776905004 - PT',
+    'SEYLAN - 13012776905005 - JE',
+    'SEYLAN - 13012776905006 - KB',
+    'SEYLAN - 13012776905019- NL',
+    'SEYLAN - 13012776905020- AV',
+    'SEYLAN - 13012776905030 - KM'
+  ].map((acc, i) => ({
+    id: `rec-dha-${i}`,
+    account: acc,
+    userId: 'dhanushka',
+    status: i < 2 ? 'completed' : 'pending',
+    tag: i < 2 ? 'Matched' : 'CRO / Bank Query',
+    remark: ''
+  })),
+  // Gayodya (13)
+  ...[
+    'NDB -101000689662 - KW',
+    'PANASIA-105211000662 -PO',
+    'SAMPATH - 021210002933-WW',
+    'SAMPATH -006010009985-KD',
+    'SAMPATH -021210004103- KH',
+    'SAMPATH - 009811002456 -AM',
+    'Sampath - 009811006595 - EM',
+    'Sampath- 009811006594 - KA',
+    'SAMPATH-009810007149-KU',
+    'Sampath-019810001596-DP',
+    'Sampath-019810001618-VL',
+    'SEYLAN - 13012776905018- TM',
+    'SAMPATH - 009811002799 - JF CITY'
+  ].map((acc, i) => ({
+    id: `rec-gay-${i}`,
+    account: acc,
+    userId: 'gayodya',
+    status: i < 2 ? 'completed' : 'pending',
+    tag: i < 2 ? 'Matched' : 'Timing Difference',
+    remark: ''
+  })),
+  // Nelka (12)
+  ...[
+    'BOC - 82051634 - BM',
+    'BOC - 85968461 - PG',
+    'BOC - 86969834 - KN',
+    'BOC - 91646743 - PD',
+    'BOC -82807715 - MP',
+    'BOC-93613789-TK',
+    'SEYLAN - 13012776905028 - CO3',
+    'SEYLAN - 13012776905011 - GP',
+    'SEYLAN - 13012776905013- NE',
+    'SEYLAN - 13012776905014- JF',
+    'SEYLAN - 13012776905015- VN',
+    'SEYLAN - 13012776905016- MR'
+  ].map((acc, i) => ({
+    id: `rec-nel-${i}`,
+    account: acc,
+    userId: 'nelka',
+    status: i < 4 ? 'completed' : 'pending',
+    tag: i < 4 ? 'Matched' : 'Timing Difference',
+    remark: ''
+  })),
+  // Shani (14)
+  ...[
+    'SEYLAN - 13012776905022- BT',
+    'SEYLAN - 13012776905017- FC',
+    'SEYLAN - 13012776905031 - KK',
+    'SEYLAN - 13012776905032 - BD',
+    'SEYLAN - 13012776905033 - PN',
+    'SEYLAN - 13012776905035- NT',
+    'SEYLAN - 13012776905036-MT',
+    'SEYLAN - 13012776905038-BL',
+    'SEYLAN - 13012776905039-AG',
+    'SEYLAN - 13012776905040-KL',
+    'SEYLAN- 130127769050123',
+    'SAMPATH-009810007270-DY',
+    'SAMPATH-009811001471-HT',
+    'Sampath - 009811007019 - KI'
+  ].map((acc, i) => ({
+    id: `rec-sha-${i}`,
+    account: acc,
+    userId: 'shani',
+    status: i < 3 ? 'completed' : 'pending',
+    tag: i < 3 ? 'Matched' : 'Timing Difference',
+    remark: ''
+  }))
+];
+
+const INITIAL_TASKS = [
+  // Dinithi JD
+  {
+    id: 't-din-1',
+    userId: 'dinithi',
     title: 'Attaching Payment Slips & Handover to Shani',
-    category: 'Daily Routine',
-    scheduleType: 'Daily',
+    category: 'Daily',
     timeSlot: '08:30 AM - 08:50 AM',
     allocatedMinutes: 20,
     actualMinutes: 18,
-    status: 'Awaiting Acknowledgment',
-    approvalStatus: 'Pending Approval',
-    acceptedByOwner: true,
-    handedOverTo: 'emp-shani',
+    status: 'completed_pending_approval',
+    accepted: true,
+    handoverTo: 'shani',
     handoverAcknowledged: false,
-    handoverSentAt: '08:48 AM',
-    detailNotes: 'Morning physical payment slips attached by branch/voucher ref and handed over to Shani.',
-    subItems: [
-      { id: 'sub-d1-1', label: 'Collect morning physical payment slips batch #01', done: true, needsHelp: false, helpReason: '' },
-      { id: 'sub-d1-2', label: 'Verify slip amounts against voucher bundle & hand over to Shani', done: true, needsHelp: false, helpReason: '' }
-    ]
+    remark: 'All morning payment slips attached & handed over to Shani.',
+    subItems: []
   },
   {
-    id: 'task-dinithi-2',
-    employeeId: 'emp-dinithi',
+    id: 't-din-2',
+    userId: 'dinithi',
     title: 'Petty Cash Float Count, Sheet Checking & Pass Entries',
-    category: 'Cash & Petty Cash',
-    scheduleType: 'Daily',
+    category: 'Daily',
     timeSlot: '08:50 AM - 09:10 AM',
     allocatedMinutes: 20,
-    actualMinutes: 20,
-    status: 'Completed',
-    approvalStatus: 'Approved',
-    acceptedByOwner: true,
-    handedOverTo: null,
-    handoverAcknowledged: false,
-    detailNotes: 'Physical float tallied with petty cash book; zero variance.',
-    subItems: [
-      { id: 'sub-d2-1', label: 'Count physical cash notes & coins in petty cash box', done: true, needsHelp: false, helpReason: '' },
-      { id: 'sub-d2-2', label: 'Update petty cash excel sheet & post entries', done: true, needsHelp: false, helpReason: '' }
-    ]
+    actualMinutes: 0,
+    status: 'pending',
+    accepted: true,
+    remark: '',
+    subItems: []
   },
   {
-    id: 'task-dinithi-3',
-    employeeId: 'emp-dinithi',
+    id: 't-din-3',
+    userId: 'dinithi',
     title: 'Daily System Entries / Daily Entries Voucher Printing',
-    category: 'System Entries',
-    scheduleType: 'Daily',
+    category: 'Daily',
     timeSlot: '09:10 AM - 12:15 PM',
     allocatedMinutes: 185,
-    actualMinutes: 110,
-    status: 'In Progress',
-    approvalStatus: 'Pending Approval',
-    acceptedByOwner: true,
-    handedOverTo: null,
-    handoverAcknowledged: false,
-    detailNotes: 'Batch printing and posting daily journal vouchers.',
+    actualMinutes: 0,
+    status: 'pending',
+    accepted: false,
+    remark: '',
     subItems: [
-      { id: 'sub-d3-1', label: 'Post morning receipt & payment journal entries (Batch A)', done: true, needsHelp: false, helpReason: '' },
-      { id: 'sub-d3-2', label: 'Print & verify daily voucher set #104-#148', done: false, needsHelp: false, helpReason: '' },
-      { id: 'sub-d3-3', label: 'File signed vouchers & log batch completion', done: false, needsHelp: false, helpReason: '' }
+      { id: 'vs-1', label: 'Batch 01: Cash Receipt Vouchers & Slip Verification', done: false, escalated: false },
+      { id: 'vs-2', label: 'Batch 02: Payment Vouchers Entry & Printing', done: false, escalated: false },
+      { id: 'vs-3', label: 'Batch 03: Journal Transfers & Voucher Numbering', done: false, escalated: false }
     ]
   },
   {
-    id: 'task-dinithi-4',
-    employeeId: 'emp-dinithi',
-    title: 'Receivable / Payable Ledger Tally & Month-End Schedule',
-    category: 'Ledger & Month-End',
-    scheduleType: 'Month-End',
+    id: 't-din-4',
+    userId: 'dinithi',
+    title: 'Receivable Payable Ledger Tally',
+    category: 'Daily',
+    timeSlot: '01:00 PM - 02:00 PM',
+    allocatedMinutes: 60,
+    actualMinutes: 0,
+    status: 'pending',
+    accepted: false,
+    remark: '',
+    subItems: []
+  },
+  {
+    id: 't-din-5',
+    userId: 'dinithi',
+    title: 'BOC 962 Reconciliation & Cash Flow',
+    category: 'Daily',
+    timeSlot: '02:00 PM - 05:00 PM',
+    allocatedMinutes: 180,
+    actualMinutes: 0,
+    status: 'pending',
+    accepted: false,
+    remark: '',
+    subItems: []
+  },
+  {
+    id: 't-din-me1',
+    userId: 'dinithi',
+    title: 'Prepare Home Appliance Final Report & Entry',
+    category: 'Month End',
+    timeSlot: 'Month-End Schedule',
+    allocatedMinutes: 480,
+    actualMinutes: 0,
+    status: 'pending',
+    accepted: false,
+    remark: '',
+    subItems: []
+  },
+  // Shani JD
+  {
+    id: 't-sha-1',
+    userId: 'shani',
+    title: 'Update Daily Cashflow',
+    category: 'Daily',
+    timeSlot: '08:30 AM - 08:45 AM',
+    allocatedMinutes: 15,
+    actualMinutes: 15,
+    status: 'approved',
+    accepted: true,
+    remark: 'Cashflow updated on time',
+    subItems: []
+  },
+  {
+    id: 't-sha-2',
+    userId: 'shani',
+    title: 'Daily Entries Sharing (Seylan & Sampath Allocation)',
+    category: 'Daily',
+    timeSlot: '09:00 AM - 09:30 AM',
+    allocatedMinutes: 30,
+    actualMinutes: 0,
+    status: 'pending',
+    accepted: true,
+    timerStartedAt: null,
+    remark: 'Waiting for Dinithi payment slip handover acknowledgment',
+    subItems: []
+  },
+  {
+    id: 't-sha-3',
+    userId: 'shani',
+    title: 'Corporate Payments Transfer & Pass Entries',
+    category: 'Daily',
+    timeSlot: '10:00 AM - 01:30 PM',
+    allocatedMinutes: 210,
+    actualMinutes: 0,
+    status: 'pending',
+    accepted: false,
+    remark: '',
+    subItems: []
+  },
+  {
+    id: 't-sha-4',
+    userId: 'shani',
+    title: 'Interest Reconciliation & Run Entry',
+    category: 'Daily',
     timeSlot: '01:00 PM - 02:30 PM',
+    allocatedMinutes: 60,
+    actualMinutes: 0,
+    status: 'pending',
+    accepted: false,
+    remark: '',
+    subItems: []
+  },
+  {
+    id: 't-sha-me1',
+    userId: 'shani',
+    title: 'WHT Ledger Tally, WHT Payment & IRD Details',
+    category: 'Month End',
+    timeSlot: '15th / Month-End',
+    allocatedMinutes: 105,
+    actualMinutes: 0,
+    status: 'pending',
+    accepted: false,
+    remark: '',
+    subItems: []
+  },
+  // Nikeshala JD
+  {
+    id: 't-nik-1',
+    userId: 'nikeshala',
+    title: 'Update Daily Cashflow & Morning Bank Balance',
+    category: 'Daily',
+    timeSlot: '08:30 AM - 08:45 AM',
+    allocatedMinutes: 15,
+    actualMinutes: 14,
+    status: 'approved',
+    accepted: true,
+    remark: '',
+    subItems: []
+  },
+  {
+    id: 't-nik-2',
+    userId: 'nikeshala',
+    title: 'Preparing Transfer Entry & Head Office Reconciliations',
+    category: 'Daily',
+    timeSlot: '08:45 AM - 02:30 PM',
+    allocatedMinutes: 180,
+    actualMinutes: 0,
+    status: 'pending',
+    accepted: true,
+    remark: '',
+    subItems: []
+  },
+  {
+    id: 't-nik-me1',
+    userId: 'nikeshala',
+    title: 'Branch, AI & Pawn PNL Preparing',
+    category: 'Month End',
+    timeSlot: 'Month-End (2 Days)',
+    allocatedMinutes: 960,
+    actualMinutes: 0,
+    status: 'pending',
+    accepted: false,
+    remark: '',
+    subItems: []
+  },
+  // Gayodya JD
+  {
+    id: 't-gay-1',
+    userId: 'gayodya',
+    title: 'Issuing Temporary Receipts & Assigning PS Numbers',
+    category: 'Daily',
+    timeSlot: '08:45 AM - 10:00 AM',
+    allocatedMinutes: 90,
+    actualMinutes: 85,
+    status: 'completed_pending_approval',
+    accepted: true,
+    remark: 'All morning deposit slips verified',
+    subItems: []
+  },
+  {
+    id: 't-gay-2',
+    userId: 'gayodya',
+    title: 'Daily System Entries / Daily Entries Voucher Printing',
+    category: 'Daily',
+    timeSlot: '10:00 AM - 12:00 PM',
+    allocatedMinutes: 120,
+    actualMinutes: 0,
+    status: 'pending',
+    accepted: true,
+    remark: '',
+    subItems: [
+      { id: 'vg-1', label: 'Temporary Receipts Voucher Printing', done: false, escalated: false },
+      { id: 'vg-2', label: 'Tax & Branch Deposit System Entries', done: false, escalated: false }
+    ]
+  },
+  {
+    id: 't-gay-me1',
+    userId: 'gayodya',
+    title: 'Stock Tally (HR Stock / T&D / Diri Liya Stock)',
+    category: 'Month End',
+    timeSlot: 'Month-End Schedule',
+    allocatedMinutes: 360,
+    actualMinutes: 0,
+    status: 'pending',
+    accepted: false,
+    remark: '',
+    subItems: []
+  },
+  // Charuka JD
+  {
+    id: 't-cha-1',
+    userId: 'charuka',
+    title: 'Previous Day Run Payments & Daily System Entries',
+    category: 'Daily',
+    timeSlot: '08:45 AM - 11:15 AM',
+    allocatedMinutes: 150,
+    actualMinutes: 145,
+    status: 'approved',
+    accepted: true,
+    remark: '',
+    subItems: []
+  },
+  {
+    id: 't-cha-2',
+    userId: 'charuka',
+    title: 'OPD, Staff Loan, Employee & T&D Payments',
+    category: 'Daily',
+    timeSlot: '03:00 PM - 05:00 PM',
+    allocatedMinutes: 120,
+    actualMinutes: 0,
+    status: 'pending',
+    accepted: true,
+    remark: '',
+    subItems: []
+  },
+  // Nelka JD
+  {
+    id: 't-nel-1',
+    userId: 'nelka',
+    title: 'Daily System Entries & Cash Advance Settlement',
+    category: 'Daily',
+    timeSlot: '08:45 AM - 12:15 PM',
+    allocatedMinutes: 240,
+    actualMinutes: 0,
+    status: 'pending',
+    accepted: true,
+    remark: '',
+    subItems: []
+  },
+  {
+    id: 't-nel-me1',
+    userId: 'nelka',
+    title: 'Preparing All Branch Cash Flows & Depreciation Entry',
+    category: 'Month End',
+    timeSlot: 'Month-End Schedule',
+    allocatedMinutes: 320,
+    actualMinutes: 0,
+    status: 'pending',
+    accepted: false,
+    remark: '',
+    subItems: []
+  },
+  // Dhanushka JD
+  {
+    id: 't-dha-1',
+    userId: 'dhanushka',
+    title: 'Handling Cheques (Legal Float, ML Wallet, Suppliers)',
+    category: 'Daily',
+    timeSlot: 'Within Day (7 Min / Cheque)',
     allocatedMinutes: 90,
     actualMinutes: 0,
-    status: 'Pending',
-    approvalStatus: 'Pending Approval',
-    acceptedByOwner: false,
-    handedOverTo: null,
-    handoverAcknowledged: false,
-    detailNotes: 'Reconcile supplier/customer open balances prior to monthly close.',
-    subItems: [
-      { id: 'sub-d4-1', label: 'Export aged receivables & payables sub-ledger', done: false, needsHelp: false, helpReason: '' },
-      { id: 'sub-d4-2', label: 'Flag unmatched debit/credit balances for review', done: false, needsHelp: false, helpReason: '' }
-    ]
+    status: 'pending',
+    accepted: true,
+    remark: '',
+    subItems: []
   },
+  // Dilshan JD
   {
-    id: 'task-shani-1',
-    employeeId: 'emp-shani',
-    title: 'Daily Entries Sharing (Seylan & Sampath Allocation)',
-    category: 'Bank & Entries Allocation',
-    scheduleType: 'Daily',
-    timeSlot: '08:50 AM - 09:30 AM',
-    allocatedMinutes: 40,
+    id: 't-dil-1',
+    userId: 'dilshan',
+    title: 'Loan Cash & Cash Allocation Plan',
+    category: 'Daily',
+    timeSlot: '08:30 AM - 03:30 PM',
+    allocatedMinutes: 90,
+    actualMinutes: 80,
+    status: 'completed_pending_approval',
+    accepted: true,
+    remark: 'Daily cash plan circulated',
+    subItems: []
+  },
+  // Supervisory KPIs
+  {
+    id: 't-han-1',
+    userId: 'hansi',
+    title: 'Review HO Reconciliations & Interest Entries (Team Verification)',
+    category: 'Daily',
+    timeSlot: '03:30 PM - 05:00 PM',
+    allocatedMinutes: 90,
     actualMinutes: 0,
-    timerStarted: false,
-    timerStartedAt: null,
-    status: 'Pending',
-    approvalStatus: 'Pending Approval',
-    acceptedByOwner: true,
-    handedOverTo: null,
-    handoverAcknowledged: false,
-    detailNotes: 'Starts when Dinithi payment slips are acknowledged; completes when all allocated entries are acknowledged by assignees.',
-    subItems: [
-      { id: 'sub-s1-1', label: 'Acknowledge morning payment slips from Dinithi', done: false, needsHelp: false, helpReason: '' },
-      { id: 'sub-s1-2', label: 'Upload & allocate Sampath (09810004042) & Seylan (013012776905002) rows', done: false, needsHelp: false, helpReason: '' }
-    ]
+    status: 'pending',
+    accepted: true,
+    remark: '',
+    subItems: []
   },
   {
-    id: 'task-shani-2',
-    employeeId: 'emp-shani',
-    title: 'Corporate Payments Transfer & Pass Entries',
-    category: 'Payments & Transfers',
-    scheduleType: 'Daily',
-    timeSlot: '09:30 AM - 11:30 AM',
-    allocatedMinutes: 120,
-    actualMinutes: 75,
-    status: 'In Progress',
-    approvalStatus: 'Pending Approval',
-    acceptedByOwner: true,
-    handedOverTo: null,
-    handoverAcknowledged: false,
-    detailNotes: 'Process CEFTS/RTGS/SLIPS schedules and post corresponding entries.',
-    subItems: [
-      { id: 'sub-s2-1', label: 'Verify supplier & statutory payment schedule', done: true, needsHelp: false, helpReason: '' },
-      { id: 'sub-s2-2', label: 'Post transfer entries & attach bank confirmation refs', done: false, needsHelp: false, helpReason: '' }
-    ]
-  },
-  {
-    id: 'task-shani-3',
-    employeeId: 'emp-shani',
-    title: 'Monthly WHT & Statutory Tax Schedule Sign-Off',
-    category: 'Statutory & Month-End',
-    scheduleType: 'Month-End',
-    timeSlot: '02:00 PM - 04:00 PM',
-    allocatedMinutes: 120,
+    id: 't-nay-1',
+    userId: 'nayomi',
+    title: 'Verify Branch Reconciliations & Voucher Batches',
+    category: 'Daily',
+    timeSlot: '03:30 PM - 05:00 PM',
+    allocatedMinutes: 90,
     actualMinutes: 0,
-    status: 'Pending',
-    approvalStatus: 'Pending Approval',
-    acceptedByOwner: false,
-    handedOverTo: null,
-    handoverAcknowledged: false,
-    detailNotes: 'Compile monthly WHT deductions and reconcile with GL tax control accounts.',
-    subItems: [
-      { id: 'sub-s3-1', label: 'Consolidate monthly WHT certificates & bank deductions', done: false, needsHelp: false, helpReason: '' }
-    ]
+    status: 'pending',
+    accepted: true,
+    remark: '',
+    subItems: []
   },
   {
-    id: 'task-nelka-1',
-    employeeId: 'emp-nelka',
-    title: 'Branch Cash Flow Reporting & GL Tally Check',
-    category: 'GL & Branch Control',
-    scheduleType: 'Daily',
-    timeSlot: '08:45 AM - 10:30 AM',
-    allocatedMinutes: 105,
-    actualMinutes: 95,
-    status: 'Completed',
-    approvalStatus: 'Approved',
-    acceptedByOwner: true,
-    handedOverTo: null,
-    handoverAcknowledged: false,
-    detailNotes: 'Daily branch cash flow consolidated and GL control accounts tallied.',
-    subItems: [
-      { id: 'sub-n1-1', label: 'Consolidate branch inflows/outflows & opening balances', done: true, needsHelp: false, helpReason: '' },
-      { id: 'sub-n1-2', label: 'Verify GL vs sub-ledger control totals', done: true, needsHelp: false, helpReason: '' }
-    ]
-  },
-  {
-    id: 'task-nelka-2',
-    employeeId: 'emp-nelka',
-    title: 'Third-Party Payment Processing & Variance Review',
-    category: 'Payments & Audit',
-    scheduleType: 'Daily',
-    timeSlot: '10:30 AM - 12:15 PM',
-    allocatedMinutes: 105,
-    actualMinutes: 65,
-    status: 'In Progress',
-    approvalStatus: 'Pending Approval',
-    acceptedByOwner: true,
-    handedOverTo: null,
-    handoverAcknowledged: false,
-    detailNotes: 'Review third-party disbursement batches and variance notes.',
-    subItems: [
-      { id: 'sub-n2-1', label: 'Audit third-party payment batch supporting docs', done: true, needsHelp: false, helpReason: '' },
-      { id: 'sub-n2-2', label: 'Approve cleared disbursement entries', done: false, needsHelp: false, helpReason: '' }
-    ]
-  },
-  {
-    id: 'task-nelka-3',
-    employeeId: 'emp-nelka',
-    title: 'Month-End Branch P&L Consolidation & Review Pack',
-    category: 'Month-End Reporting',
-    scheduleType: 'Month-End',
-    timeSlot: '01:30 PM - 04:30 PM',
-    allocatedMinutes: 180,
+    id: 't-kan-1',
+    userId: 'kanishka',
+    title: 'Department Daily Cashflow & Senior Executive Sign-Off',
+    category: 'Daily',
+    timeSlot: '04:30 PM - 05:30 PM',
+    allocatedMinutes: 60,
     actualMinutes: 0,
-    status: 'Pending',
-    approvalStatus: 'Pending Approval',
-    acceptedByOwner: true,
-    handedOverTo: null,
-    handoverAcknowledged: false,
-    detailNotes: 'Consolidate branch P&L schedules after bank reconciliations and accruals are locked.',
-    subItems: [
-      { id: 'sub-n3-1', label: 'Verify month-end accruals & inter-branch adjustments', done: false, needsHelp: false, helpReason: '' },
-      { id: 'sub-n3-2', label: 'Submit consolidated branch P&L pack to Assistant Manager', done: false, needsHelp: false, helpReason: '' }
-    ]
+    status: 'pending',
+    accepted: true,
+    remark: '',
+    subItems: []
   },
   {
-    id: 'task-mahasen-1',
-    employeeId: 'emp-mahasen',
-    title: 'Daily Finance Queue Supervision & Escalation Resolution',
-    category: 'Supervision & Escalations',
-    scheduleType: 'Daily',
-    timeSlot: '09:00 AM - 11:00 AM',
-    allocatedMinutes: 120,
-    actualMinutes: 85,
-    status: 'In Progress',
-    approvalStatus: 'Approved',
-    acceptedByOwner: true,
-    handedOverTo: null,
-    handoverAcknowledged: false,
-    detailNotes: 'Review escalated bank entries, approval queues, and morning cut-off milestones.',
-    subItems: [
-      { id: 'sub-m1-1', label: 'Review morning allocation readiness & pending escalations', done: true, needsHelp: false, helpReason: '' },
-      { id: 'sub-m1-2', label: 'Sign off high-value payment & journal approvals', done: false, needsHelp: false, helpReason: '' }
-    ]
+    id: 't-mah-1',
+    userId: 'mahasen',
+    title: 'Treasury & Bank Compliance Oversight Review',
+    category: 'Daily',
+    timeSlot: '04:30 PM - 05:30 PM',
+    allocatedMinutes: 60,
+    actualMinutes: 0,
+    status: 'pending',
+    accepted: true,
+    remark: '',
+    subItems: []
   },
   {
-    id: 'task-rangika-1',
-    employeeId: 'emp-rangika',
-    title: 'Department Governance, Liquidity & Month-End Sign-Off',
-    category: 'HOD Governance',
-    scheduleType: 'Daily',
-    timeSlot: '09:30 AM - 11:30 AM',
-    allocatedMinutes: 120,
-    actualMinutes: 90,
-    status: 'Completed',
-    approvalStatus: 'Approved',
-    acceptedByOwner: true,
-    handedOverTo: null,
-    handoverAcknowledged: false,
-    detailNotes: 'Department liquidity oversight, policy guidance, and exception sign-offs.',
-    subItems: [
-      { id: 'sub-r1-1', label: 'Review department cash position & audit exceptions', done: true, needsHelp: false, helpReason: '' }
-    ]
-  },
-  {
-    id: 'task-charuka-1',
-    employeeId: 'emp-charuka',
-    title: 'Voucher Batch Entry & Daily Ledger Matching',
-    category: 'System Entries',
-    scheduleType: 'Daily',
-    timeSlot: '09:00 AM - 12:00 PM',
-    allocatedMinutes: 180,
-    actualMinutes: 140,
-    status: 'In Progress',
-    approvalStatus: 'Pending Approval',
-    acceptedByOwner: true,
-    handedOverTo: null,
-    handoverAcknowledged: false,
-    detailNotes: 'Post allocated bank entries and match supporting vouchers.',
-    subItems: [
-      { id: 'sub-c1-1', label: 'Post assigned Sampath/Seylan entries', done: true, needsHelp: false, helpReason: '' },
-      { id: 'sub-c1-2', label: 'Match voucher numbers against bank references', done: false, needsHelp: false, helpReason: '' }
-    ]
-  },
-  {
-    id: 'task-gayodya-1',
-    employeeId: 'emp-gayodya',
-    title: 'Daily Cashflow Update & Temporary Receipt Verification',
-    category: 'Cashflow & Receipts',
-    scheduleType: 'Daily',
-    timeSlot: '08:30 AM - 10:30 AM',
-    allocatedMinutes: 120,
-    actualMinutes: 120,
-    status: 'Completed',
-    approvalStatus: 'Approved',
-    acceptedByOwner: true,
-    handedOverTo: null,
-    handoverAcknowledged: false,
-    detailNotes: 'Daily cashflow sheet updated and temporary receipts checked.',
-    subItems: [
-      { id: 'sub-g1-1', label: 'Update daily cashflow tracker by 8:45 AM', done: true, needsHelp: false, helpReason: '' },
-      { id: 'sub-g1-2', label: 'Verify deposit slips & assign receipt numbers', done: true, needsHelp: false, helpReason: '' }
-    ]
-  },
-  {
-    id: 'task-nikeshala-1',
-    employeeId: 'emp-nikeshala',
-    title: 'Morning Bank Balance & HO Reconciliation Update',
-    category: 'Bank Reconciliations',
-    scheduleType: 'Daily',
-    timeSlot: '08:30 AM - 10:30 AM',
-    allocatedMinutes: 120,
-    actualMinutes: 105,
-    status: 'Completed',
-    approvalStatus: 'Approved',
-    acceptedByOwner: true,
-    handedOverTo: null,
-    handoverAcknowledged: false,
-    detailNotes: 'Morning bank balances updated and HO bank reconciliations progressed.',
-    subItems: [
-      { id: 'sub-nk1-1', label: 'Compile morning bank balances across accounts', done: true, needsHelp: false, helpReason: '' }
-    ]
-  },
-  {
-    id: 'task-dhanushka-1',
-    employeeId: 'emp-dhanushka',
-    title: 'Batch Voucher Filing & Supporting Document Check',
-    category: 'Documentation',
-    scheduleType: 'Daily',
-    timeSlot: '09:00 AM - 11:30 AM',
-    allocatedMinutes: 150,
-    actualMinutes: 95,
-    status: 'In Progress',
-    approvalStatus: 'Pending Approval',
-    acceptedByOwner: true,
-    handedOverTo: null,
-    handoverAcknowledged: false,
-    detailNotes: 'Verify payment/receipt attachments and organize daily voucher batches.',
-    subItems: [
-      { id: 'sub-dh1-1', label: 'Check attachment completeness on morning vouchers', done: true, needsHelp: false, helpReason: '' }
-    ]
+    id: 't-ran-1',
+    userId: 'rangika',
+    title: 'HOD Daily Department Performance & Cash Position Sign-Off',
+    category: 'Daily',
+    timeSlot: '05:00 PM - 05:30 PM',
+    allocatedMinutes: 30,
+    actualMinutes: 0,
+    status: 'pending',
+    accepted: true,
+    remark: '',
+    subItems: []
   }
 ];
-
-const INITIAL_STATEMENTS = {
-  sampath: {
-    accountNo: '09810004042',
-    bankName: 'Sampath Bank PLC',
-    fileName: '09810004042_statement_sample.xlsx',
-    uploadedAt: '08:55 AM',
-    entries: [
-      {
-        id: 'smp-1',
-        date: '2026-11-25',
-        ref: 'S3017356',
-        description: 'SVC-0034460536-42 TO TG MM - LOAN DISB VOUCHER 4412',
-        side: 'Debit',
-        amount: 200000,
-        balance: 13023605.89,
-        assignedTo: 'emp-dinithi',
-        acknowledged: false,
-        ackAt: null,
-        completed: false,
-        approved: false,
-        pendingReason: '',
-        escalatedToSuperior: false,
-        escalatedAt: null,
-        escalationReason: '',
-        highlighted: true,
-        note: 'Verify disbursement voucher #4412 before posting.'
-      },
-      {
-        id: 'smp-2',
-        date: '2026-11-25',
-        ref: 'S3017360',
-        description: '0034460537-42TOWMMM 009810004042 Future Life Investments',
-        side: 'Debit',
-        amount: 1000000,
-        balance: 12023605.89,
-        assignedTo: 'emp-charuka',
-        acknowledged: true,
-        ackAt: '09:02 AM',
-        completed: false,
-        approved: false,
-        pendingReason: '',
-        escalatedToSuperior: false,
-        escalatedAt: null,
-        escalationReason: '',
-        highlighted: false,
-        note: ''
-      },
-      {
-        id: 'smp-3',
-        date: '2026-11-25',
-        ref: 'S3017366',
-        description: 'CEFTS TRF / SLIPS PYMT - METROPOLITAN SUPPLIES INV-892',
-        side: 'Debit',
-        amount: 68500,
-        balance: 11955105.89,
-        assignedTo: '',
-        acknowledged: false,
-        ackAt: null,
-        completed: false,
-        approved: false,
-        pendingReason: '',
-        escalatedToSuperior: false,
-        escalatedAt: null,
-        escalationReason: '',
-        highlighted: true,
-        note: 'Unallocated debit — requires immediate assignment.'
-      },
-      {
-        id: 'smp-4',
-        date: '2026-11-25',
-        ref: 'S3018515',
-        description: 'BGT-2926 / BRANCH COLLECTION RECEIPT CREDIT',
-        side: 'Credit',
-        amount: 16000,
-        balance: 11971105.89,
-        assignedTo: 'emp-gayodya',
-        acknowledged: true,
-        ackAt: '09:05 AM',
-        completed: true,
-        approved: false,
-        pendingReason: '',
-        escalatedToSuperior: false,
-        escalatedAt: null,
-        escalationReason: '',
-        highlighted: false,
-        note: 'Matched with receipt batch.'
-      },
-      {
-        id: 'smp-5',
-        date: '2026-11-25',
-        ref: 'S3026870',
-        description: 'WHT REMITTANCE & LEASING SETTLEMENT REF-774',
-        side: 'Debit',
-        amount: 95000,
-        balance: 11876105.89,
-        assignedTo: 'emp-dhanushka',
-        acknowledged: false,
-        ackAt: null,
-        completed: false,
-        approved: false,
-        pendingReason: 'Awaiting supplier WHT schedule confirmation',
-        escalatedToSuperior: true,
-        escalatedAt: Date.now() - 45 * 60000,
-        escalationReason: 'Need superior guidance on WHT tax rate split.',
-        highlighted: true,
-        note: 'Escalated to Shani for review.'
-      }
-    ]
-  },
-  seylan: {
-    accountNo: '013012776905002',
-    bankName: 'Seylan Bank PLC',
-    fileName: '013012776905002_statement_sample.xlsx',
-    uploadedAt: '08:58 AM',
-    entries: [
-      {
-        id: 'sey-1',
-        date: '2026-11-25',
-        ref: 'TRF 12776905 123',
-        description: 'SUSPENSE ASSET / CURRENT ACCOUNT TRANSFER 013012776905002',
-        side: 'Debit',
-        amount: 721984.85,
-        balance: 25000,
-        assignedTo: 'emp-nelka',
-        acknowledged: true,
-        ackAt: '09:04 AM',
-        completed: true,
-        approved: true,
-        pendingReason: '',
-        escalatedToSuperior: false,
-        escalatedAt: null,
-        escalationReason: '',
-        highlighted: true,
-        note: 'Verified & posted to suspense asset.'
-      },
-      {
-        id: 'sey-2',
-        date: '2026-11-25',
-        ref: 'NEG@@BO2609020000049',
-        description: 'SUSPENSE LIABILITY / CUSTOMER DEPOSIT CREDIT 13012776905033',
-        side: 'Credit',
-        amount: 54000,
-        balance: 746984.85,
-        assignedTo: 'emp-nikeshala',
-        acknowledged: false,
-        ackAt: null,
-        completed: false,
-        approved: false,
-        pendingReason: '',
-        escalatedToSuperior: false,
-        escalatedAt: null,
-        escalationReason: '',
-        highlighted: false,
-        note: ''
-      },
-      {
-        id: 'sey-3',
-        date: '2026-11-25',
-        ref: 'NEG@@BO2609020000047',
-        description: 'SUSPENSE LIABILITY / DIRECT CREDIT 13012776905032',
-        side: 'Credit',
-        amount: 3500,
-        balance: 692984.85,
-        assignedTo: '',
-        acknowledged: false,
-        ackAt: null,
-        completed: false,
-        approved: false,
-        pendingReason: '',
-        escalatedToSuperior: false,
-        escalatedAt: null,
-        escalationReason: '',
-        highlighted: false,
-        note: ''
-      }
-    ]
-  }
-};
-
-const INITIAL_RECONCILIATIONS = Array.from({ length: 81 }, (_, idx) => {
-  const num = idx + 1;
-  const owners = ['emp-nelka', 'emp-shani', 'emp-nikeshala', 'emp-charuka', 'emp-gayodya', 'emp-dinithi', 'emp-dhanushka'];
-  const ownerId = owners[idx % owners.length];
-  const bankPrefix = idx % 3 === 0 ? 'Sampath' : idx % 3 === 1 ? 'Seylan' : 'Commercial / BOC';
-  const isDone = idx < 52;
-  const tags = ['Matched', 'Timing Difference', 'Missing Slip', 'CRO / Bank Query'];
-  return {
-    id: `rec-${num}`,
-    accountName: `${bankPrefix} A/C #${String(1000 + num).padStart(6, '0')} - ${idx % 2 === 0 ? 'Branch Collection' : 'HO Operational'}`,
-    ownerId,
-    completed: isDone,
-    varianceTag: isDone ? 'Matched' : tags[idx % tags.length],
-    remark: isDone
-      ? 'Reconciled with GL & bank statement; zero unexplained variance.'
-      : 'Pending bank advice / timing check in progress.',
-    updatedAt: isDone ? '09:40 AM' : '11:15 AM'
-  };
-});
 
 const INITIAL_MONTH_END_ITEMS = [
   {
     id: 'me-1',
-    task: 'Lock All 81 Bank Reconciliations & Variance Schedules',
-    ownerId: 'emp-nikeshala',
-    targetDate: '2026-11-30',
-    dependency: 'Ready (No blocker)',
-    dependencyMet: true,
-    progress: 85,
-    status: 'In Progress'
+    title: 'Complete All 81 Branch & Head Office Bank Reconciliations',
+    ownerId: 'hansi',
+    targetDate: '2026-11-28',
+    dependency: 'Prerequisite for Cash Flows & P&L',
+    progress: 72,
+    status: 'in_progress'
   },
   {
     id: 'me-2',
-    task: 'Month-End WHT, VAT & Statutory Tax Schedules',
-    ownerId: 'emp-shani',
-    targetDate: '2026-11-30',
-    dependency: 'Requires Daily Entries & WHT Batch',
-    dependencyMet: true,
-    progress: 70,
-    status: 'In Progress'
+    title: 'Preparing All Branch Cash Flows & Depreciation Entry',
+    ownerId: 'nelka',
+    targetDate: '2026-11-29',
+    dependency: 'Requires Bank Reconciliations (81) >= 95%',
+    progress: 35,
+    status: 'in_progress'
   },
   {
     id: 'me-3',
-    task: 'Receivable / Payable Sub-Ledger Control Sign-Off',
-    ownerId: 'emp-dinithi',
+    title: 'Home Appliance Final Report & Ledger Entry',
+    ownerId: 'dinithi',
     targetDate: '2026-11-29',
-    dependency: 'Requires Voucher Posting Complete',
-    dependencyMet: true,
-    progress: 60,
-    status: 'In Progress'
+    dependency: 'Requires BOC 962 Reconciliation',
+    progress: 50,
+    status: 'in_progress'
   },
   {
     id: 'me-4',
-    task: 'Consolidated Cash Flow & Branch P&L Preparation',
-    ownerId: 'emp-nelka',
-    targetDate: '2026-12-02',
-    dependency: 'Depends on Bank Reconciliations & Ledger Lock',
-    dependencyMet: false,
-    progress: 40,
-    status: 'Pending Dependency'
+    title: 'WHT Ledger Tally, WHT Payment & IRD Details',
+    ownerId: 'shani',
+    targetDate: '2026-11-30',
+    dependency: 'Requires Interest Entries Complete',
+    progress: 60,
+    status: 'in_progress'
   },
   {
     id: 'me-5',
-    task: 'HOD Final Financial Pack & Audit Exception Sign-Off',
-    ownerId: 'emp-rangika',
-    targetDate: '2026-12-03',
-    dependency: 'Depends on Branch P&L & Cash Flow',
-    dependencyMet: false,
-    progress: 25,
-    status: 'Scheduled'
+    title: 'Branch, AI & Pawn PNL Preparing & Final Sign-Off',
+    ownerId: 'nikeshala',
+    targetDate: '2026-11-30',
+    dependency: 'Requires Branch Cash Flows & Stock Tally',
+    progress: 20,
+    status: 'pending'
   }
 ];
 
-const INITIAL_CALENDAR_EVENTS = [
-  {
-    id: 'cal-1',
-    date: '2026-11-25',
-    title: 'Morning Cut-Off: Payment Slips & Statement Allocation',
-    type: 'Scheduled Job',
-    target: 'everyone',
-    createdBy: 'emp-mahasen',
-    approvalStatus: 'Approved'
-  },
-  {
-    id: 'cal-2',
-    date: '2026-11-25',
-    title: 'Verify Unallocated Debit Entries Before Noon',
-    type: 'Reminder',
-    target: 'emp-shani',
-    createdBy: 'emp-shani',
-    approvalStatus: 'Approved'
-  },
-  {
-    id: 'cal-3',
-    date: '2026-11-27',
-    title: 'Pre-Month-End Reconciliation Audit Check',
-    type: 'Scheduled Job',
-    target: 'everyone',
-    createdBy: 'emp-nelka',
-    approvalStatus: 'Approved'
-  },
-  {
-    id: 'cal-4',
-    date: '2026-11-30',
-    title: 'Month-End Ledger & Bank Reconciliation Cut-Off',
-    type: 'Scheduled Job',
-    target: 'everyone',
-    createdBy: 'emp-rangika',
-    approvalStatus: 'Approved'
+function calculateTenure(joiningDateStr) {
+  if (!joiningDateStr) return 'N/A';
+  const start = new Date(joiningDateStr);
+  const now = new Date();
+  let years = now.getFullYear() - start.getFullYear();
+  let months = now.getMonth() - start.getMonth();
+  if (months < 0) {
+    years -= 1;
+    months += 12;
   }
-];
-
-const INITIAL_PLEDGE_RATINGS = [
-  { id: 'pr-1', raterId: 'emp-nelka', targetId: 'emp-mahasen', principleId: 1, score: 5, comment: 'Thorough review on branch variances.' },
-  { id: 'pr-2', raterId: 'emp-shani', targetId: 'emp-mahasen', principleId: 2, score: 5, comment: 'Fast escalation resolution before cut-off.' },
-  { id: 'pr-3', raterId: 'emp-mahasen', targetId: 'emp-nelka', principleId: 3, score: 5, comment: 'Consistent ownership of branch cashflow & GL.' },
-  { id: 'pr-4', raterId: 'emp-nelka', targetId: 'emp-dinithi', principleId: 4, score: 4, comment: 'Clear morning slip organization.' }
-];
-
-const INITIAL_IDEAS = [
-  {
-    id: 'idea-1',
-    title: 'Standardized Narration Prefix Tagging for Sampath & Seylan',
-    category: 'Bank & Entries Automation',
-    authorId: 'emp-shani',
-    desc: 'Tag recurring bank narration keywords so statement rows map faster during morning allocation.',
-    votes: 7
-  },
-  {
-    id: 'idea-2',
-    title: 'Pre-Close Variance Checklist for Branch Reconciliations',
-    category: 'Month-End & Audit',
-    authorId: 'emp-nelka',
-    desc: 'Standardize timing-difference notes before month-end cut-off to speed up review.',
-    votes: 6
-  }
-];
-
-const INITIAL_FEEDBACKS = [
-  {
-    id: 'fb-1',
-    title: 'Morning Cut-Off Visibility Between 8:30 AM – 10:00 AM',
-    category: 'Workflow & Timings',
-    authorId: 'emp-dinithi',
-    desc: 'Having a single strip showing slip handover and statement allocation status helps avoid morning bottlenecks.',
-    status: 'Implemented'
-  }
-];
-
-const INITIAL_LAN_FILES = [
-  {
-    id: 'lan-1',
-    name: 'Sampath_09810004042_Nov25.xlsx',
-    category: 'Bank Statements',
-    visibility: 'everyone',
-    targetId: null,
-    uploadedBy: 'emp-shani',
-    time: '08:55 AM',
-    size: '148 KB'
-  },
-  {
-    id: 'lan-2',
-    name: 'Branch_Cashflow_Template_v2.xlsx',
-    category: 'Other / Custom',
-    customCategory: 'GL & Cashflow Pack',
-    visibility: 'selected',
-    targetId: 'emp-nelka',
-    uploadedBy: 'emp-mahasen',
-    time: '09:15 AM',
-    size: '92 KB'
-  }
-];
-
-const INITIAL_CHAT_MESSAGES = [
-  {
-    id: 'msg-1',
-    channelType: 'group',
-    channelId: 'finance-all',
-    senderId: 'emp-mahasen',
-    text: 'Good morning team! Let us keep morning slip handover and statement allocation smooth before 9:30 AM.',
-    time: '08:35 AM'
-  },
-  {
-    id: 'msg-2',
-    channelType: 'group',
-    channelId: 'finance-all',
-    senderId: 'emp-dinithi',
-    text: 'Morning payment slips prepared and handed over to Shani.',
-    time: '08:48 AM'
-  },
-  {
-    id: 'msg-3',
-    channelType: 'dm',
-    channelId: 'emp-shani',
-    senderId: 'emp-nelka',
-    text: 'Shani, let me know once the Sampath & Seylan unallocated debits are assigned.',
-    time: '09:06 AM'
-  }
-];
-
-const DAILY_QUOTES = [
-  'Accuracy in small daily entries builds unshakable financial confidence.',
-  'Clarity, ownership, and calm execution turn busy schedules into smooth milestones.',
-  'Every reconciled number today saves hours of rework at month-end.',
-  'Great finance teams win through timely handovers and transparent communication.'
-];
-
-// ============================================================================
-// HELPER FUNCTIONS (GREETING, WEATHER, EXCEL PARSER, PDF DAY-END EXPORT)
-// ============================================================================
-
-function getTimeGreeting(date = new Date()) {
-  const hour = date.getHours();
-  if (hour < 12) return 'Good Morning';
-  if (hour < 17) return 'Good Afternoon';
-  return 'Good Evening';
+  return `${Math.max(0, years)} Yrs, ${Math.max(0, months)} Mos`;
 }
 
-function getSuggestedAssignee(description = '', side = 'Debit') {
-  const text = String(description).toUpperCase();
-  if (text.includes('SLIPS') || text.includes('PETTY') || text.includes('VOUCHER')) return 'emp-dinithi';
-  if (text.includes('WHT') || text.includes('TAX') || text.includes('RTGS')) return 'emp-shani';
-  if (text.includes('SUSPENSE') || text.includes('GL') || text.includes('BRANCH')) return 'emp-nelka';
-  if (text.includes('LEASING') || text.includes('LOAN') || text.includes('CEFTS')) return 'emp-charuka';
-  if (side === 'Credit' || text.includes('RECEIPT') || text.includes('COLLECTION')) return 'emp-gayodya';
-  return 'emp-dhanushka';
+// Smart Rule-Based Assignee Suggestion Engine
+function suggestAssigneeForDescription(desc) {
+  const d = (desc || '').toUpperCase();
+  if (d.includes('LOAN') || d.includes('VOUCHER') || d.includes('PETTY') || d.includes('962')) {
+    return { userId: 'dinithi', reason: 'Loan/Voucher pattern' };
+  }
+  if (d.includes('SLIPS') || d.includes('OPD') || d.includes('STAFF') || d.includes('SUPPLIES')) {
+    return { userId: 'charuka', reason: 'Supplier/SLIPS pattern' };
+  }
+  if (d.includes('WHT') || d.includes('INTEREST') || d.includes('CORPORATE') || d.includes('FD')) {
+    return { userId: 'shani', reason: 'Interest/WHT pattern' };
+  }
+  if (d.includes('LEASING') || d.includes('COLLECTION') || d.includes('RECEIPT') || d.includes('TAX')) {
+    return { userId: 'gayodya', reason: 'Collection/Tax pattern' };
+  }
+  if (d.includes('CHEQUE') || d.includes('LEGAL') || d.includes('WALLET')) {
+    return { userId: 'dhanushka', reason: 'Cheque/Wallet pattern' };
+  }
+  if (d.includes('DEPRECIATION') || d.includes('CASH FLOW') || d.includes('ADVANCE')) {
+    return { userId: 'nelka', reason: 'Cash Advance/Flow pattern' };
+  }
+  return null;
 }
 
-function getSlaAgingLabel(timestampMs) {
-  if (!timestampMs) return null;
-  const mins = Math.max(1, Math.floor((Date.now() - timestampMs) / 60000));
-  if (mins >= 60) {
-    const hrs = Math.floor(mins / 60);
-    const rem = mins % 60;
-    return `${hrs}h ${rem}m overdue`;
-  }
-  return `${mins} mins overdue`;
-}
-
-function parseBankStatementWorkbook(arrayBuffer, fallbackAccountNo) {
-  const wb = XLSX.read(arrayBuffer, { type: 'array', cellDates: true });
-  const firstSheet = wb.Sheets[wb.SheetNames[0]];
-  const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: '' });
-
-  let headerRowIdx = 0;
-  for (let i = 0; i < Math.min(rows.length, 25); i++) {
-    const joined = rows[i].map((c) => String(c).toLowerCase()).join(' ');
-    if (
-      joined.includes('description') ||
-      joined.includes('txn date') ||
-      joined.includes('transaction date') ||
-      joined.includes('amount')
-    ) {
-      headerRowIdx = i;
-      break;
-    }
-  }
-
-  const headers = rows[headerRowIdx].map((h) => String(h).trim().toLowerCase());
-  const dateIdx = headers.findIndex((h) => h.includes('date'));
-  const descIdx = headers.findIndex((h) => h.includes('description') || h.includes('narration') || h.includes('particulars'));
-  const refIdx = headers.findIndex((h) => h.includes('ref') || h.includes('tran id') || h.includes('cheque') || h.includes('chq'));
-  const sideIdx = headers.findIndex((h) => h.includes('cr/dr') || h.includes('cr /dr') || h.includes('type') || h.includes('d/c'));
-  const amtIdx = headers.findIndex((h) => h.includes('amount') || h.includes('debit') || h.includes('credit'));
-  const balIdx = headers.findIndex((h) => h.includes('balance'));
-
-  const parsed = [];
-  for (let r = headerRowIdx + 1; r < rows.length; r++) {
-    const row = rows[r];
-    if (!row || row.every((c) => String(c).trim() === '')) continue;
-
-    let rawDate = dateIdx >= 0 ? row[dateIdx] : '2026-11-25';
-    let formattedDate = '2026-11-25';
-    if (rawDate instanceof Date && !isNaN(rawDate.getTime())) {
-      formattedDate = rawDate.toISOString().slice(0, 10);
-    } else if (String(rawDate).trim()) {
-      formattedDate = String(rawDate).trim().slice(0, 16);
-    }
-
-    const rawDesc = descIdx >= 0 ? String(row[descIdx]).replace(/^'|'$/g, '').trim() : '';
-    const rawRef = refIdx >= 0 ? String(row[refIdx]).replace(/^'|'$/g, '').trim() : `TXN-${r}`;
-    let rawSide = sideIdx >= 0 ? String(row[sideIdx]).toUpperCase().trim() : '';
-
-    let side = 'Debit';
-    if (rawSide.includes('CR') || rawSide.includes('CREDIT')) {
-      side = 'Credit';
-    } else if (rawSide.includes('DR') || rawSide.includes('DEBIT')) {
-      side = 'Debit';
-    }
-
-    const rawAmt = amtIdx >= 0 ? row[amtIdx] : 0;
-    const numericAmt = Math.abs(parseFloat(String(rawAmt).replace(/,/g, '')) || 0);
-    if (!rawDesc && numericAmt === 0) continue;
-
-    const rawBal = balIdx >= 0 ? parseFloat(String(row[balIdx]).replace(/,/g, '')) : null;
-    const cleanDesc = rawDesc || `Statement Entry (${fallbackAccountNo})`;
-
-    parsed.push({
-      id: `imp-${fallbackAccountNo}-${r}-${Date.now()}`,
-      date: formattedDate,
-      ref: rawRef || `REF-${r}`,
-      description: cleanDesc,
-      side,
-      amount: numericAmt,
-      balance: Number.isFinite(rawBal) ? rawBal : null,
-      assignedTo: '',
-      acknowledged: false,
-      ackAt: null,
-      completed: false,
-      approved: false,
-      pendingReason: '',
-      escalatedToSuperior: false,
-      escalatedAt: null,
-      escalationReason: '',
-      highlighted: false,
-      note: ''
-    });
-  }
-
-  return parsed.slice(0, 120);
-}
-
-function exportDayEndReportPdf(employee, dutyInTime, tasks, statements, reconciliations, employees) {
-  const empTasks = tasks.filter((t) => t.employeeId === employee.id);
-  const empEntries = Object.values(statements).flatMap((st) =>
-    st.entries
-      .filter((e) => e.assignedTo === employee.id)
-      .map((e) => ({ ...e, accountNo: st.accountNo, bankName: st.bankName }))
+// 4-Stage Status Badge Component (Assigned -> Acknowledged -> Completed -> Approved)
+function FourStageBadge({ status }) {
+  const map = {
+    assigned: { label: '1. Assigned', cls: 'bg-blue-50 text-blue-700 border-blue-200' },
+    acknowledged: { label: '2. Acknowledged', cls: 'bg-amber-50 text-amber-800 border-amber-200' },
+    completed: { label: '3. Completed', cls: 'bg-teal-50 text-teal-700 border-teal-200' },
+    completed_pending_approval: { label: '3. Completed (Awaiting Approval)', cls: 'bg-amber-50 text-amber-800 border-amber-200' },
+    approved: { label: '4. Approved ✓', cls: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+    rejected: { label: 'Returned for Rework', cls: 'bg-rose-50 text-rose-700 border-rose-200' },
+    pending: { label: '1. Assigned / Pending', cls: 'bg-slate-100 text-slate-700 border-slate-200' }
+  };
+  const cfg = map[status] || map.pending;
+  return (
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full border text-[10px] font-extrabold ${cfg.cls}`}>
+      {cfg.label}
+    </span>
   );
-  const empRecs = reconciliations.filter((r) => r.ownerId === employee.id);
-  const completedRecs = empRecs.filter((r) => r.completed).length;
-
-  const win = window.open('', '_blank', 'width=900,height=700');
-  if (!win) return;
-
-  const html = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>Day-End Handover & Activity Report - ${employee.name}</title>
-      <style>
-        body { font-family: Arial, sans-serif; color: #0F172A; padding: 28px; line-height: 1.45; }
-        .header { display: flex; justify-content: space-between; border-bottom: 3px solid #1E3A8A; padding-bottom: 14px; margin-bottom: 20px; }
-        .brand { font-size: 20px; font-weight: 800; color: #1E3A8A; }
-        .sub { font-size: 12px; color: #475569; }
-        .meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
-        .meta-box { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px; }
-        .meta-label { font-size: 10px; text-transform: uppercase; color: #64748B; font-weight: 700; }
-        .meta-val { font-size: 14px; font-weight: 700; margin-top: 2px; }
-        h3 { font-size: 14px; color: #1E3A8A; margin: 18px 0 8px; border-bottom: 1px solid #E2E8F0; padding-bottom: 4px; }
-        table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 14px; }
-        th, td { border: 1px solid #CBD5E1; padding: 7px 9px; text-align: left; }
-        th { background: #EFF6FF; color: #1E3A8A; font-weight: 700; }
-        .badge { padding: 2px 7px; border-radius: 999px; font-size: 10px; font-weight: 700; background: #E2E8F0; }
-        .btn-print { background: #1E3A8A; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 700; margin-bottom: 16px; }
-        @media print { .no-print { display: none; } }
-      </style>
-    </head>
-    <body>
-      <div class="no-print">
-        <button class="btn-print" onclick="window.print()">Print / Save as PDF</button>
-      </div>
-      <div class="header">
-        <div>
-          <div class="brand">FUTURE LIFE INVESTMENTS LIMITED — FLi PINNACLE</div>
-          <div class="sub">Finance Department Standardized Day-End Handover & Activity Report</div>
-        </div>
-        <div style="text-align:right;">
-          <div style="font-weight:700;">Date: 2026-11-25</div>
-          <div class="sub">Generated: ${new Date().toLocaleTimeString()}</div>
-        </div>
-      </div>
-      <div class="meta-grid">
-        <div class="meta-box"><div class="meta-label">Employee</div><div class="meta-val">${employee.name}</div><div class="sub">${employee.role}</div></div>
-        <div class="meta-box"><div class="meta-label">Duty In Time</div><div class="meta-val">${dutyInTime || '08:30 AM'}</div><div class="sub">Shift: ${employee.shift}</div></div>
-        <div class="meta-box"><div class="meta-label">Tasks & Time</div><div class="meta-val">${empTasks.filter((t) => t.status === 'Completed').length}/${empTasks.length} Done</div><div class="sub">Logged: ${empTasks.reduce((a, b) => a + (b.actualMinutes || 0), 0)} mins</div></div>
-        <div class="meta-box"><div class="meta-label">Reconciliations</div><div class="meta-val">${completedRecs}/${empRecs.length}</div><div class="sub">Hydration: ${employee.waterGlassesToday || 0} glasses</div></div>
-      </div>
-
-      <h3>1. Daily Tasks, Timings & Handover Summary</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Task / KPI</th>
-            <th>Schedule</th>
-            <th>Alloc / Actual</th>
-            <th>Status & Approval</th>
-            <th>Notes / Reasons</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${
-            empTasks.length
-              ? empTasks
-                  .map(
-                    (t) => `
-                <tr>
-                  <td><strong>${t.title}</strong><br/><span class="sub">${t.category} (${t.scheduleType})</span></td>
-                  <td>${t.timeSlot}</td>
-                  <td>${t.allocatedMinutes}m / ${t.actualMinutes || 0}m</td>
-                  <td><span class="badge">${t.status}</span> • <span class="badge">${t.approvalStatus}</span></td>
-                  <td>${t.rejectReason ? `Rejected: ${t.rejectReason}` : t.detailNotes || '-'}</td>
-                </tr>`
-                  )
-                  .join('')
-              : '<tr><td colspan="5">No tasks recorded for today.</td></tr>'
-          }
-        </tbody>
-      </table>
-
-      <h3>2. Allocated Bank Statement Entries Handled / Escalated</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Account & Ref</th>
-            <th>Description</th>
-            <th>Side & Amount</th>
-            <th>State</th>
-            <th>Reason / Escalation Note</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${
-            empEntries.length
-              ? empEntries
-                  .map((e) => {
-                    const stLabel = e.approved
-                      ? 'Approved'
-                      : e.completed
-                      ? 'Completed'
-                      : e.acknowledged
-                      ? 'Acknowledged'
-                      : 'Assigned';
-                    return `
-                    <tr>
-                      <td>${e.accountNo}<br/><span class="sub">${e.ref}</span></td>
-                      <td>${e.description}</td>
-                      <td>${e.side} • Rs. ${Number(e.amount || 0).toLocaleString()}</td>
-                      <td><span class="badge">${stLabel}</span>${e.escalatedToSuperior ? ' • Escalated' : ''}</td>
-                      <td>${e.escalationReason || e.pendingReason || e.note || '-'}</td>
-                    </tr>`;
-                  })
-                  .join('')
-              : '<tr><td colspan="5">No bank statement entries assigned today.</td></tr>'
-          }
-        </tbody>
-      </table>
-
-      <h3>3. Assigned Bank Reconciliations Status</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Account</th>
-            <th>Status</th>
-            <th>Variance Tag</th>
-            <th>Remarks</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${empRecs
-            .map(
-              (r) => `
-            <tr>
-              <td>${r.accountName}</td>
-              <td>${r.completed ? 'Completed' : 'Pending'}</td>
-              <td>${r.varianceTag || 'Matched'}</td>
-              <td>${r.remark || '-'}</td>
-            </tr>`
-            )
-            .join('')}
-        </tbody>
-      </table>
-    </body>
-    </html>
-  `;
-  win.document.write(html);
-  win.document.close();
 }
 
 // ============================================================================
-// MAIN APPLICATION COMPONENT
+// 2. MAIN APPLICATION COMPONENT: FLi Pinnacle Workspace Hub
 // ============================================================================
 
 export default function App() {
-  const [currentUserId, setCurrentUserId] = useState('emp-nelka');
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [sidebarExpanded, setSidebarExpanded] = useState(false);
-  const [eyeCareMode, setEyeCareMode] = useState(false);
-  const [nowTick, setNowTick] = useState(Date.now());
-  const [quoteIdx, setQuoteIdx] = useState(0);
-  const [weather, setWeather] = useState({
-    location: 'Kadawatha / Colombo, LK',
-    tempC: 29,
-    condition: 'Partly Sunny & Breeze'
+  const [users, setUsers] = useState(INITIAL_USERS);
+  const [currentUserId, setCurrentUserId] = useState(null);
+  const [darkMode, setDarkMode] = useState(false);
+  const [eyeCareMode, setEyeCareMode] = useState(true);
+  const [activeNav, setActiveNav] = useState('dashboard');
+  const [isSidebarHovered, setIsSidebarHovered] = useState(false);
+  const [isSidebarPinned, setIsSidebarPinned] = useState(false);
+  const [openCategories, setOpenCategories] = useState({
+    core: true,
+    ops: true,
+    gov: true,
+    culture: true
   });
 
-  const [employees, setEmployees] = useState(INITIAL_EMPLOYEES);
-  const [dutyInMap, setDutyInMap] = useState(INITIAL_DUTY_IN);
-  const [tasks, setTasks] = useState(INITIAL_TASKS);
-  const [statements, setStatements] = useState(INITIAL_STATEMENTS);
-  const [reconciliations, setReconciliations] = useState(INITIAL_RECONCILIATIONS);
-  const [monthEndItems, setMonthEndItems] = useState(INITIAL_MONTH_END_ITEMS);
-  const [calendarEvents, setCalendarEvents] = useState(INITIAL_CALENDAR_EVENTS);
-  const [pledgeRatings, setPledgeRatings] = useState(INITIAL_PLEDGE_RATINGS);
-  const [ideas, setIdeas] = useState(INITIAL_IDEAS);
-  const [feedbacks, setFeedbacks] = useState(INITIAL_FEEDBACKS);
-  const [lanFiles, setLanFiles] = useState(INITIAL_LAN_FILES);
-  const [chatMessages, setChatMessages] = useState(INITIAL_CHAT_MESSAGES);
+  // Live Clock & Weather (Kadawatha / Colombo, Sri Lanka)
+  const [nowTime, setNowTime] = useState(new Date());
+  const [weatherInfo, setWeatherInfo] = useState({ temp: '29°C', desc: 'Partly Cloudy', city: 'Kadawatha, LK' });
 
-  const [notifications, setNotifications] = useState([
+  // Attendance / Duty In
+  const [dutyInRecords, setDutyInRecords] = useState({
+    rangika: '08:22 AM',
+    mahasen: '08:25 AM',
+    kanishka: '08:27 AM',
+    hansi: '08:28 AM',
+    nayomi: '08:29 AM',
+    dinithi: '08:24 AM',
+    shani: '08:26 AM'
+  });
+
+  // Modals & Popovers
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+  const [showWifiPopover, setShowWifiPopover] = useState(false);
+  const [showChatWidget, setShowChatWidget] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
+
+  // Tasks, Month-End & Reconciliations
+  const [tasks, setTasks] = useState(INITIAL_TASKS);
+  const [monthEndItems, setMonthEndItems] = useState(INITIAL_MONTH_END_ITEMS);
+  const [bankRecs, setBankRecs] = useState(INITIAL_BANK_RECS);
+  const [quickLinks, setQuickLinks] = useState(INITIAL_QUICK_LINKS);
+
+  // Allocated Statement Entries (4-stage status: assigned -> acknowledged -> completed -> approved, plus send-back & SLA aging)
+  const [allocatedEntries, setAllocatedEntries] = useState([
     {
-      id: 'n-1',
-      forUserId: 'emp-shani',
-      title: 'Morning Payment Slips Handover from Dinithi',
-      body: 'Dinithi handed over 08:30 AM payment slips. Acknowledge to approve Dinithi’s job & start your Daily Entries timer.',
-      time: '08:48 AM',
-      unread: true
+      id: 'ae-1',
+      bank: 'Sampath Bank - 09810004042 (HO Main)',
+      date: '2026-11-23',
+      ref: 'SMP-0981-01',
+      side: 'Debit',
+      amount: 145000,
+      balance: 2845000,
+      desc: 'CEFTS TRF / LOAN DISB VOUCHER 4412 - K. PERERA',
+      specialNote: 'Slip attached by Dinithi',
+      highlighted: true,
+      assigneeId: 'dinithi',
+      acknowledged: false,
+      ackAt: null,
+      status: 'assigned',
+      pendingReason: '',
+      escalatedToId: null,
+      escalatedMinutesAgo: 0,
+      supervisorNote: ''
     },
     {
-      id: 'n-2',
-      forUserId: 'all',
-      title: 'Daily Cut-Off Strip Active',
-      body: 'Morning chain: Dinithi Payment Slips → Shani Allocation → Daily Entries.',
-      time: '08:50 AM',
-      unread: false
+      id: 'ae-2',
+      bank: 'Sampath Bank - 09810004042 (HO Main)',
+      date: '2026-11-23',
+      ref: 'SMP-0981-02',
+      side: 'Debit',
+      amount: 68500,
+      balance: 2776500,
+      desc: 'SLIPS PYMT / METROPOLITAN OFFICE SUPPLIES INV-892',
+      specialNote: '',
+      highlighted: false,
+      assigneeId: 'charuka',
+      acknowledged: true,
+      ackAt: '09:12 AM',
+      status: 'acknowledged',
+      pendingReason: '',
+      escalatedToId: 'nayomi',
+      escalatedMinutesAgo: 48,
+      supervisorNote: ''
     }
   ]);
 
-  const [showNotifDrawer, setShowNotifDrawer] = useState(false);
-  const [showChatWidget, setShowChatWidget] = useState(false);
-  const [showLanPopover, setShowLanPopover] = useState(false);
-  const [restBannerDismissed, setRestBannerDismissed] = useState(false);
+  // Pending Approvals (Profile updates & Job detail modifications)
+  const [profileRequests, setProfileRequests] = useState([]);
+  const [jobUpdateRequests, setJobUpdateRequests] = useState([]);
 
-  const currentUser = useMemo(
-    () => employees.find((e) => e.id === currentUserId) || employees[0],
-    [employees, currentUserId]
-  );
+  // Calendar Events (Everyone vs Specific Staff)
+  const [calendarEvents, setCalendarEvents] = useState([
+    {
+      id: 'ce-1',
+      date: '2026-11-23',
+      type: 'reminder',
+      title: '10:30 AM Tax Payment Cut-Off',
+      assignedToId: 'everyone',
+      createdById: 'rangika',
+      status: 'approved'
+    },
+    {
+      id: 'ce-2',
+      date: '2026-11-23',
+      type: 'scheduled_job',
+      title: '05:00 PM Daily Cashbook & Voucher Filing',
+      assignedToId: 'everyone',
+      createdById: 'mahasen',
+      status: 'approved'
+    }
+  ]);
 
-  const pushNotification = (forUserId, title, body) => {
-    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    setNotifications((prev) => [
-      { id: `n-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`, forUserId, title, body, time: timeStr, unread: true },
-      ...prev
-    ]);
+  // Our Pledge Ratings (Selective +1 to +5 or Deduction -1 to -3)
+  const [pledgeRatings, setPledgeRatings] = useState([
+    {
+      id: 'pr-1',
+      toUserId: 'mahasen',
+      fromUserId: 'rangika',
+      scores: { 1: 5, 3: 5, 7: 5 },
+      comment: 'Exceptional coaching and treasury oversight across the team.'
+    }
+  ]);
+
+  // Office Wi-Fi Speed File Drop
+  const [wifiFiles, setWifiFiles] = useState([
+    {
+      id: 'wf-1',
+      name: 'Daily_Cashflow_Template_2026.xlsx',
+      size: '420 KB',
+      category: 'Cashflow',
+      visibility: 'everyone',
+      targetUserId: '',
+      uploadedById: 'shani',
+      time: '08:40 AM'
+    }
+  ]);
+
+  // Chat Channels (Group & Individual 1-on-1 DMs)
+  const [chatGroups] = useState([
+    { id: 'grp-general', name: '# Finance General' },
+    { id: 'grp-recs', name: '# Reconciliations' },
+    { id: 'grp-entries', name: '# Daily Entries' }
+  ]);
+  const [activeChatChannel, setActiveChatChannel] = useState('grp-general');
+  const [chatMessages, setChatMessages] = useState([
+    {
+      id: 'm-1',
+      channelId: 'grp-general',
+      senderId: 'rangika',
+      text: 'Good morning team! Please ensure all morning bank balances and daily entries are updated on schedule.',
+      time: '08:30 AM'
+    },
+    {
+      id: 'm-2',
+      channelId: 'grp-entries',
+      senderId: 'dinithi',
+      text: 'Morning payment slips have been attached and handed over to Shani.',
+      time: '08:48 AM'
+    }
+  ]);
+  const [chatPopupAlert, setChatPopupAlert] = useState(null);
+
+  // Separate New Idea Hub & Feedback Box
+  const [ideaCategories, setIdeaCategories] = useState(['Automation', 'Reconciliation', 'Cost Saving', 'Client Experience']);
+  const [ideas, setIdeas] = useState([
+    {
+      id: 'id-1',
+      title: 'Auto-Tag Recurring Branch Seylan Deposits',
+      category: 'Reconciliation',
+      desc: 'Group daily branch deposit references by branch code before voucher printing.',
+      authorId: 'nelka',
+      votes: 7
+    }
+  ]);
+  const [feedbackCategories, setFeedbackCategories] = useState(['Appreciation', 'Workflow Support', 'IT & Systems', 'Workplace']);
+  const [feedbacks, setFeedbacks] = useState([
+    {
+      id: 'fb-1',
+      category: 'Appreciation',
+      text: 'Thank you Dinithi and Shani for smooth morning voucher handovers!',
+      authorId: 'hansi',
+      anonymous: false
+    }
+  ]);
+
+  // Personal Notepad & Hydration Glass Tracker
+  const [notesByUser, setNotesByUser] = useState({});
+  const [waterGlassesByUser, setWaterGlassesByUser] = useState({});
+
+  const currentUser = users.find(u => u.id === currentUserId) || null;
+  const isSidebarOpen = isSidebarHovered || isSidebarPinned;
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 4200);
   };
 
+  // Live Clock Tick
   useEffect(() => {
-    const t = setInterval(() => setNowTick(Date.now()), 30000);
-    const q = setInterval(() => setQuoteIdx((i) => (i + 1) % DAILY_QUOTES.length), 15000);
-    return () => {
-      clearInterval(t);
-      clearInterval(q);
-    };
+    const t = setInterval(() => setNowTime(new Date()), 30000);
+    return () => clearInterval(t);
   }, []);
 
+  // Fetch Current Location Weather (Kadawatha / Colombo, Sri Lanka)
   useEffect(() => {
-    if (!navigator.geolocation) return;
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        try {
-          const { latitude, longitude } = pos.coords;
-          const res = await fetch(
-            `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`
-          );
-          if (res.ok) {
-            const data = await res.json();
-            if (data?.current_weather) {
-              const code = data.current_weather.weathercode;
-              const condText =
-                code === 0 ? 'Clear Sky' : code <= 3 ? 'Partly Cloudy' : code >= 51 ? 'Light Rain / Showers' : 'Breezy & Mild';
-              setWeather({
-                location: `Local Area (${latitude.toFixed(1)}°, ${longitude.toFixed(1)}°)`,
-                tempC: Math.round(data.current_weather.temperature),
-                condition: condText
-              });
-            }
-          }
-        } catch {
-          // Keep graceful default weather
-        }
-      },
-      () => {},
-      { timeout: 3000 }
-    );
-  }, []);
-
-  // Auto-complete Shani's "Daily Entries Sharing" task when all allocated entries are acknowledged
-  useEffect(() => {
-    const allEntries = [...statements.sampath.entries, ...statements.seylan.entries];
-    const assignedEntries = allEntries.filter((e) => e.assignedTo);
-    const allAcked = assignedEntries.length > 0 && assignedEntries.every((e) => e.acknowledged);
-    if (!allAcked) return;
-
-    setTasks((prev) => {
-      let triggered = false;
-      const updated = prev.map((t) => {
-        if (t.id === 'task-shani-1' && t.status !== 'Completed') {
-          triggered = true;
-          const elapsed = t.timerStartedAt ? Math.max(1, Math.round((Date.now() - t.timerStartedAt) / 60000)) : 25;
-          return {
-            ...t,
-            status: 'Completed',
-            approvalStatus: 'Approved',
-            actualMinutes: t.actualMinutes || elapsed,
-            completedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          };
-        }
-        if (t.id === 'task-shani-2' && t.status === 'Pending') {
-          return { ...t, status: 'In Progress', acceptedByOwner: true };
-        }
-        return t;
-      });
-      if (triggered) {
-        pushNotification(
-          'all',
-          'Shani’s Daily Entries Sharing Completed → Next Scheduled Task Active',
-          'All allocated statement entries were acknowledged. Shani’s task is marked Completed & Approved, moving automatically to Corporate Payments Transfer & Pass Entries.'
+    const fetchWeather = async (lat, lon, cityLabel) => {
+      try {
+        const res = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`
         );
+        const data = await res.json();
+        if (data?.current_weather) {
+          const temp = `${Math.round(data.current_weather.temperature)}°C`;
+          const code = data.current_weather.weathercode;
+          const desc = code <= 1 ? 'Clear Sky' : code <= 3 ? 'Partly Cloudy' : code >= 51 ? 'Light Showers' : 'Fair';
+          setWeatherInfo({ temp, desc, city: cityLabel });
+        }
+      } catch {
+        // Keep default Kadawatha weather fallback
       }
-      return updated;
-    });
-  }, [statements]);
+    };
+    fetchWeather(7.0019, 79.9528, 'Kadawatha, LK');
+  }, []);
 
-  const handleLoginAs = (empId) => {
-    setCurrentUserId(empId);
-    const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    setDutyInMap((prev) => {
-      if (prev[empId] && prev[empId] !== 'On Leave') return prev;
-      return { ...prev, [empId]: nowTime };
-    });
-    setActiveTab('dashboard');
+  // Time-based Greeting
+  const hour = nowTime.getHours();
+  const timeGreeting = hour < 12 ? 'Good Morning' : hour < 17 ? 'Good Afternoon' : 'Good Evening';
+  const formattedClock = nowTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const dailyQuote = DAILY_QUOTES[nowTime.getDate() % DAILY_QUOTES.length];
+
+  // Login Handler (Records First Duty-In Time)
+  const handleLogin = (userId) => {
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    setDutyInRecords(prev => (prev[userId] ? prev : { ...prev, [userId]: timeStr }));
+    setCurrentUserId(userId);
+    setActiveNav('dashboard');
+    setShowWelcomeModal(true);
   };
 
+  // Helper: Get all subordinates recursively
+  const getSubordinateIds = (managerId) => {
+    const direct = users.filter(u => u.supervisorId === managerId).map(u => u.id);
+    let all = [...direct];
+    direct.forEach(dId => {
+      all = [...all, ...getSubordinateIds(dId)];
+    });
+    return all;
+  };
+
+  // Top Performer from Our Pledge Ratings
+  const getTopPledgeLeader = () => {
+    let bestUser = users[1];
+    let bestAvg = 0;
+    users.forEach(u => {
+      const userRatings = pledgeRatings.filter(r => r.toUserId === u.id);
+      if (userRatings.length > 0) {
+        let sum = 0;
+        let count = 0;
+        userRatings.forEach(r => {
+          Object.values(r.scores).forEach(val => {
+            if (typeof val === 'number') {
+              sum += val;
+              count += 1;
+            }
+          });
+        });
+        const avg = count > 0 ? sum / count : 0;
+        if (avg >= bestAvg) {
+          bestAvg = avg;
+          bestUser = u;
+        }
+      }
+    });
+    return { user: bestUser, avg: bestAvg > 0 ? bestAvg.toFixed(2) : '5.00' };
+  };
+
+  // Most Efficient Employee Today (Highest % of completed KPIs + Bank Recs)
+  const getMostEfficientToday = () => {
+    let leader = users[0];
+    let highestPct = 0;
+    users.forEach(u => {
+      const uTasks = tasks.filter(t => t.userId === u.id && t.category === 'Daily');
+      const uRecs = bankRecs.filter(r => r.userId === u.id);
+      const total = uTasks.length + uRecs.length;
+      const done =
+        uTasks.filter(t => t.status === 'approved' || t.status === 'completed_pending_approval').length +
+        uRecs.filter(r => r.status === 'completed').length;
+      const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+      if (pct >= highestPct) {
+        highestPct = pct;
+        leader = u;
+      }
+    });
+    return { user: leader, pct: highestPct };
+  };
+
+  // Dinithi -> Shani Handover Acknowledgment
   const handleAcknowledgeDinithiHandover = () => {
-    const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    setTasks((prev) =>
-      prev.map((t) => {
-        if (t.id === 'task-dinithi-1') {
+    const startTimeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    setTasks(prev =>
+      prev.map(t => {
+        if (t.id === 't-din-1') {
           return {
             ...t,
-            status: 'Completed',
-            approvalStatus: 'Approved',
             handoverAcknowledged: true,
-            acknowledgedAt: nowTime
+            status: 'approved',
+            remark: 'Payment slips acknowledged by Shani — Auto-Approved.'
           };
         }
-        if (t.id === 'task-shani-1') {
+        if (t.id === 't-sha-2') {
           return {
             ...t,
-            status: 'In Progress',
-            timerStarted: true,
-            timerStartedAt: Date.now(),
-            subItems: t.subItems.map((s, idx) => (idx === 0 ? { ...s, done: true } : s))
+            timerStartedAt: startTimeStr,
+            remark: `Timer started at ${startTimeStr} after Dinithi slip handover`
           };
         }
         return t;
       })
     );
-    pushNotification(
-      'all',
-      'Payment Slips Acknowledged by Shani',
-      `Dinithi’s 08:30 AM Payment Slips job is Approved (${nowTime}) and Shani’s Daily Entries Sharing timer has started.`
-    );
+    showToast(`Acknowledged Dinithi's slips! Dinithi's job approved & Shani's timer started (${startTimeStr}).`);
   };
 
-  const handleAcceptTask = (taskId) => {
-    setTasks((prev) =>
-      prev.map((t) =>
-        t.id === taskId
-          ? { ...t, acceptedByOwner: true, status: t.status === 'Pending' ? 'In Progress' : t.status }
-          : t
-      )
+  // Acknowledge All Allocated Entries (Auto-completes Shani's Daily Entries job & advances schedule)
+  const handleAcknowledgeAllMyEntries = () => {
+    if (!currentUser) return;
+    const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const updated = allocatedEntries.map(e =>
+      e.assigneeId === currentUser.id && !e.acknowledged
+        ? { ...e, acknowledged: true, ackAt: nowStr, status: 'acknowledged' }
+        : e
     );
+    setAllocatedEntries(updated);
+
+    const anyUnacked = updated.some(e => e.assigneeId && !e.acknowledged);
+    if (!anyUnacked && updated.length > 0) {
+      setTasks(prev =>
+        prev.map(t => {
+          if (t.id === 't-sha-2') {
+            return { ...t, status: 'approved', remark: 'All allocated staff acknowledged entries!' };
+          }
+          if (t.id === 't-sha-3') {
+            return { ...t, accepted: true, remark: 'Auto-advanced from Daily Entries Sharing' };
+          }
+          return t;
+        })
+      );
+      showToast('All entries acknowledged! Shani’s Daily Entries task completed & next scheduled task activated.');
+    } else {
+      showToast('Acknowledged all your allocated bank statement entries.');
+    }
   };
 
-  const handleHandoverTask = (taskId, targetEmpId, note = '') => {
-    if (!targetEmpId) return;
-    const targetEmp = employees.find((e) => e.id === targetEmpId);
-    setTasks((prev) =>
-      prev.map((t) =>
-        t.id === taskId
-          ? {
-              ...t,
-              employeeId: targetEmpId,
-              acceptedByOwner: false,
-              handedOverFrom: currentUser.id,
-              handoverAcknowledged: false,
-              detailNotes: note ? `${t.detailNotes} [Handover note: ${note}]` : t.detailNotes
-            }
-          : t
-      )
-    );
-    pushNotification(
-      targetEmpId,
-      `Task Handed Over by ${currentUser.shortName}`,
-      `A task has been transferred to ${targetEmp?.name || 'you'}. Open My JD & KPIs to accept ownership.`
-    );
-  };
-
-  const handleToggleSubItem = (taskId, subId) => {
-    setTasks((prev) =>
-      prev.map((t) => {
-        if (t.id !== taskId) return t;
-        const nextSubs = t.subItems.map((s) => (s.id === subId ? { ...s, done: !s.done, needsHelp: false } : s));
-        const allDone = nextSubs.length > 0 && nextSubs.every((s) => s.done);
-        return {
-          ...t,
-          subItems: nextSubs,
-          status: allDone ? 'Completed' : 'In Progress',
-          actualMinutes: Math.max(t.actualMinutes || 0, 15)
-        };
-      })
-    );
-  };
-
-  const handleEscalateSubItem = (taskId, subId, reason) => {
-    const owner = employees.find((e) => e.id === tasks.find((t) => t.id === taskId)?.employeeId);
-    const superiorId = owner?.supervisorId || 'emp-mahasen';
-    setTasks((prev) =>
-      prev.map((t) => {
-        if (t.id !== taskId) return t;
-        return {
-          ...t,
-          subItems: t.subItems.map((s) =>
-            s.id === subId
-              ? { ...s, needsHelp: true, helpReason: reason || 'Needs superior guidance', escalatedTo: superiorId, escalatedAt: Date.now() }
-              : s
-          )
-        };
-      })
-    );
-    pushNotification(
-      superiorId,
-      `Sub-Task Help Escalation from ${owner?.shortName || currentUser.shortName}`,
-      `Reason: ${reason || 'Needs superior guidance'}`
-    );
-  };
-
-  const handleUpdateTaskDetail = (taskId, newDetailNotes, addMinutes = 0) => {
-    setTasks((prev) =>
-      prev.map((t) =>
-        t.id === taskId
-          ? {
-              ...t,
-              detailNotes: newDetailNotes,
-              actualMinutes: (t.actualMinutes || 0) + Number(addMinutes || 0),
-              approvalStatus: 'Pending Approval'
-            }
-          : t
-      )
-    );
-  };
-
-  const handleApproveTask = (taskId) => {
-    setTasks((prev) =>
-      prev.map((t) => (t.id === taskId ? { ...t, approvalStatus: 'Approved', rejectReason: '' } : t))
-    );
-  };
-
-  const handleRejectTask = (taskId, reason) => {
-    setTasks((prev) =>
-      prev.map((t) =>
-        t.id === taskId
-          ? {
-              ...t,
-              status: 'Pending',
-              approvalStatus: 'Rejected / Rework',
-              rejectReason: reason || 'Returned by supervisor for correction.'
-            }
-          : t
-      )
-    );
-  };
-
-  // Efficiency calculation per employee
-  const efficiencyLeaderboard = useMemo(() => {
-    return employees
-      .filter((e) => e.status !== 'On Leave')
-      .map((emp) => {
-        const empTasks = tasks.filter((t) => t.employeeId === emp.id);
-        const totalAlloc = empTasks.reduce((a, b) => a + (b.allocatedMinutes || 30), 0) || 1;
-        const doneMins = empTasks.reduce(
-          (a, b) => a + (b.status === 'Completed' ? b.allocatedMinutes || 30 : Math.round((b.allocatedMinutes || 30) * 0.45)),
-          0
-        );
-        const pct = Math.min(100, Math.round((doneMins / totalAlloc) * 100));
-        return { emp, pct, completedCount: empTasks.filter((t) => t.status === 'Completed').length, totalCount: empTasks.length };
-      })
-      .sort((a, b) => b.pct - a.pct);
-  }, [employees, tasks]);
-
-  const topEfficient = efficiencyLeaderboard[0];
-
-  // Morning cut-off chain status
-  const morningChain = useMemo(() => {
-    const dinithiSlipTask = tasks.find((t) => t.id === 'task-dinithi-1');
-    const shaniAllocTask = tasks.find((t) => t.id === 'task-shani-1');
-    const allEntries = [...statements.sampath.entries, ...statements.seylan.entries];
-    const debits = allEntries.filter((e) => e.side === 'Debit');
-    const unallocatedDebits = debits.filter((e) => !e.assignedTo).length;
-    const unackedAssigned = allEntries.filter((e) => e.assignedTo && !e.acknowledged).length;
-
-    return {
-      slipDone: dinithiSlipTask?.status === 'Completed',
-      shaniDone: shaniAllocTask?.status === 'Completed',
-      unallocatedDebits,
-      unackedAssigned,
-      bottleneck:
-        dinithiSlipTask?.status !== 'Completed'
-          ? 'Waiting on Shani to acknowledge Dinithi’s morning payment slips'
-          : unallocatedDebits > 0
-          ? `${unallocatedDebits} Debit statement entry/entries still Not Allocated`
-          : unackedAssigned > 0
-          ? `${unackedAssigned} assigned statement entry/entries awaiting assignee acknowledgment`
-          : 'Morning allocation & acknowledgments on track!'
+  // Send Chat Message (Individual DM or Group)
+  const handleSendChatMessage = (text, channelId = activeChatChannel) => {
+    if (!text.trim() || !currentUser) return;
+    const msg = {
+      id: `m-${Date.now()}`,
+      channelId,
+      senderId: currentUser.id,
+      text: text.trim(),
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
-  }, [tasks, statements]);
+    setChatMessages(prev => [...prev, msg]);
+    setChatPopupAlert({ senderName: currentUser.name, text: msg.text, channelId });
+    setTimeout(() => setChatPopupAlert(null), 4000);
+  };
 
-  // Continuous work rest reminder check (> 45 mins since last rest)
-  const needsRestReminder = useMemo(() => {
-    if (restBannerDismissed || currentUser.status === 'On Leave') return false;
-    const minsSinceRest = (nowTick - (currentUser.lastRestAt || nowTick)) / 60000;
-    return minsSinceRest >= 45;
-  }, [nowTick, currentUser, restBannerDismissed]);
+  if (!currentUser) {
+    return (
+      <LoginScreen
+        users={users}
+        onLogin={handleLogin}
+        onActivateUser={(updatedUser) =>
+          setUsers(prev => prev.map(u => (u.id === updatedUser.id ? updatedUser : u)))
+        }
+      />
+    );
+  }
 
-  const dailyWaterTargetMl = (currentUser.weightKg || 65) * 35;
-  const dailyWaterGlassesTarget = Math.max(6, Math.round(dailyWaterTargetMl / 250));
-  const waterConsumedMl = (currentUser.waterGlassesToday || 0) * 250;
+  const subordinateIds = currentUser.isAdmin
+    ? users.filter(u => u.id !== currentUser.id).map(u => u.id)
+    : getSubordinateIds(currentUser.id);
+  const canViewTeam = currentUser.isAdmin || subordinateIds.length > 0;
 
-  const surfaceBg = eyeCareMode ? 'bg-[#EFECE4] text-slate-900' : 'bg-[#F6F8FB] text-slate-900';
-  const cardSurface = eyeCareMode
-    ? 'bg-[#FAF8F3] border border-[#DFD8C8] shadow-xs'
-    : 'bg-white border border-slate-200/80 shadow-xs';
+  const myTasks = tasks.filter(t => t.userId === currentUser.id);
+  const myPendingTasks = myTasks.filter(t => t.status === 'pending' || t.status === 'rejected');
+  const myPendingRecs = bankRecs.filter(r => r.userId === currentUser.id && r.status !== 'completed');
+  const myUnackedEntries = allocatedEntries.filter(e => e.assigneeId === currentUser.id && !e.acknowledged);
 
-  const navItems = [
-    { id: 'dashboard', label: 'FLi Pinnacle', icon: LayoutGrid },
-    { id: 'tasks', label: 'My JD & KPIs', icon: CheckSquare },
-    { id: 'statements', label: 'Statement Allocation', icon: FileSpreadsheet },
-    { id: 'reconciliations', label: '81 Reconciliations', icon: Layers },
-    { id: 'monthend', label: 'Month-End Tracker', icon: CalendarIcon },
-    { id: 'approvals', label: 'Tree & Approvals', icon: UserCheck },
-    { id: 'pledge', label: 'Our Pledge', icon: Award },
-    { id: 'ideas', label: 'New Idea Hub', icon: Lightbulb },
-    { id: 'feedback', label: 'Feedback Box', icon: MessageSquare },
-    { id: 'files', label: 'Wi-Fi LAN Drop', icon: Wifi },
-    { id: 'reports', label: 'Reports & Day-End PDF', icon: BarChart3 },
-    { id: 'games', label: 'Break-Time Games', icon: Gamepad2 },
-    { id: 'profile', label: 'My Profile & Health', icon: UserIcon }
+  const pendingApprovalsCount =
+    tasks.filter(t => subordinateIds.includes(t.userId) && t.status === 'completed_pending_approval').length +
+    allocatedEntries.filter(e => subordinateIds.includes(e.assigneeId) && e.status === 'completed').length +
+    profileRequests.filter(r => r.supervisorId === currentUser.id && r.status === 'pending').length +
+    jobUpdateRequests.filter(r => r.supervisorId === currentUser.id && r.status === 'pending').length;
+
+  const topPledge = getTopPledgeLeader();
+  const topEfficient = getMostEfficientToday();
+
+  const dinithiSlipsAcked = tasks.find(t => t.id === 't-din-1')?.handoverAcknowledged || false;
+  const shaniAllocDone = tasks.find(t => t.id === 't-sha-2')?.status === 'approved';
+
+  const navCategories = [
+    {
+      key: 'core',
+      label: 'Core Workspace',
+      items: [
+        { id: 'dashboard', label: 'FLi Pinnacle', icon: Home, badge: null },
+        { id: 'tasks', label: 'My Confidential JD & KPIs', icon: Clock, badge: myPendingTasks.length || null },
+        { id: 'month-end', label: 'Month-End Closing Board', icon: Layers, badge: null }
+      ]
+    },
+    {
+      key: 'ops',
+      label: 'Finance Operations',
+      items: [
+        {
+          id: 'daily-entries',
+          label: 'Daily Entries & Statements',
+          icon: FileSpreadsheet,
+          badge: myUnackedEntries.length || null
+        },
+        { id: 'reconciliations', label: 'Bank Reconciliations (81)', icon: Landmark, badge: myPendingRecs.length || null }
+      ]
+    },
+    {
+      key: 'gov',
+      label: 'Team & Governance',
+      items: [
+        ...(canViewTeam
+          ? [{ id: 'tree', label: 'Tree View & Approvals', icon: Users, badge: pendingApprovalsCount || null }]
+          : []),
+        { id: 'reports', label: 'Reports & Analytics (PDF)', icon: Printer, badge: null },
+        ...(currentUser.isAdmin ? [{ id: 'admin', label: 'HOD Control Center', icon: Shield, badge: null }] : [])
+      ]
+    },
+    {
+      key: 'culture',
+      label: 'Culture & Growth',
+      items: [
+        { id: 'pledge', label: 'Our Pledge (8 Principles)', icon: Award, badge: null },
+        { id: 'ideas', label: 'New Idea Hub', icon: Lightbulb, badge: null },
+        { id: 'feedback', label: 'Feedback Box', icon: Inbox, badge: null },
+        { id: 'notepad', label: 'Personal Notepad', icon: StickyNote, badge: null },
+        { id: 'games', label: 'Break-Time Games', icon: Gamepad2, badge: null },
+        { id: 'profile', label: 'My Profile & Health', icon: User, badge: null }
+      ]
+    }
   ];
 
-  const unreadCount = notifications.filter((n) => n.unread && (n.forUserId === currentUser.id || n.forUserId === 'all')).length;
+  // Eye-Comfort Background Token
+  const rootBgClass = darkMode
+    ? 'bg-[#081021] text-slate-100'
+    : eyeCareMode
+    ? 'bg-[#FBF9F3] text-slate-800'
+    : 'bg-[#F6F8FB] text-slate-900';
 
   return (
-    <div className={`min-h-screen flex ${surfaceBg} transition-colors duration-200 select-none`}>
-      {/* ====================================================================
-          COLLAPSIBLE ICON-RAIL SIDEBAR (ROYAL BLUE + GOLDEN ACCENT, NO BULKY BAR)
-      ===================================================================== */}
+    <div className={`min-h-screen transition-colors duration-200 ${rootBgClass}`}>
+      {/* Left Hover-Expandable Icon-Rail Sidebar (No Bulky Scrollbar) */}
       <aside
-        onMouseEnter={() => setSidebarExpanded(true)}
-        onMouseLeave={() => setSidebarExpanded(false)}
-        className={`${
-          sidebarExpanded ? 'w-64' : 'w-16'
-        } shrink-0 bg-[#0F296B] text-white flex flex-col justify-between transition-all duration-200 z-30 sticky top-0 h-screen`}
+        onMouseEnter={() => setIsSidebarHovered(true)}
+        onMouseLeave={() => setIsSidebarHovered(false)}
+        className={`fixed top-0 left-0 bottom-0 z-40 flex flex-col bg-[#0D2B5B] text-white border-r border-blue-950 shadow-xl transition-all duration-200 ${
+          isSidebarOpen ? 'w-72' : 'w-[68px]'
+        }`}
       >
-        <div>
-          {/* White-Background Royal Blue Company Logo Header */}
-          <div className="p-2.5 border-b border-blue-900/70">
-            <div className="bg-white rounded-xl p-2 flex items-center gap-2.5 shadow-xs overflow-hidden">
-              <div className="w-8 h-8 rounded-lg bg-[#0F296B] text-amber-300 font-black text-xs flex items-center justify-center shrink-0 tracking-tight">
-                FLi
-              </div>
-              {sidebarExpanded && (
-                <div className="min-w-0">
-                  <div className="text-xs font-extrabold text-[#0F296B] truncate">FLi PINNACLE</div>
-                  <div className="text-[10px] font-semibold text-slate-600 truncate">Future Life Investments</div>
+        {/* Brand Header with Crisp White Badge & Royal Blue "FLi" Letters */}
+        <div className="h-16 px-3.5 flex items-center justify-between border-b border-blue-800/70 shrink-0">
+          <div className="flex items-center gap-3 overflow-hidden">
+            <div className="w-10 h-10 rounded-xl bg-white text-[#0D2B5B] border-2 border-amber-400 font-black text-base flex items-center justify-center shrink-0 shadow">
+              FLi
+            </div>
+            {isSidebarOpen && (
+              <div className="truncate bg-white px-2.5 py-1 rounded-xl border border-amber-300">
+                <div className="font-black text-xs tracking-tight text-[#0D2B5B]">FLi Pinnacle</div>
+                <div className="text-[9px] text-blue-700 font-bold uppercase tracking-wider">
+                  Future Life Investments Limited
                 </div>
-              )}
-            </div>
-          </div>
-
-          {/* Navigation Items (Hidden Scrollbar) */}
-          <nav
-            className="mt-2 px-2 space-y-1 overflow-y-auto max-h-[calc(100vh-140px)]"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const active = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  title={!sidebarExpanded ? item.label : undefined}
-                  className={`w-full flex items-center gap-3 px-2.5 py-2 rounded-xl text-xs font-semibold transition-all ${
-                    active
-                      ? 'bg-amber-400 text-[#0F296B] shadow-xs'
-                      : 'text-blue-100 hover:bg-blue-800/70 hover:text-white'
-                  }`}
-                >
-                  <Icon className="w-4 h-4 shrink-0" />
-                  {sidebarExpanded && <span className="truncate">{item.label}</span>}
-                </button>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* Bottom Switch User Quick Selector */}
-        <div className="p-2 border-t border-blue-900/70">
-          <button
-            onClick={() => setActiveTab('profile')}
-            className="w-full flex items-center gap-2.5 p-1.5 rounded-xl hover:bg-blue-800/70 transition text-left"
-          >
-            <div className="w-8 h-8 rounded-full bg-amber-400 text-[#0F296B] font-extrabold text-xs flex items-center justify-center shrink-0">
-              {currentUser.avatar}
-            </div>
-            {sidebarExpanded && (
-              <div className="min-w-0">
-                <div className="text-xs font-bold text-white truncate">{currentUser.shortName}</div>
-                <div className="text-[10px] text-blue-200 truncate">Duty In: {dutyInMap[currentUser.id] || '08:30 AM'}</div>
               </div>
             )}
+          </div>
+          {isSidebarOpen && (
+            <button
+              onClick={() => setIsSidebarPinned(!isSidebarPinned)}
+              title={isSidebarPinned ? 'Unpin Sidebar' : 'Pin Sidebar Open'}
+              className={`p-1.5 rounded-lg transition ${
+                isSidebarPinned ? 'bg-amber-400 text-[#0D2B5B]' : 'text-blue-200 hover:bg-blue-800'
+              }`}
+            >
+              <Pin className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+
+        {/* Navigation List (Hidden Scrollbar Track) */}
+        <div
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          className="flex-1 overflow-y-auto py-3 px-2.5 space-y-4 [&::-webkit-scrollbar]:hidden"
+        >
+          {navCategories.map(cat => (
+            <div key={cat.key} className="space-y-1">
+              {isSidebarOpen && (
+                <button
+                  onClick={() => setOpenCategories(prev => ({ ...prev, [cat.key]: !prev[cat.key] }))}
+                  className="w-full px-2 py-1 flex items-center justify-between text-[10px] font-extrabold uppercase tracking-wider text-blue-300/80 hover:text-amber-300"
+                >
+                  <span>{cat.label}</span>
+                  {openCategories[cat.key] ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+                </button>
+              )}
+              {(openCategories[cat.key] || !isSidebarOpen) &&
+                cat.items.map(item => {
+                  const Icon = item.icon;
+                  const active = activeNav === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveNav(item.id)}
+                      title={!isSidebarOpen ? item.label : undefined}
+                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition ${
+                        active
+                          ? 'bg-amber-400 text-[#0D2B5B] shadow-md'
+                          : 'text-blue-100 hover:bg-blue-800/70 hover:text-white'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <Icon className="w-4 h-4 shrink-0" />
+                        {isSidebarOpen && <span className="truncate">{item.label}</span>}
+                      </div>
+                      {isSidebarOpen && item.badge ? (
+                        <span
+                          className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                            active ? 'bg-[#0D2B5B] text-amber-300' : 'bg-amber-400 text-[#0D2B5B]'
+                          }`}
+                        >
+                          {item.badge}
+                        </span>
+                      ) : null}
+                    </button>
+                  );
+                })}
+            </div>
+          ))}
+        </div>
+
+        {/* Sign Out */}
+        <div className="p-2.5 border-t border-blue-800/70 shrink-0">
+          <button
+            onClick={() => setCurrentUserId(null)}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-rose-200 hover:bg-rose-500/20 transition"
+          >
+            <LogOut className="w-4 h-4 shrink-0" />
+            {isSidebarOpen && <span>Sign Out</span>}
           </button>
         </div>
       </aside>
 
-      {/* ====================================================================
-          MAIN CONTENT SHELL
-      ===================================================================== */}
-      <div className="flex-1 min-w-0 flex flex-col">
-        {/* Top Utility Bar */}
+      {/* Main Content Container (Auto-fits smoothly when sidebar expands) */}
+      <div className={`transition-all duration-200 ${isSidebarOpen ? 'pl-72' : 'pl-[68px]'}`}>
+        {/* Top Utility Header */}
         <header
-          className={`sticky top-0 z-20 px-5 py-2.5 border-b backdrop-blur-md flex flex-wrap items-center justify-between gap-3 ${
-            eyeCareMode ? 'bg-[#F5F2EA]/95 border-[#DFD8C8]' : 'bg-[#F6F8FB]/95 border-slate-200/80'
+          className={`sticky top-0 z-30 h-16 px-5 border-b backdrop-blur-md flex items-center justify-between gap-3 ${
+            darkMode
+              ? 'bg-[#0B1528]/90 border-slate-800'
+              : eyeCareMode
+              ? 'bg-[#FBF9F3]/95 border-amber-200/60'
+              : 'bg-white/95 border-slate-200'
           }`}
         >
-          <div className="flex items-center gap-3">
-            <div>
-              <div className="text-sm font-extrabold text-[#0F296B] tracking-tight">
-                {getTimeGreeting(new Date(nowTick))}, {currentUser.shortName}
-              </div>
-              <div className="text-[11px] text-slate-500 flex items-center gap-2">
-                <span>{new Date(nowTick).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                <span>•</span>
-                <span>Duty In: <strong className="text-slate-700">{dutyInMap[currentUser.id] || '08:30 AM'}</strong></span>
-                <span>•</span>
-                <span className="inline-flex items-center gap-1 text-slate-600">
-                  <CloudSun className="w-3.5 h-3.5 text-amber-500" />
-                  {weather.tempC}°C {weather.condition}
-                </span>
-              </div>
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="bg-white border-2 border-[#0D2B5B] px-3 py-1 rounded-xl flex items-center gap-2 shadow-sm">
+              <span className="font-black text-sm text-[#0D2B5B] tracking-tight">FLi Pinnacle</span>
+              <span className="text-[10px] font-bold text-blue-700 hidden sm:inline">
+                • Future Life Investments Limited
+              </span>
+            </div>
+            <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50/80 dark:bg-blue-950/60 border border-blue-200/70 dark:border-blue-800 text-xs font-bold text-[#0D2B5B] dark:text-blue-200">
+              <Clock className="w-3.5 h-3.5 text-amber-500" />
+              <span>{formattedClock}</span>
+              <span className="opacity-40">|</span>
+              <span className="text-emerald-600 dark:text-emerald-400">
+                Duty In: {dutyInRecords[currentUser.id] || '08:30 AM'}
+              </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 flex-wrap">
-            {/* Quick Profile Switcher */}
-            <select
-              value={currentUserId}
-              onChange={(e) => handleLoginAs(e.target.value)}
-              className="text-xs font-semibold bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0F296B]/20"
-            >
-              {employees.map((emp) => (
-                <option key={emp.id} value={emp.id}>
-                  {emp.name} ({emp.grade})
-                </option>
-              ))}
-            </select>
+          <div className="flex items-center gap-2">
+            {/* Weather Badge */}
+            <div className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold">
+              <CloudSun className="w-4 h-4 text-amber-500" />
+              <span>{weatherInfo.temp}</span>
+              <span className="opacity-60 text-[11px]">({weatherInfo.city})</span>
+            </div>
 
             {/* Eye-Care Soft Mode Toggle */}
             <button
-              onClick={() => setEyeCareMode((v) => !v)}
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition ${
-                eyeCareMode
-                  ? 'bg-amber-100 border-amber-300 text-amber-950'
-                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+              onClick={() => {
+                setEyeCareMode(!eyeCareMode);
+                if (darkMode) setDarkMode(false);
+              }}
+              title="Eye-Care Soft Mode (Warm Low-Glare Tint & Relaxed Spacing)"
+              className={`px-3 py-1.5 rounded-xl border text-xs font-extrabold transition flex items-center gap-1.5 ${
+                eyeCareMode && !darkMode
+                  ? 'bg-amber-100/90 border-amber-300 text-amber-900'
+                  : 'border-slate-200 dark:border-slate-700 opacity-75 hover:opacity-100'
               }`}
-              title="Toggle Eye-Care Soft Mode"
             >
-              {eyeCareMode ? <Moon className="w-3.5 h-3.5 text-amber-700" /> : <Sun className="w-3.5 h-3.5 text-amber-500" />}
-              <span>{eyeCareMode ? 'Eye-Care On' : 'Eye-Care'}</span>
+              <Eye className="w-3.5 h-3.5 text-amber-600" />
+              <span className="hidden sm:inline">Eye-Care</span>
             </button>
 
-            {/* Top-Right Wi-Fi LAN File Drop Popover Trigger */}
+            {/* Top-Right Icon-Only Wi-Fi LAN File Drop Trigger */}
             <div className="relative">
               <button
-                onClick={() => setShowLanPopover((v) => !v)}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-[#0F296B] hover:bg-blue-50/50 transition"
+                onClick={() => setShowWifiPopover(!showWifiPopover)}
+                title="Office Wi-Fi Speed File Drop"
+                className="p-2.5 rounded-xl bg-blue-50 dark:bg-slate-800 text-[#0D2B5B] dark:text-amber-300 border border-blue-200/70 dark:border-slate-700 hover:bg-amber-400 hover:text-[#0D2B5B] transition relative"
               >
-                <Wifi className="w-3.5 h-3.5 text-blue-700" />
-                <span>LAN Drop</span>
+                <Wifi className="w-4 h-4" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500" />
               </button>
-              {showLanPopover && (
-                <LanQuickDropPopover
-                  employees={employees}
-                  currentUser={currentUser}
-                  lanFiles={lanFiles}
-                  onAddFile={(fileObj) => setLanFiles((prev) => [fileObj, ...prev])}
-                  onClose={() => setShowLanPopover(false)}
-                  onOpenFull={() => {
-                    setShowLanPopover(false);
-                    setActiveTab('files');
-                  }}
-                />
-              )}
-            </div>
 
-            {/* Notifications Bell */}
-            <div className="relative">
-              <button
-                onClick={() => setShowNotifDrawer((v) => !v)}
-                className="relative p-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition"
-              >
-                <Bell className="w-4 h-4" />
-                {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-amber-500 text-[#0F296B] text-[10px] font-extrabold flex items-center justify-center">
-                    {unreadCount}
-                  </span>
-                )}
-              </button>
-              {showNotifDrawer && (
-                <div className="absolute right-0 mt-2 w-80 bg-white border border-slate-200 rounded-2xl shadow-xl p-3 z-40">
-                  <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                    <span className="text-xs font-extrabold text-[#0F296B]">Notifications</span>
-                    <button
-                      onClick={() => setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })))}
-                      className="text-[11px] font-semibold text-blue-700 hover:underline"
-                    >
-                      Mark all read
+              {showWifiPopover && (
+                <div
+                  className={`absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl border shadow-2xl p-4 z-50 ${
+                    darkMode ? 'bg-[#0F1B33] border-slate-700' : 'bg-white border-slate-200'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2 font-extrabold text-xs text-[#0D2B5B] dark:text-amber-300">
+                      <Wifi className="w-4 h-4 text-emerald-500" />
+                      <span>Office Wi-Fi Speed File Drop</span>
+                    </div>
+                    <button onClick={() => setShowWifiPopover(false)} className="opacity-60 hover:opacity-100">
+                      <X className="w-4 h-4" />
                     </button>
                   </div>
-                  <div className="max-h-72 overflow-y-auto divide-y divide-slate-100 mt-1">
-                    {notifications.map((n) => (
-                      <div key={n.id} className={`py-2 text-xs ${n.unread ? 'bg-amber-50/50 px-2 rounded-lg' : ''}`}>
-                        <div className="font-bold text-slate-800">{n.title}</div>
-                        <div className="text-[11px] text-slate-600 mt-0.5">{n.body}</div>
-                        <div className="text-[10px] text-slate-400 mt-1">{n.time}</div>
-                      </div>
-                    ))}
-                  </div>
+                  <WifiQuickDropForm
+                    users={users}
+                    currentUser={currentUser}
+                    wifiFiles={wifiFiles}
+                    onUpload={(newFile) => {
+                      setWifiFiles(prev => [newFile, ...prev]);
+                      showToast(`Shared ${newFile.name} over Office LAN!`);
+                    }}
+                  />
                 </div>
               )}
             </div>
+
+            {/* Dark / Light Theme Toggle */}
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              title="Toggle Dark / Light Mode"
+              className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            >
+              {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-[#0D2B5B]" />}
+            </button>
+
+            {/* User Profile Pill */}
+            <button
+              onClick={() => setActiveNav('profile')}
+              className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl bg-[#0D2B5B] text-white hover:bg-blue-900 transition"
+            >
+              <div className="w-7 h-7 rounded-lg bg-amber-400 text-[#0D2B5B] font-black text-xs flex items-center justify-center overflow-hidden">
+                {currentUser.photoUrl ? (
+                  <img src={currentUser.photoUrl} alt={currentUser.name} className="w-full h-full object-cover" />
+                ) : (
+                  currentUser.name.charAt(0)
+                )}
+              </div>
+              <div className="text-left hidden sm:block">
+                <div className="text-xs font-extrabold leading-tight">{currentUser.name.split(' ')[0]}</div>
+                <div className="text-[10px] text-amber-300 font-semibold leading-tight">{currentUser.brainColor} Brain</div>
+              </div>
+            </button>
           </div>
         </header>
 
-        {/* Continuous Work Rest Reminder Banner */}
-        {needsRestReminder && (
-          <div className="mx-5 mt-3 px-4 py-2.5 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-2 text-amber-950 font-semibold">
-              <Activity className="w-4 h-4 text-amber-600 shrink-0" />
-              <span>
-                Continuous work check: You’ve been active for 45+ mins. Take a short 3-minute eye & posture rest or drink water ({waterConsumedMl}/{dailyWaterTargetMl} ml today).
-              </span>
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={() => {
-                  setEmployees((prev) =>
-                    prev.map((e) => (e.id === currentUser.id ? { ...e, lastRestAt: Date.now() } : e))
-                  );
-                  setRestBannerDismissed(true);
-                }}
-                className="px-2.5 py-1 rounded-lg bg-[#0F296B] text-white font-semibold"
-              >
-                Took Rest
-              </button>
-              <button onClick={() => setRestBannerDismissed(true)} className="text-slate-500 hover:text-slate-800">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
+        {/* Toast Notification Banner */}
+        {toastMessage && (
+          <div className="fixed top-20 right-5 z-50 max-w-md bg-[#0D2B5B] text-white border-l-4 border-amber-400 px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-xs font-bold">
+            <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+            <span>{toastMessage}</span>
           </div>
         )}
 
-        {/* Morning Readiness & Cut-Off Strip (8:30 AM - 10:30 AM Chain) */}
-        <div className="mx-5 mt-3 px-4 py-2 rounded-xl bg-white border border-slate-200/80 flex flex-wrap items-center justify-between gap-2 text-xs">
-          <div className="flex items-center gap-2 font-bold text-[#0F296B]">
-            <Clock className="w-4 h-4 text-amber-500" />
-            <span>Morning Cut-Off Chain:</span>
+        {/* Dinithi -> Shani Handover Alert Banner for Shani */}
+        {currentUser.id === 'shani' && !dinithiSlipsAcked && (
+          <div className="mx-5 mt-4 p-4 rounded-2xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-300 flex flex-wrap items-center justify-between gap-3 shadow-sm">
+            <div className="flex items-center gap-3">
+              <Bell className="w-5 h-5 text-amber-600 shrink-0" />
+              <div>
+                <div className="text-xs font-black text-[#0D2B5B] dark:text-amber-200">
+                  Handover Alert from Dinithi Perera (08:30 AM – 08:50 AM)
+                </div>
+                <div className="text-xs opacity-80">
+                  Dinithi has attached morning payment slips and handed them over. Acknowledge to approve Dinithi’s task and start your Daily Entries timer.
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={handleAcknowledgeDinithiHandover}
+              className="px-4 py-2 rounded-xl bg-[#0D2B5B] text-amber-300 font-extrabold text-xs hover:bg-blue-900 transition"
+            >
+              Acknowledge Payment Slips &amp; Start Timer
+            </button>
           </div>
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${morningChain.slipDone ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'}`}>
-              1. Dinithi Slips {morningChain.slipDone ? '✓' : 'Pending Ack'}
-            </span>
-            <span className="text-slate-400">→</span>
-            <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${morningChain.shaniDone ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-900'}`}>
-              2. Shani Allocation {morningChain.shaniDone ? '✓' : `(${morningChain.unallocatedDebits} Unalloc Dr)`}
-            </span>
-            <span className="text-slate-400">→</span>
-            <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${morningChain.unackedAssigned === 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
-              3. Team Ack ({morningChain.unackedAssigned} Waiting)
-            </span>
-          </div>
-          <div className="text-[11px] font-medium text-slate-600">{morningChain.bottleneck}</div>
-        </div>
+        )}
 
-        {/* ==================================================================
-            ACTIVE VIEW ROUTER
-        =================================================================== */}
-        <main className="p-5 flex-1">
-          {activeTab === 'dashboard' && (
-            <DashboardHub
+        {/* Active View Content */}
+        <main className="p-5 max-w-[1440px] mx-auto">
+          {activeNav === 'dashboard' && (
+            <BentoDashboardHub
               currentUser={currentUser}
-              employees={employees}
-              dutyInMap={dutyInMap}
+              users={users}
+              darkMode={darkMode}
+              eyeCareMode={eyeCareMode}
+              timeGreeting={timeGreeting}
+              formattedClock={formattedClock}
+              dutyInTime={dutyInRecords[currentUser.id] || '08:30 AM'}
+              dailyQuote={dailyQuote}
+              weatherInfo={weatherInfo}
+              quickLinks={quickLinks}
+              onAddQuickLink={(ql) => setQuickLinks(prev => [...prev, ql])}
               tasks={tasks}
-              statements={statements}
-              reconciliations={reconciliations}
-              calendarEvents={calendarEvents}
-              pledgeRatings={pledgeRatings}
-              quote={DAILY_QUOTES[quoteIdx]}
-              weather={weather}
+              bankRecs={bankRecs}
+              allocatedEntries={allocatedEntries}
+              dinithiSlipsAcked={dinithiSlipsAcked}
+              shaniAllocDone={shaniAllocDone}
+              topPledge={topPledge}
               topEfficient={topEfficient}
-              efficiencyLeaderboard={efficiencyLeaderboard}
-              cardSurface={cardSurface}
-              onNavigate={setActiveTab}
-              onAcknowledgeDinithi={handleAcknowledgeDinithiHandover}
-              onAddCalendarEvent={(ev) => {
-                setCalendarEvents((prev) => [
-                  {
-                    ...ev,
-                    id: `cal-${Date.now()}`,
-                    createdBy: currentUser.id,
-                    approvalStatus: ev.type === 'Scheduled Job' ? 'Pending Approval' : 'Approved'
-                  },
-                  ...prev
-                ]);
-                pushNotification(
-                  ev.target === 'everyone' ? 'all' : ev.target,
-                  `New Calendar ${ev.type}: ${ev.title}`,
-                  `Scheduled for ${ev.date}${ev.target === 'everyone' ? ' (Visible to Everyone)' : ''}.`
-                );
+              calendarEvents={calendarEvents}
+              onAddCalendarEvent={(ev) => setCalendarEvents(prev => [...prev, ev])}
+              waterGlasses={waterGlassesByUser[currentUser.id] || 2}
+              onAddWaterGlass={() =>
+                setWaterGlassesByUser(prev => ({ ...prev, [currentUser.id]: (prev[currentUser.id] || 2) + 1 }))
+              }
+              onNavigate={setActiveNav}
+              onOpenDirectChat={(colleagueId) => {
+                const dmId = `dm-${[currentUser.id, colleagueId].sort().join('-')}`;
+                setActiveChatChannel(dmId);
+                setShowChatWidget(true);
               }}
-              onLogWater={() => {
-                setEmployees((prev) =>
-                  prev.map((e) =>
-                    e.id === currentUser.id
-                      ? { ...e, waterGlassesToday: (e.waterGlassesToday || 0) + 1, lastRestAt: Date.now() }
-                      : e
+              showToast={showToast}
+            />
+          )}
+
+          {activeNav === 'tasks' && (
+            <MyTasksWorkspace
+              currentUser={currentUser}
+              users={users}
+              tasks={myTasks}
+              darkMode={darkMode}
+              eyeCareMode={eyeCareMode}
+              onAcceptTask={(taskId) => {
+                setTasks(prev => prev.map(t => (t.id === taskId ? { ...t, accepted: true } : t)));
+                showToast('Task accepted into your active queue.');
+              }}
+              onHandoverTask={(taskId, targetUserId) => {
+                const target = users.find(u => u.id === targetUserId);
+                setTasks(prev =>
+                  prev.map(t =>
+                    t.id === taskId
+                      ? { ...t, userId: targetUserId, accepted: false, remark: `Handed over by ${currentUser.name}` }
+                      : t
+                  )
+                );
+                showToast(`Handed over task to ${target?.name}.`);
+              }}
+              onCompleteTask={(taskId, actualMins, remark) => {
+                setTasks(prev =>
+                  prev.map(t =>
+                    t.id === taskId
+                      ? {
+                          ...t,
+                          status: currentUser.isAdmin ? 'approved' : 'completed_pending_approval',
+                          actualMinutes: actualMins || t.allocatedMinutes,
+                          remark
+                        }
+                      : t
+                  )
+                );
+                showToast('Task marked complete & submitted to your Superior for approval!');
+              }}
+              onToggleSubItem={(taskId, subId) => {
+                setTasks(prev =>
+                  prev.map(t =>
+                    t.id === taskId
+                      ? {
+                          ...t,
+                          subItems: t.subItems.map(s => (s.id === subId ? { ...s, done: !s.done } : s))
+                        }
+                      : t
                   )
                 );
               }}
-            />
-          )}
-
-          {activeTab === 'tasks' && (
-            <MyTasksView
-              currentUser={currentUser}
-              employees={employees}
-              tasks={tasks}
-              cardSurface={cardSurface}
-              onAcceptTask={handleAcceptTask}
-              onHandoverTask={handleHandoverTask}
-              onAcknowledgeDinithi={handleAcknowledgeDinithiHandover}
-              onToggleSubItem={handleToggleSubItem}
-              onEscalateSubItem={handleEscalateSubItem}
-              onUpdateTaskDetail={handleUpdateTaskDetail}
-            />
-          )}
-
-          {activeTab === 'statements' && (
-            <StatementAllocationView
-              currentUser={currentUser}
-              employees={employees}
-              statements={statements}
-              setStatements={setStatements}
-              cardSurface={cardSurface}
-              pushNotification={pushNotification}
-            />
-          )}
-
-          {activeTab === 'reconciliations' && (
-            <ReconciliationsView
-              currentUser={currentUser}
-              employees={employees}
-              reconciliations={reconciliations}
-              setReconciliations={setReconciliations}
-              cardSurface={cardSurface}
-            />
-          )}
-
-          {activeTab === 'monthend' && (
-            <MonthEndView
-              employees={employees}
-              monthEndItems={monthEndItems}
-              setMonthEndItems={setMonthEndItems}
-              cardSurface={cardSurface}
-            />
-          )}
-
-          {activeTab === 'approvals' && (
-            <ApprovalsTreeView
-              currentUser={currentUser}
-              employees={employees}
-              tasks={tasks}
-              calendarEvents={calendarEvents}
-              setCalendarEvents={setCalendarEvents}
-              onApproveTask={handleApproveTask}
-              onRejectTask={handleRejectTask}
-              cardSurface={cardSurface}
-            />
-          )}
-
-          {activeTab === 'pledge' && (
-            <OurPledgeView
-              currentUser={currentUser}
-              employees={employees}
-              pledgeRatings={pledgeRatings}
-              setPledgeRatings={setPledgeRatings}
-              cardSurface={cardSurface}
-            />
-          )}
-
-          {activeTab === 'ideas' && (
-            <IdeaHubView
-              currentUser={currentUser}
-              employees={employees}
-              ideas={ideas}
-              setIdeas={setIdeas}
-              cardSurface={cardSurface}
-            />
-          )}
-
-          {activeTab === 'feedback' && (
-            <FeedbackBoxView
-              currentUser={currentUser}
-              employees={employees}
-              feedbacks={feedbacks}
-              setFeedbacks={setFeedbacks}
-              cardSurface={cardSurface}
-            />
-          )}
-
-          {activeTab === 'files' && (
-            <LanFilesView
-              currentUser={currentUser}
-              employees={employees}
-              lanFiles={lanFiles}
-              onAddFile={(f) => setLanFiles((prev) => [f, ...prev])}
-              cardSurface={cardSurface}
-            />
-          )}
-
-          {activeTab === 'reports' && (
-            <ReportsAnalyticsView
-              currentUser={currentUser}
-              employees={employees}
-              dutyInMap={dutyInMap}
-              tasks={tasks}
-              statements={statements}
-              reconciliations={reconciliations}
-              cardSurface={cardSurface}
-            />
-          )}
-
-          {activeTab === 'games' && <BreakTimeGamesView cardSurface={cardSurface} />}
-
-          {activeTab === 'profile' && (
-            <ProfileHealthView
-              currentUser={currentUser}
-              employees={employees}
-              dutyInMap={dutyInMap}
-              dailyWaterTargetMl={dailyWaterTargetMl}
-              dailyWaterGlassesTarget={dailyWaterGlassesTarget}
-              cardSurface={cardSurface}
-              onUpdateProfile={(updatedFields) => {
-                setEmployees((prev) =>
-                  prev.map((e) => (e.id === currentUser.id ? { ...e, ...updatedFields } : e))
+              onEscalateSubItem={(taskId, subId, reason) => {
+                const sup = users.find(u => u.id === currentUser.supervisorId);
+                setTasks(prev =>
+                  prev.map(t =>
+                    t.id === taskId
+                      ? {
+                          ...t,
+                          subItems: t.subItems.map(s =>
+                            s.id === subId ? { ...s, escalated: true, escalationReason: reason } : s
+                          )
+                        }
+                      : t
+                  )
                 );
+                showToast(`Escalated item to ${sup?.name || 'Superior'} for assistance.`);
+              }}
+              onRequestJobDetailUpdate={(req) => {
+                setJobUpdateRequests(prev => [...prev, req]);
+                showToast('Job detail update sent to your Next Superior for approval.');
               }}
             />
           )}
+
+          {activeNav === 'month-end' && (
+            <MonthEndClosingPortal
+              currentUser={currentUser}
+              users={users}
+              monthEndItems={monthEndItems}
+              bankRecs={bankRecs}
+              darkMode={darkMode}
+              onUpdateProgress={(id, progress) => {
+                setMonthEndItems(prev =>
+                  prev.map(m =>
+                    m.id === id
+                      ? { ...m, progress, status: progress >= 100 ? 'completed' : 'in_progress' }
+                      : m
+                  )
+                );
+                showToast('Month-End closing progress updated.');
+              }}
+              onAddItem={(item) => {
+                setMonthEndItems(prev => [...prev, item]);
+                showToast('Added item to Month-End Closing Checklist.');
+              }}
+            />
+          )}
+
+          {activeNav === 'reconciliations' && (
+            <BankReconciliationPortal
+              currentUser={currentUser}
+              users={users}
+              bankRecs={bankRecs}
+              darkMode={darkMode}
+              eyeCareMode={eyeCareMode}
+              onToggleRec={(recId) => {
+                setBankRecs(prev =>
+                  prev.map(r =>
+                    r.id === recId
+                      ? {
+                          ...r,
+                          status: r.status === 'completed' ? 'pending' : 'completed',
+                          tag: r.status === 'completed' ? r.tag : 'Matched'
+                        }
+                      : r
+                  )
+                );
+                showToast('Bank reconciliation status updated.');
+              }}
+              onUpdateRemark={(recId, remark) => {
+                setBankRecs(prev => prev.map(r => (r.id === recId ? { ...r, remark } : r)));
+              }}
+              onUpdateTag={(recId, tag) => {
+                setBankRecs(prev => prev.map(r => (r.id === recId ? { ...r, tag } : r)));
+                showToast(`Reconciliation tagged as "${tag}".`);
+              }}
+              onReassignRec={(recId, newUserId) => {
+                setBankRecs(prev => prev.map(r => (r.id === recId ? { ...r, userId: newUserId } : r)));
+                showToast('Bank account reassigned.');
+              }}
+            />
+          )}
+
+          {activeNav === 'daily-entries' && (
+            <DailyEntriesAllocationPortal
+              currentUser={currentUser}
+              users={users}
+              darkMode={darkMode}
+              eyeCareMode={eyeCareMode}
+              allocatedEntries={allocatedEntries}
+              onPublishAllocations={(newItems) => {
+                setAllocatedEntries(newItems);
+                showToast(`Published & handed over ${newItems.length} statement transactions!`);
+              }}
+              onAcknowledgeOne={(entryId) => {
+                const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                setAllocatedEntries(prev =>
+                  prev.map(e =>
+                    e.id === entryId ? { ...e, acknowledged: true, ackAt: nowStr, status: 'acknowledged' } : e
+                  )
+                );
+                showToast('Entry acknowledged & timer started.');
+              }}
+              onAcknowledgeAll={handleAcknowledgeAllMyEntries}
+              onCompleteEntries={(ids) => {
+                setAllocatedEntries(prev =>
+                  prev.map(e => (ids.includes(e.id) ? { ...e, status: 'completed' } : e))
+                );
+                showToast(`Marked ${ids.length} entry item(s) as Completed!`);
+              }}
+              onSetPendingReason={(entryId, reason) => {
+                setAllocatedEntries(prev =>
+                  prev.map(e => (e.id === entryId ? { ...e, pendingReason: reason } : e))
+                );
+              }}
+              onEscalateEntries={(ids, reason) => {
+                const supId = currentUser.supervisorId || 'rangika';
+                const sup = users.find(u => u.id === supId);
+                setAllocatedEntries(prev =>
+                  prev.map(e =>
+                    ids.includes(e.id)
+                      ? {
+                          ...e,
+                          escalatedToId: supId,
+                          escalatedMinutesAgo: 1,
+                          pendingReason: reason || 'Help requested from Superior'
+                        }
+                      : e
+                  )
+                );
+                showToast(`Transferred ${ids.length} entry item(s) to ${sup?.name} for help.`);
+              }}
+            />
+          )}
+
+          {activeNav === 'tree' && (
+            <TeamTreeApprovalView
+              currentUser={currentUser}
+              users={users}
+              subordinateIds={subordinateIds}
+              tasks={tasks}
+              bankRecs={bankRecs}
+              allocatedEntries={allocatedEntries}
+              profileRequests={profileRequests}
+              jobUpdateRequests={jobUpdateRequests}
+              darkMode={darkMode}
+              onApproveTask={(taskId) => {
+                setTasks(prev => prev.map(t => (t.id === taskId ? { ...t, status: 'approved' } : t)));
+                showToast('Task approved!');
+              }}
+              onRejectTask={(taskId, note) => {
+                setTasks(prev =>
+                  prev.map(t => (t.id === taskId ? { ...t, status: 'rejected', remark: `Returned: ${note}` } : t))
+                );
+                showToast('Task returned to employee with rework reason.');
+              }}
+              onApproveEntry={(entryId) => {
+                setAllocatedEntries(prev =>
+                  prev.map(e => (e.id === entryId ? { ...e, status: 'approved', escalatedToId: null } : e))
+                );
+                showToast('Allocated statement entry approved!');
+              }}
+              onSendBackEntry={(entryId, reason) => {
+                setAllocatedEntries(prev =>
+                  prev.map(e =>
+                    e.id === entryId
+                      ? {
+                          ...e,
+                          status: 'rejected',
+                          escalatedToId: null,
+                          supervisorNote: reason,
+                          pendingReason: `Returned by Supervisor: ${reason}`
+                        }
+                      : e
+                  )
+                );
+                showToast('Entry sent back to employee with rework note.');
+              }}
+              onApproveProfileReq={(reqId) => {
+                const req = profileRequests.find(r => r.id === reqId);
+                if (req) {
+                  setUsers(prev => prev.map(u => (u.id === req.userId ? { ...u, ...req.updates } : u)));
+                  setProfileRequests(prev => prev.map(r => (r.id === reqId ? { ...r, status: 'approved' } : r)));
+                  showToast('Employee profile update approved & published!');
+                }
+              }}
+              onApproveJobDetailReq={(reqId) => {
+                const req = jobUpdateRequests.find(r => r.id === reqId);
+                if (req) {
+                  setTasks(prev =>
+                    prev.map(t =>
+                      t.id === req.taskId
+                        ? { ...t, title: req.newTitle, timeSlot: req.newTimeSlot, remark: req.newNotes }
+                        : t
+                    )
+                  );
+                  setJobUpdateRequests(prev => prev.map(r => (r.id === reqId ? { ...r, status: 'approved' } : r)));
+                  showToast('Job detail modification approved!');
+                }
+              }}
+              onToggleLeaveCoverage={(targetUserId, onLeave, coveringUserId) => {
+                setUsers(prev =>
+                  prev.map(u => (u.id === targetUserId ? { ...u, onLeave, coveringUserId } : u))
+                );
+                if (onLeave && coveringUserId) {
+                  setTasks(prev =>
+                    prev.map(t =>
+                      t.userId === targetUserId && t.status === 'pending'
+                        ? { ...t, userId: coveringUserId, remark: 'Covering leave reassignment' }
+                        : t
+                    )
+                  );
+                  showToast('Staff marked On Leave & pending tasks reassigned to covering officer.');
+                } else {
+                  showToast('Leave status updated.');
+                }
+              }}
+            />
+          )}
+
+          {activeNav === 'reports' && (
+            <ReportsAnalyticsPortal
+              currentUser={currentUser}
+              users={users}
+              tasks={tasks}
+              bankRecs={bankRecs}
+              allocatedEntries={allocatedEntries}
+              dutyInRecords={dutyInRecords}
+              darkMode={darkMode}
+            />
+          )}
+
+          {activeNav === 'profile' && (
+            <EmployeeProfileSettings
+              currentUser={currentUser}
+              users={users}
+              darkMode={darkMode}
+              onSubmitProfileUpdate={(updates) => {
+                if (currentUser.isAdmin || !currentUser.supervisorId) {
+                  setUsers(prev => prev.map(u => (u.id === currentUser.id ? { ...u, ...updates } : u)));
+                  showToast('Profile updated directly!');
+                } else {
+                  setProfileRequests(prev => [
+                    ...prev,
+                    {
+                      id: `prq-${Date.now()}`,
+                      userId: currentUser.id,
+                      supervisorId: currentUser.supervisorId,
+                      updates,
+                      status: 'pending'
+                    }
+                  ]);
+                  showToast('Profile update submitted to your Next Superior for approval!');
+                }
+              }}
+            />
+          )}
+
+          {activeNav === 'admin' && currentUser.isAdmin && (
+            <ManagerAdminPanel
+              users={users}
+              tasks={tasks}
+              dutyInRecords={dutyInRecords}
+              bankRecs={bankRecs}
+              darkMode={darkMode}
+              onUpdateUser={(id, patch) => {
+                setUsers(prev => prev.map(u => (u.id === id ? { ...u, ...patch } : u)));
+                showToast('Staff record updated by HOD.');
+              }}
+              onAddTask={(newT) => {
+                setTasks(prev => [...prev, newT]);
+                showToast('New KPI / Task assigned.');
+              }}
+              onUpdateTask={(id, patch) => {
+                setTasks(prev => prev.map(t => (t.id === id ? { ...t, ...patch } : t)));
+                showToast('KPI / JD updated.');
+              }}
+            />
+          )}
+
+          {activeNav === 'pledge' && (
+            <OurPledgeRatingPortal
+              currentUser={currentUser}
+              users={users}
+              topPledge={topPledge}
+              darkMode={darkMode}
+              onSubmitRating={(ratingObj) => {
+                setPledgeRatings(prev => [ratingObj, ...prev]);
+                showToast('Our Pledge evaluation submitted!');
+              }}
+            />
+          )}
+
+          {activeNav === 'ideas' && (
+            <IdeaHubPortal
+              currentUser={currentUser}
+              users={users}
+              ideas={ideas}
+              categories={ideaCategories}
+              darkMode={darkMode}
+              onAddCategory={(c) => setIdeaCategories(prev => [...prev, c])}
+              onAddIdea={(idea) => {
+                setIdeas(prev => [idea, ...prev]);
+                showToast('New idea posted to FLi Pinnacle Idea Hub!');
+              }}
+              onVoteIdea={(id) =>
+                setIdeas(prev => prev.map(i => (i.id === id ? { ...i, votes: i.votes + 1 } : i)))
+              }
+            />
+          )}
+
+          {activeNav === 'feedback' && (
+            <FeedbackBoxPortal
+              currentUser={currentUser}
+              users={users}
+              feedbacks={feedbacks}
+              categories={feedbackCategories}
+              darkMode={darkMode}
+              onAddCategory={(c) => setFeedbackCategories(prev => [...prev, c])}
+              onAddFeedback={(fb) => {
+                setFeedbacks(prev => [fb, ...prev]);
+                showToast('Feedback submitted!');
+              }}
+            />
+          )}
+
+          {activeNav === 'notepad' && (
+            <PersonalNotepadPortal
+              currentUser={currentUser}
+              notes={notesByUser[currentUser.id] || []}
+              darkMode={darkMode}
+              onUpdateNotes={(updated) => setNotesByUser(prev => ({ ...prev, [currentUser.id]: updated }))}
+            />
+          )}
+
+          {activeNav === 'games' && <BreakTimeGamePortal darkMode={darkMode} />}
         </main>
       </div>
 
-      {/* ====================================================================
-          FLOATING INSTANT MESSENGER (GROUP CHANNELS + 1-ON-1 DIRECT MESSAGES)
-      ===================================================================== */}
-      <div className="fixed bottom-4 right-4 z-40">
-        {!showChatWidget ? (
+      {/* Bottom-Right Floating Instant Messenger Widget (Group & Individual 1-on-1) */}
+      <div className="fixed bottom-5 right-5 z-40">
+        {showChatWidget ? (
+          <div
+            className={`w-80 sm:w-96 rounded-3xl border shadow-2xl overflow-hidden ${
+              darkMode ? 'bg-[#0F1B33] border-slate-700' : 'bg-white border-slate-200'
+            }`}
+          >
+            <div className="p-3.5 bg-[#0D2B5B] text-white flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <MessageSquare className="w-4 h-4 text-amber-300" />
+                <span className="text-xs font-extrabold">FLi Instant Messenger (Group &amp; 1-on-1)</span>
+              </div>
+              <button onClick={() => setShowChatWidget(false)} className="text-blue-200 hover:text-white">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-2 border-b border-slate-200 dark:border-slate-800 space-y-1.5">
+              <div className="flex gap-1 overflow-x-auto">
+                {chatGroups.map(g => (
+                  <button
+                    key={g.id}
+                    onClick={() => setActiveChatChannel(g.id)}
+                    className={`px-2.5 py-1 rounded-xl text-[10px] font-extrabold whitespace-nowrap ${
+                      activeChatChannel === g.id ? 'bg-amber-400 text-[#0D2B5B]' : 'bg-slate-100 dark:bg-slate-800'
+                    }`}
+                  >
+                    {g.name}
+                  </button>
+                ))}
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] font-bold opacity-70 whitespace-nowrap">Direct (1-on-1):</span>
+                <select
+                  value={activeChatChannel.startsWith('dm-') ? activeChatChannel : ''}
+                  onChange={e => {
+                    if (e.target.value) setActiveChatChannel(e.target.value);
+                  }}
+                  className="flex-1 px-2 py-1 rounded-xl border text-[10px] font-bold bg-transparent"
+                >
+                  <option value="" className="text-slate-900">
+                    -- Select Colleague --
+                  </option>
+                  {users
+                    .filter(u => u.id !== currentUser.id)
+                    .map(u => {
+                      const dmId = `dm-${[currentUser.id, u.id].sort().join('-')}`;
+                      return (
+                        <option key={u.id} value={dmId} className="text-slate-900">
+                          {u.name} ({u.roleTitle})
+                        </option>
+                      );
+                    })}
+                </select>
+              </div>
+            </div>
+            <div className="h-56 overflow-y-auto p-3 space-y-2 text-xs">
+              {chatMessages
+                .filter(m => m.channelId === activeChatChannel)
+                .map(m => {
+                  const sender = users.find(u => u.id === m.senderId);
+                  const isMe = m.senderId === currentUser.id;
+                  return (
+                    <div key={m.id} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
+                      <span className="text-[10px] opacity-60 mb-0.5">
+                        {sender?.name.split(' ')[0]} • {m.time}
+                      </span>
+                      <div
+                        className={`px-3 py-2 rounded-2xl max-w-[82%] font-medium ${
+                          isMe ? 'bg-[#0D2B5B] text-white' : 'bg-slate-100 dark:bg-slate-800'
+                        }`}
+                      >
+                        {m.text}
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+            <ChatInputBox onSend={(txt) => handleSendChatMessage(txt, activeChatChannel)} />
+          </div>
+        ) : (
           <button
             onClick={() => setShowChatWidget(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#0F296B] text-white text-xs font-bold shadow-lg hover:bg-blue-900 transition"
+            title="Open FLi Instant Messenger"
+            className="p-3.5 rounded-2xl bg-[#0D2B5B] text-amber-300 border-2 border-amber-400 shadow-xl hover:scale-105 transition flex items-center justify-center relative"
           >
-            <MessageSquare className="w-4 h-4 text-amber-400" />
-            <span>Team Chat</span>
+            <MessageSquare className="w-6 h-6" />
+            <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white" />
           </button>
-        ) : (
-          <InstantChatBox
-            currentUser={currentUser}
-            employees={employees}
-            messages={chatMessages}
-            onSend={(msg) => setChatMessages((prev) => [...prev, msg])}
-            onClose={() => setShowChatWidget(false)}
-          />
         )}
+      </div>
+
+      {/* Chat Toast Alert */}
+      {chatPopupAlert && !showChatWidget && (
+        <div
+          onClick={() => {
+            setActiveChatChannel(chatPopupAlert.channelId);
+            setShowChatWidget(true);
+            setChatPopupAlert(null);
+          }}
+          className="fixed bottom-20 right-5 z-40 w-72 p-3 rounded-2xl bg-[#0D2B5B] text-white border border-amber-400 shadow-xl cursor-pointer text-xs"
+        >
+          <div className="font-extrabold text-amber-300">{chatPopupAlert.senderName}</div>
+          <div className="truncate opacity-90">{chatPopupAlert.text}</div>
+        </div>
+      )}
+
+      {/* Login Welcome Briefing Modal */}
+      {showWelcomeModal && (
+        <WelcomeBriefingModal
+          currentUser={currentUser}
+          timeGreeting={timeGreeting}
+          formattedClock={formattedClock}
+          dutyInTime={dutyInRecords[currentUser.id] || '08:30 AM'}
+          dailyQuote={dailyQuote}
+          weatherInfo={weatherInfo}
+          pendingTasksCount={myPendingTasks.length}
+          pendingRecsCount={myPendingRecs.length}
+          unackedEntriesCount={myUnackedEntries.length}
+          onClose={() => setShowWelcomeModal(false)}
+        />
+      )}
+    </div>
+  );
+}
+
+// ============================================================================
+// 3. CURVED SLIDING SPLIT-PANEL LOGIN & ACTIVATION SCREEN
+// ============================================================================
+
+function LoginScreen({ users, onLogin, onActivateUser }) {
+  const [isRegisterMode, setIsRegisterMode] = useState(false);
+  const [showDemoList, setShowDemoList] = useState(false);
+  const [identifier, setIdentifier] = useState('rangika');
+  const [pin, setPin] = useState('1234');
+  const [error, setError] = useState('');
+
+  const [actEmpId, setActEmpId] = useState('dinithi');
+  const [actPhone, setActPhone] = useState('');
+  const [actNewPin, setActNewPin] = useState('1234');
+
+  const handleSignIn = (e) => {
+    e.preventDefault();
+    const q = identifier.trim().toLowerCase();
+    const found = users.find(
+      u =>
+        u.id.toLowerCase() === q ||
+        u.empCode.toLowerCase() === q ||
+        u.email.toLowerCase() === q ||
+        u.name.toLowerCase().includes(q)
+    );
+    if (!found) {
+      setError('Staff ID or Email not found. Try e.g. rangika, shani, dinithi, kanishka.');
+      return;
+    }
+    if (found.pin !== pin.trim()) {
+      setError('Invalid Security PIN (default demo PIN is 1234).');
+      return;
+    }
+    setError('');
+    onLogin(found.id);
+  };
+
+  const handleActivate = (e) => {
+    e.preventDefault();
+    const found = users.find(u => u.id === actEmpId);
+    if (!found) return;
+    onActivateUser({ ...found, pin: actNewPin.trim() || '1234', phone: actPhone.trim() || found.phone });
+    setIdentifier(found.id);
+    setPin(actNewPin.trim() || '1234');
+    setIsRegisterMode(false);
+    setError('');
+  };
+
+  return (
+    <div className="min-h-screen bg-[#F6F8FB] flex items-center justify-center p-4">
+      <div className="relative w-full max-w-4xl min-h-[540px] bg-white rounded-[32px] border border-slate-200 shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
+        {/* Left Form Panel */}
+        <div className="p-8 sm:p-10 flex flex-col justify-center">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-11 h-11 rounded-2xl bg-white border-2 border-[#0D2B5B] text-[#0D2B5B] font-black text-lg flex items-center justify-center shadow-sm">
+              FLi
+            </div>
+            <div>
+              <h1 className="font-black text-xl text-[#0D2B5B] tracking-tight">FLi Pinnacle</h1>
+              <p className="text-[11px] font-bold text-blue-700 uppercase tracking-wider">
+                Future Life Investments Limited • Finance Workspace
+              </p>
+            </div>
+          </div>
+
+          {!isRegisterMode ? (
+            <form onSubmit={handleSignIn} className="space-y-4">
+              <div>
+                <h2 className="text-2xl font-black text-slate-900">Sign In</h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  First login of the day automatically records your Duty-In attendance.
+                </p>
+              </div>
+
+              {error && (
+                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold">
+                  {error}
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-extrabold text-slate-700 mb-1">
+                  Employee Username / Corporate Email
+                </label>
+                <input
+                  type="text"
+                  value={identifier}
+                  onChange={e => setIdentifier(e.target.value)}
+                  placeholder="e.g. rangika, shani, dinithi"
+                  className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-sm font-bold text-slate-900 focus:outline-none focus:border-[#0D2B5B]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-extrabold text-slate-700 mb-1">Security PIN</label>
+                <input
+                  type="password"
+                  value={pin}
+                  onChange={e => setPin(e.target.value)}
+                  placeholder="••••"
+                  className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-sm font-bold text-slate-900 focus:outline-none focus:border-[#0D2B5B]"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3.5 rounded-2xl bg-[#0D2B5B] text-amber-300 font-black text-sm hover:bg-blue-900 transition shadow-md"
+              >
+                Sign In &amp; Record Duty In
+              </button>
+
+              {/* Collapsible Demo Staff Directory Helper */}
+              <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={() => setShowDemoList(!showDemoList)}
+                  className="text-[11px] font-extrabold text-[#0D2B5B] hover:underline flex items-center gap-1"
+                >
+                  <span>{showDemoList ? 'Hide' : 'Show'} Demo Staff Directory (PIN: 1234)</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showDemoList ? 'rotate-180' : ''}`} />
+                </button>
+                {showDemoList && (
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {users.map(u => (
+                      <button
+                        key={u.id}
+                        type="button"
+                        onClick={() => {
+                          setIdentifier(u.id);
+                          setPin('1234');
+                        }}
+                        className="px-2.5 py-1 rounded-lg bg-blue-50 text-[#0D2B5B] border border-blue-200 text-[10px] font-extrabold capitalize hover:bg-amber-400 transition"
+                      >
+                        {u.id} ({u.brainColor})
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={handleActivate} className="space-y-4">
+              <div>
+                <h2 className="text-2xl font-black text-slate-900">Activate / Reset PIN</h2>
+                <p className="text-xs text-slate-500 mt-0.5">Update your contact number &amp; personal login PIN.</p>
+              </div>
+              <div>
+                <label className="block text-xs font-extrabold text-slate-700 mb-1">Select Staff Profile</label>
+                <select
+                  value={actEmpId}
+                  onChange={e => setActEmpId(e.target.value)}
+                  className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-sm font-bold text-slate-900"
+                >
+                  {users.map(u => (
+                    <option key={u.id} value={u.id}>
+                      {u.name} ({u.empCode})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-extrabold text-slate-700 mb-1">Mobile Number</label>
+                <input
+                  type="text"
+                  value={actPhone}
+                  onChange={e => setActPhone(e.target.value)}
+                  placeholder="070-XXXXXXX"
+                  className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-sm font-bold text-slate-900"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-extrabold text-slate-700 mb-1">New Security PIN</label>
+                <input
+                  type="password"
+                  value={actNewPin}
+                  onChange={e => setActNewPin(e.target.value)}
+                  className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-sm font-bold text-slate-900"
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full py-3.5 rounded-2xl bg-amber-400 text-[#0D2B5B] font-black text-sm hover:bg-amber-300 transition shadow-md"
+              >
+                Save &amp; Return to Login
+              </button>
+            </form>
+          )}
+        </div>
+
+        {/* Right Curved Royal Blue & Gold Welcome Panel */}
+        <div className="bg-gradient-to-br from-[#0D2B5B] via-[#153E82] to-[#0A2249] text-white p-10 flex flex-col items-center justify-center text-center md:rounded-l-[110px] border-l-4 border-amber-400">
+          <div className="w-16 h-16 rounded-3xl bg-white text-[#0D2B5B] border-2 border-amber-400 font-black text-2xl flex items-center justify-center shadow-xl mb-5">
+            FLi
+          </div>
+          <h2 className="text-3xl font-black tracking-tight mb-2">
+            {isRegisterMode ? 'Welcome Back!' : 'Hello, Team FLi!'}
+          </h2>
+          <p className="text-xs text-blue-100 max-w-xs leading-relaxed mb-6">
+            {isRegisterMode
+              ? 'Already activated your FLi Pinnacle finance account? Sign in with your corporate ID and PIN.'
+              : 'Need to set a new PIN or verify your Future Life Investments Limited staff profile? Activate your credentials here.'}
+          </p>
+          <button
+            type="button"
+            onClick={() => setIsRegisterMode(!isRegisterMode)}
+            className="px-8 py-3 rounded-2xl border-2 border-amber-400 text-amber-300 font-black text-xs uppercase tracking-wider hover:bg-amber-400 hover:text-[#0D2B5B] transition"
+          >
+            {isRegisterMode ? 'Sign In' : 'Activate / Reset PIN'}
+          </button>
+        </div>
       </div>
     </div>
   );
 }
 
 // ============================================================================
-// SUB-VIEWS & MODULES
+// 4. WELCOME BRIEFING MODAL (Time Greeting + Duty In + Quote + Weather)
 // ============================================================================
 
-function DashboardHub({
+function WelcomeBriefingModal({
   currentUser,
-  employees,
-  dutyInMap,
-  tasks,
-  statements,
-  reconciliations,
-  calendarEvents,
-  pledgeRatings,
-  quote,
-  weather,
-  topEfficient,
-  efficiencyLeaderboard,
-  cardSurface,
-  onNavigate,
-  onAcknowledgeDinithi,
-  onAddCalendarEvent,
-  onLogWater
+  timeGreeting,
+  formattedClock,
+  dutyInTime,
+  dailyQuote,
+  weatherInfo,
+  pendingTasksCount,
+  pendingRecsCount,
+  unackedEntriesCount,
+  onClose
 }) {
-  const [selectedDate, setSelectedDate] = useState('2026-11-25');
+  return (
+    <div className="fixed inset-0 z-50 bg-slate-950/55 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="w-full max-w-lg rounded-3xl bg-white dark:bg-[#0F1B33] border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">
+        <div className="p-6 bg-gradient-to-r from-[#0D2B5B] to-[#174287] text-white border-b-4 border-amber-400">
+          <div className="flex items-center justify-between text-xs font-bold text-amber-300 mb-1">
+            <span>
+              {formattedClock} • Duty In Recorded: {dutyInTime}
+            </span>
+            <span>
+              {weatherInfo.temp} • {weatherInfo.city}
+            </span>
+          </div>
+          <h2 className="text-2xl font-black tracking-tight">
+            {timeGreeting}, {currentUser.name.split(' ')[0]}!
+          </h2>
+          <p className="text-xs text-blue-100 mt-0.5">
+            {currentUser.roleTitle} • Future Life Investments Limited
+          </p>
+
+          <div className="mt-4 p-3 rounded-2xl bg-white/10 border border-white/15 text-xs italic text-amber-100">
+            “{dailyQuote.text}” — <span className="not-italic font-extrabold text-amber-300">{dailyQuote.author}</span>
+          </div>
+        </div>
+
+        <div className="p-6 space-y-4">
+          <div className="grid grid-cols-3 gap-3 text-center">
+            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+              <div className="text-2xl font-black text-[#0D2B5B] dark:text-amber-300">{pendingTasksCount}</div>
+              <div className="text-[11px] font-bold opacity-75">Pending KPIs</div>
+            </div>
+            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+              <div className="text-2xl font-black text-amber-600">{pendingRecsCount}</div>
+              <div className="text-[11px] font-bold opacity-75">Pending Recs</div>
+            </div>
+            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+              <div className="text-2xl font-black text-emerald-600">{unackedEntriesCount}</div>
+              <div className="text-[11px] font-bold opacity-75">New Entries</div>
+            </div>
+          </div>
+
+          <button
+            onClick={onClose}
+            className="w-full py-3 rounded-2xl bg-[#0D2B5B] text-amber-300 font-black text-xs uppercase tracking-wider hover:bg-blue-900 transition"
+          >
+            Enter FLi Pinnacle Workspace →
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// 5. FLi PINNACLE MAIN DASHBOARD HUB (Calm, Eye-Friendly & Structured)
+// ============================================================================
+
+function BentoDashboardHub({
+  currentUser,
+  users,
+  darkMode,
+  eyeCareMode,
+  timeGreeting,
+  formattedClock,
+  dutyInTime,
+  dailyQuote,
+  weatherInfo,
+  quickLinks,
+  onAddQuickLink,
+  tasks,
+  bankRecs,
+  allocatedEntries,
+  dinithiSlipsAcked,
+  shaniAllocDone,
+  topPledge,
+  topEfficient,
+  calendarEvents,
+  onAddCalendarEvent,
+  waterGlasses,
+  onAddWaterGlass,
+  onNavigate,
+  onOpenDirectChat,
+  showToast
+}) {
+  const [showAddLink, setShowAddLink] = useState(false);
+  const [newLinkName, setNewLinkName] = useState('');
+  const [newLinkUrl, setNewLinkUrl] = useState('');
+
+  // Monthly Calendar State
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDayOffset = new Date(year, month, 1).getDay();
+  const [selectedCalDate, setSelectedCalDate] = useState(today.toISOString().split('T')[0]);
+  const [calItemType, setCalItemType] = useState('reminder');
   const [calTitle, setCalTitle] = useState('');
-  const [calType, setCalType] = useState('Reminder');
-  const [calTarget, setCalTarget] = useState('everyone');
+  const [calAssigneeId, setCalAssigneeId] = useState('everyone');
 
-  const myTasks = tasks.filter((t) => t.employeeId === currentUser.id);
-  const myEntries = [...statements.sampath.entries, ...statements.seylan.entries].filter(
-    (e) => e.assignedTo === currentUser.id
-  );
-  const completedRecCount = reconciliations.filter((r) => r.completed).length;
+  const cardSurface = darkMode
+    ? 'bg-[#0F1B33] border-slate-800'
+    : eyeCareMode
+    ? 'bg-white border-amber-200/70 shadow-sm'
+    : 'bg-white border-slate-200 shadow-sm';
 
-  // Pledge Top Performer
-  const pledgeScores = useMemo(() => {
-    const map = {};
-    pledgeRatings.forEach((r) => {
-      map[r.targetId] = (map[r.targetId] || 0) + Number(r.score || 0);
-    });
-    const sorted = Object.entries(map).sort((a, b) => b[1] - a[1]);
-    const topId = sorted[0]?.[0] || 'emp-mahasen';
-    const topEmp = employees.find((e) => e.id === topId) || employees[1];
-    return { topEmp, pts: sorted[0]?.[1] || 10 };
-  }, [pledgeRatings, employees]);
+  const myDailyTasks = tasks.filter(t => t.userId === currentUser.id && t.category === 'Daily');
+  const completedDaily = myDailyTasks.filter(
+    t => t.status === 'approved' || t.status === 'completed_pending_approval'
+  ).length;
+  const myPct = myDailyTasks.length > 0 ? Math.round((completedDaily / myDailyTasks.length) * 100) : 0;
 
-  const eventsForSelectedDate = calendarEvents.filter(
-    (ev) => ev.date === selectedDate && (ev.target === 'everyone' || ev.target === currentUser.id)
-  );
+  const weightKg = currentUser.health?.weightKg || 60;
+  const targetMl = Math.round(weightKg * 35);
+  const targetGlasses = Math.max(6, Math.round(targetMl / 250));
 
-  // November 2026 calendar grid (30 days, Nov 1 2026 is Sunday)
-  const daysInMonth = Array.from({ length: 30 }, (_, i) => {
-    const d = String(i + 1).padStart(2, '0');
-    return `2026-11-${d}`;
-  });
+  const entriesAckedCount = allocatedEntries.filter(e => e.acknowledged).length;
 
-  const handleCreateCal = (e) => {
+  const handleAddCalendarItem = (e) => {
     e.preventDefault();
     if (!calTitle.trim()) return;
+    const isSelfReminder = calItemType === 'reminder' && calAssigneeId === currentUser.id;
+    const needsApproval = !currentUser.isAdmin && !isSelfReminder && calAssigneeId !== 'everyone';
     onAddCalendarEvent({
-      date: selectedDate,
+      id: `ce-${Date.now()}`,
+      date: selectedCalDate,
+      type: calItemType,
       title: calTitle.trim(),
-      type: calType,
-      target: calTarget
+      assignedToId: calAssigneeId,
+      createdById: currentUser.id,
+      status: needsApproval ? 'pending' : 'approved'
     });
     setCalTitle('');
+    showToast(
+      calAssigneeId === 'everyone'
+        ? 'Scheduled for Everyone on the department calendar!'
+        : needsApproval
+        ? 'Scheduled job submitted for Superior approval!'
+        : 'Added to Monthly Calendar!'
+    );
   };
 
   return (
     <div className="space-y-5">
-      {/* Inspirational Hero Banner */}
-      <div className="rounded-2xl bg-gradient-to-r from-[#0F296B] via-[#17398C] to-[#1E45A6] text-white p-5 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div className="space-y-1.5 max-w-2xl">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-400/20 border border-amber-300/40 text-amber-200 text-[11px] font-bold">
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>Future Life Investments • FLi Pinnacle Workspace</span>
+      {/* 1. Quick Access Corporate Portals Bar */}
+      <div className={`p-4 rounded-3xl border ${cardSurface}`}>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-[#0D2B5B] dark:text-amber-300">
+            <Globe className="w-4 h-4 text-amber-500" />
+            <span>Quick Access Corporate Portals</span>
           </div>
-          <h1 className="text-xl font-extrabold tracking-tight">
-            {getTimeGreeting()}, {currentUser.name}
-          </h1>
-          <p className="text-xs text-blue-100 italic">“{quote}”</p>
-        </div>
-
-        <div className="flex items-center gap-3 flex-wrap">
-          {currentUser.id === 'emp-shani' && tasks.find((t) => t.id === 'task-dinithi-1')?.status !== 'Completed' && (
-            <button
-              onClick={onAcknowledgeDinithi}
-              className="px-3.5 py-2 rounded-xl bg-amber-400 text-[#0F296B] font-extrabold text-xs shadow-xs hover:bg-amber-300 transition"
-            >
-              Acknowledge Dinithi’s Slips (Start Timer)
-            </button>
-          )}
           <button
-            onClick={() => onNavigate('statements')}
-            className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs transition"
+            onClick={() => setShowAddLink(!showAddLink)}
+            className="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-[#0D2B5B] dark:text-amber-300 text-xs font-extrabold hover:bg-amber-400 hover:text-[#0D2B5B] transition"
           >
-            Statement Allocation
-          </button>
-          <button
-            onClick={() => onNavigate('reports')}
-            className="px-3.5 py-2 rounded-xl bg-white text-[#0F296B] font-bold text-xs hover:bg-blue-50 transition"
-          >
-            Day-End PDF Report
+            + Add Link
           </button>
         </div>
-      </div>
 
-      {/* Top KPI Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div className={`${cardSurface} rounded-2xl p-4`}>
-          <div className="text-[11px] font-bold uppercase text-slate-500">My Scheduled Tasks</div>
-          <div className="text-2xl font-black text-[#0F296B] mt-1">
-            {myTasks.filter((t) => t.status === 'Completed').length} / {myTasks.length}
-          </div>
-          <div className="text-xs text-slate-500 mt-1">
-            Logged time: {myTasks.reduce((a, b) => a + (b.actualMinutes || 0), 0)} mins today
-          </div>
-        </div>
-
-        <div className={`${cardSurface} rounded-2xl p-4`}>
-          <div className="text-[11px] font-bold uppercase text-slate-500">My Bank Statement Entries</div>
-          <div className="text-2xl font-black text-[#0F296B] mt-1">{myEntries.length}</div>
-          <div className="text-xs text-slate-500 mt-1">
-            {myEntries.filter((e) => e.completed).length} completed • {myEntries.filter((e) => !e.acknowledged).length} unacknowledged
-          </div>
-        </div>
-
-        <div className={`${cardSurface} rounded-2xl p-4`}>
-          <div className="text-[11px] font-bold uppercase text-slate-500">81 Bank Reconciliations</div>
-          <div className="text-2xl font-black text-[#0F296B] mt-1">{completedRecCount} / 81</div>
-          <div className="w-full h-2 bg-slate-100 rounded-full mt-2 overflow-hidden">
-            <div
-              className="h-full bg-[#0F296B] rounded-full"
-              style={{ width: `${Math.round((completedRecCount / 81) * 100)}%` }}
+        {showAddLink && (
+          <form
+            onSubmit={e => {
+              e.preventDefault();
+              if (!newLinkName.trim() || !newLinkUrl.trim()) return;
+              onAddQuickLink({
+                id: `ql-${Date.now()}`,
+                name: newLinkName.trim(),
+                desc: 'Custom Portal',
+                url: newLinkUrl.startsWith('http') ? newLinkUrl.trim() : `https://${newLinkUrl.trim()}`,
+                tag: 'Custom'
+              });
+              setNewLinkName('');
+              setNewLinkUrl('');
+              setShowAddLink(false);
+              showToast('Quick link added!');
+            }}
+            className="mb-3 flex flex-wrap gap-2"
+          >
+            <input
+              type="text"
+              placeholder="Portal Name"
+              value={newLinkName}
+              onChange={e => setNewLinkName(e.target.value)}
+              className="px-3 py-1.5 rounded-xl border text-xs font-bold bg-transparent"
             />
-          </div>
-        </div>
+            <input
+              type="text"
+              placeholder="https://..."
+              value={newLinkUrl}
+              onChange={e => setNewLinkUrl(e.target.value)}
+              className="flex-1 min-w-[200px] px-3 py-1.5 rounded-xl border text-xs font-bold bg-transparent"
+            />
+            <button type="submit" className="px-4 py-1.5 rounded-xl bg-[#0D2B5B] text-amber-300 text-xs font-extrabold">
+              Save
+            </button>
+          </form>
+        )}
 
-        <div className={`${cardSurface} rounded-2xl p-4 flex flex-col justify-between`}>
-          <div>
-            <div className="text-[11px] font-bold uppercase text-slate-500 flex items-center justify-between">
-              <span>Hydration & Weather</span>
-              <span className="text-amber-600 font-extrabold">{weather.tempC}°C</span>
-            </div>
-            <div className="text-lg font-extrabold text-[#0F296B] mt-1">
-              {currentUser.waterGlassesToday || 0} Glasses ({(currentUser.waterGlassesToday || 0) * 250} ml)
-            </div>
-          </div>
-          <button
-            onClick={onLogWater}
-            className="mt-2 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-[#0F296B] font-bold text-xs hover:bg-blue-100 transition"
-          >
-            <Droplets className="w-3.5 h-3.5 text-blue-600" />
-            <span>+1 Glass Water (250 ml)</span>
-          </button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          {quickLinks.map(link => (
+            <a
+              key={link.id}
+              href={link.url}
+              target="_blank"
+              rel="noreferrer"
+              className={`group p-3.5 rounded-2xl border transition flex items-center justify-between hover:border-amber-400 ${
+                darkMode ? 'bg-slate-900/70 border-slate-800' : 'bg-[#F8FAFC] border-slate-200 hover:bg-white'
+              }`}
+            >
+              <div className="min-w-0">
+                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-md bg-blue-50 text-[#0D2B5B] border border-blue-200/70">
+                  {link.tag}
+                </span>
+                <div className="font-extrabold text-xs mt-1.5 truncate group-hover:text-[#0D2B5B] dark:group-hover:text-amber-300">
+                  {link.name}
+                </div>
+                <div className="text-[11px] opacity-60 truncate">{link.desc}</div>
+              </div>
+              <ExternalLink className="w-4 h-4 opacity-40 group-hover:opacity-100 text-amber-500 shrink-0" />
+            </a>
+          ))}
         </div>
       </div>
 
-      {/* Daily Efficient Employee Recognition + Department Top Performer */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Most Efficient Employee Today */}
-        <div className={`${cardSurface} rounded-2xl p-5`}>
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-emerald-600" />
-              <h2 className="text-sm font-extrabold text-[#0F296B]">Most Efficient Employee Today</h2>
-            </div>
-            <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold">
-              {topEfficient?.pct || 0}% Output
+      {/* 2. Hero Greeting & Inspirational Quote Banner */}
+      <div className="p-6 rounded-3xl bg-gradient-to-r from-[#0D2B5B] via-[#153E82] to-[#0A2249] text-white shadow-md border-b-4 border-amber-400 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+        <div className="space-y-2 max-w-2xl">
+          <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-amber-300">
+            <span>
+              {formattedClock} • Duty In: {dutyInTime}
+            </span>
+            <span>•</span>
+            <span className="inline-flex items-center gap-1">
+              <CloudSun className="w-3.5 h-3.5" /> {weatherInfo.temp} ({weatherInfo.city})
             </span>
           </div>
-
-          {topEfficient && (
-            <div className="flex items-center gap-3.5 p-3 rounded-xl bg-slate-50 border border-slate-200/70 mb-3">
-              <div className="w-12 h-12 rounded-full bg-[#0F296B] text-amber-300 font-black flex items-center justify-center shrink-0">
-                {topEfficient.emp.avatar}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-extrabold text-slate-900 truncate">{topEfficient.emp.name}</div>
-                <div className="text-xs text-slate-500 truncate">{topEfficient.emp.role}</div>
-                <div className="w-full h-2.5 bg-slate-200 rounded-full mt-2 overflow-hidden">
-                  <div
-                    className="h-full bg-emerald-600 rounded-full transition-all"
-                    style={{ width: `${topEfficient.pct}%` }}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="space-y-1.5">
-            {efficiencyLeaderboard.slice(0, 4).map((item) => (
-              <div key={item.emp.id} className="flex items-center justify-between text-xs">
-                <span className="font-medium text-slate-700">{item.emp.shortName}</span>
-                <div className="flex items-center gap-2 w-40">
-                  <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#0F296B] rounded-full" style={{ width: `${item.pct}%` }} />
-                  </div>
-                  <span className="font-bold text-slate-800 w-9 text-right">{item.pct}%</span>
-                </div>
-              </div>
-            ))}
-          </div>
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
+            {timeGreeting}, {currentUser.name}!
+          </h1>
+          <p className="text-xs sm:text-sm text-blue-100 italic">
+            “{dailyQuote.text}” <span className="not-italic font-extrabold text-amber-300">— {dailyQuote.author}</span>
+          </p>
         </div>
 
-        {/* Classic Department Top Performer Card */}
-        <div className={`${cardSurface} rounded-2xl p-5 border-2 border-amber-300/80 flex flex-col justify-between`}>
-          <div>
-            <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 text-[11px] font-extrabold">
-                <Trophy className="w-3.5 h-3.5 text-amber-600" />
-                DEPARTMENT TOP PERFORMER
-              </span>
-              <span className="text-sm font-black text-amber-600">★ 5.00 / 5.0</span>
-            </div>
-
-            <div className="flex items-center gap-4 mt-4">
-              <div className="w-14 h-14 rounded-full bg-emerald-700 text-white font-black text-base flex items-center justify-center ring-4 ring-amber-300 shrink-0">
-                {pledgeScores.topEmp.avatar}
-              </div>
-              <div>
-                <div className="text-base font-extrabold text-slate-900">{pledgeScores.topEmp.name}</div>
-                <div className="text-xs text-slate-500">{pledgeScores.topEmp.role}</div>
-                <div className="mt-1.5 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-bold">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                  {pledgeScores.topEmp.brainColor} • {pledgeScores.pts} Pledge Pts
-                </div>
-              </div>
-            </div>
-          </div>
-
+        <div className="flex flex-wrap gap-2.5">
           <button
-            onClick={() => onNavigate('pledge')}
-            className="mt-4 w-full py-2.5 rounded-xl bg-[#0F296B] text-amber-300 font-bold text-xs hover:bg-blue-900 transition flex items-center justify-center gap-1.5"
+            onClick={() => onNavigate('tasks')}
+            className="px-4 py-2.5 rounded-2xl bg-amber-400 text-[#0D2B5B] font-black text-xs hover:bg-amber-300 transition"
           >
-            <span>Rate a Colleague on FLI Pledge →</span>
+            Open My KPIs ({myPct}%)
+          </button>
+          <button
+            onClick={() => onNavigate('reconciliations')}
+            className="px-4 py-2.5 rounded-2xl bg-white/15 text-white border border-white/25 font-extrabold text-xs hover:bg-white/25 transition"
+          >
+            Bank Recs ({bankRecs.filter(r => r.userId === currentUser.id).length})
           </button>
         </div>
       </div>
 
-      {/* Monthly Calendar with Reminders & Supervisor-Approved Scheduled Jobs */}
-      <div className={`${cardSurface} rounded-2xl p-5`}>
-        <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-          <div className="flex items-center gap-2">
-            <CalendarIcon className="w-4 h-4 text-[#0F296B]" />
-            <h2 className="text-sm font-extrabold text-[#0F296B]">November 2026 Calendar — Reminders & Scheduled Jobs</h2>
-          </div>
-          <span className="text-xs text-slate-500">Selected Date: <strong className="text-slate-800">{selectedDate}</strong></span>
+      {/* 3. Morning Readiness & Cut-Off Strip (Dinithi -> Shani -> Daily Entries Chain) */}
+      <div className={`p-4 rounded-3xl border ${cardSurface} flex flex-wrap items-center justify-between gap-3`}>
+        <div className="flex items-center gap-2 text-xs font-black text-[#0D2B5B] dark:text-amber-300">
+          <Clock className="w-4 h-4 text-amber-500" />
+          <span>Morning Readiness Chain (08:30 AM – 10:30 AM Cut-Off):</span>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          {/* Calendar Grid */}
-          <div className="lg:col-span-2 grid grid-cols-7 gap-1.5">
-            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
-              <div key={d} className="text-center text-[11px] font-bold text-slate-400 py-1">
-                {d}
-              </div>
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <span
+            className={`px-3 py-1 rounded-full border font-extrabold ${
+              dinithiSlipsAcked
+                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                : 'bg-amber-50 text-amber-800 border-amber-200'
+            }`}
+          >
+            1. Dinithi Slips: {dinithiSlipsAcked ? 'Approved ✓' : 'Awaiting Shani Ack'}
+          </span>
+          <ArrowRight className="w-3.5 h-3.5 opacity-40" />
+          <span
+            className={`px-3 py-1 rounded-full border font-extrabold ${
+              shaniAllocDone
+                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                : 'bg-blue-50 text-blue-700 border-blue-200'
+            }`}
+          >
+            2. Shani Allocation: {shaniAllocDone ? 'Completed ✓' : 'In Progress'}
+          </span>
+          <ArrowRight className="w-3.5 h-3.5 opacity-40" />
+          <span className="px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700 font-extrabold">
+            3. Team Entries Acked: {entriesAckedCount} / {allocatedEntries.length}
+          </span>
+        </div>
+      </div>
+
+      {/* 4. Recognition & Efficiency Row (Our Pledge Leader + Most Efficient Employee Today + Hydration) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {/* Department Top Performer (Our Pledge) */}
+        <div className={`p-5 rounded-3xl border-2 border-amber-300 ${cardSurface} flex flex-col justify-between`}>
+          <div className="flex items-center justify-between mb-3">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-black uppercase">
+              <Trophy className="w-3.5 h-3.5 text-amber-600" /> Department Top Performer
+            </span>
+            <span className="text-sm font-black text-amber-600">★ {topPledge.avg} / 5.0</span>
+          </div>
+          <div className="flex items-center gap-3.5 my-2">
+            <div className="p-3 rounded-full bg-[#0D2B5B] text-amber-300 border-2 border-amber-400 font-black text-base flex items-center justify-center shrink-0">
+              {topPledge.user.name
+                .split(' ')
+                .map(n => n[0])
+                .join('')
+                .slice(0, 2)}
+            </div>
+            <div>
+              <div className="font-black text-base">{topPledge.user.name}</div>
+              <div className="text-xs opacity-70">{topPledge.user.roleTitle}</div>
+              <span
+                className={`inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full border text-[10px] font-bold ${
+                  BRAIN_COLOR_STYLES[topPledge.user.brainColor]?.badge
+                }`}
+              >
+                <span className={`w-1.5 h-1.5 rounded-full ${BRAIN_COLOR_STYLES[topPledge.user.brainColor]?.dot}`} />
+                {topPledge.user.brainColor}
+              </span>
+            </div>
+          </div>
+          <button
+            onClick={() => onNavigate('pledge')}
+            className="mt-3 w-full py-2.5 rounded-2xl bg-[#0D2B5B] text-amber-300 font-black text-xs hover:bg-blue-900 transition"
+          >
+            Rate a Colleague on FLI Pledge →
+          </button>
+        </div>
+
+        {/* Most Efficient Employee Today Card with Progress Bar */}
+        <div className={`p-5 rounded-3xl border ${cardSurface} flex flex-col justify-between`}>
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-black uppercase">
+                <Activity className="w-3.5 h-3.5" /> Most Efficient Today
+              </span>
+              <span className="text-sm font-black text-emerald-600">{topEfficient.pct}% Done</span>
+            </div>
+            <div className="font-black text-base">{topEfficient.user.name}</div>
+            <div className="text-xs opacity-70 mb-3">{topEfficient.user.roleTitle}</div>
+            <div className="w-full h-3 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+              <div
+                style={{ width: `${topEfficient.pct}%` }}
+                className="h-full bg-gradient-to-r from-[#0D2B5B] via-blue-600 to-amber-400 rounded-full transition-all duration-500"
+              />
+            </div>
+          </div>
+          <div className="mt-3 text-[11px] opacity-70 flex items-center justify-between">
+            <span>Your Daily Progress: {myPct}%</span>
+            <button onClick={() => onNavigate('reports')} className="font-extrabold text-[#0D2B5B] dark:text-amber-300">
+              View Reports →
+            </button>
+          </div>
+        </div>
+
+        {/* Wellness & Daily Water Intake Reminder Card */}
+        <div className={`p-5 rounded-3xl border ${cardSurface} flex flex-col justify-between`}>
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="inline-flex items-center gap-1.5 text-xs font-black text-blue-700 dark:text-blue-300">
+                <Droplets className="w-4 h-4" /> Daily Hydration &amp; Posture
+              </span>
+              <span className="text-[11px] font-extrabold opacity-70">Target: {targetMl} ml</span>
+            </div>
+            <p className="text-xs opacity-75">
+              Based on your profile weight ({weightKg} kg), aim for <strong>{targetGlasses} glasses</strong> (250ml each) and take a 5-min posture break every 90 mins.
+            </p>
+          </div>
+          <div className="mt-3 flex items-center justify-between">
+            <div className="text-sm font-black text-[#0D2B5B] dark:text-amber-300">
+              {waterGlasses} / {targetGlasses} Glasses
+            </div>
+            <button
+              onClick={onAddWaterGlass}
+              className="px-3.5 py-2 rounded-xl bg-blue-600 text-white text-xs font-extrabold hover:bg-blue-700 transition"
+            >
+              + Log 250ml Water
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 5. Interactive Monthly Calendar (Everyone vs Staff) + Team Directory */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <div className={`lg:col-span-7 p-5 rounded-3xl border ${cardSurface} space-y-4`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 font-black text-sm text-[#0D2B5B] dark:text-amber-300">
+              <Calendar className="w-4 h-4 text-amber-500" />
+              <span>
+                {today.toLocaleString('default', { month: 'long' })} {year} — Department Calendar &amp; Scheduled Jobs
+              </span>
+            </div>
+            <span className="text-xs font-bold opacity-70">Selected: {selectedCalDate}</span>
+          </div>
+
+          <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-extrabold opacity-60">
+            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
+              <div key={d}>{d}</div>
             ))}
-            {daysInMonth.map((dateStr) => {
-              const dayNum = Number(dateStr.slice(-2));
-              const hasEvent = calendarEvents.some(
-                (ev) => ev.date === dateStr && (ev.target === 'everyone' || ev.target === currentUser.id)
+          </div>
+
+          <div className="grid grid-cols-7 gap-1 text-center text-xs">
+            {Array.from({ length: firstDayOffset }).map((_, i) => (
+              <div key={`empty-${i}`} />
+            ))}
+            {Array.from({ length: daysInMonth }).map((_, idx) => {
+              const dayNum = idx + 1;
+              const dateIso = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+              const hasEvents = calendarEvents.some(
+                ev =>
+                  ev.date === dateIso &&
+                  ev.status === 'approved' &&
+                  (ev.assignedToId === 'everyone' || ev.assignedToId === currentUser.id || currentUser.isAdmin)
               );
-              const isSelected = selectedDate === dateStr;
+              const isSelected = selectedCalDate === dateIso;
               return (
                 <button
-                  key={dateStr}
-                  onClick={() => setSelectedDate(dateStr)}
-                  className={`h-12 rounded-xl border text-xs font-bold flex flex-col items-center justify-center transition ${
+                  key={dateIso}
+                  onClick={() => setSelectedCalDate(dateIso)}
+                  className={`py-2 rounded-xl font-bold transition relative ${
                     isSelected
-                      ? 'bg-[#0F296B] text-white border-[#0F296B]'
-                      : dateStr === '2026-11-25'
-                      ? 'bg-amber-50 border-amber-300 text-slate-900'
-                      : 'bg-slate-50/70 border-slate-200/70 text-slate-700 hover:bg-blue-50'
+                      ? 'bg-[#0D2B5B] text-amber-300 font-black'
+                      : 'hover:bg-blue-50 dark:hover:bg-slate-800'
                   }`}
                 >
-                  <span>{dayNum}</span>
-                  {hasEvent && (
-                    <span className={`w-1.5 h-1.5 rounded-full mt-0.5 ${isSelected ? 'bg-amber-300' : 'bg-amber-500'}`} />
-                  )}
+                  {dayNum}
+                  {hasEvents && <span className="block w-1.5 h-1.5 rounded-full bg-amber-400 mx-auto mt-0.5" />}
                 </button>
               );
             })}
           </div>
 
-          {/* Add Reminder / Scheduled Job + Events List */}
-          <div className="space-y-3 border-t lg:border-t-0 lg:border-l border-slate-200/80 pt-4 lg:pt-0 lg:pl-4">
-            <form onSubmit={handleCreateCal} className="space-y-2">
-              <div className="text-xs font-extrabold text-[#0F296B]">Add on {selectedDate}</div>
+          {/* Add Reminder / Scheduled Job Form */}
+          <form onSubmit={handleAddCalendarItem} className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-2">
+            <div className="flex flex-wrap gap-2">
+              <select
+                value={calItemType}
+                onChange={e => setCalItemType(e.target.value)}
+                className="px-2.5 py-1.5 rounded-xl border text-xs font-bold bg-transparent"
+              >
+                <option value="reminder" className="text-slate-900">Reminder</option>
+                <option value="scheduled_job" className="text-slate-900">Scheduled Job</option>
+              </select>
+              <select
+                value={calAssigneeId}
+                onChange={e => setCalAssigneeId(e.target.value)}
+                className="px-2.5 py-1.5 rounded-xl border text-xs font-bold bg-transparent"
+              >
+                <option value="everyone" className="text-slate-900">Everyone (All Staff)</option>
+                {users.map(u => (
+                  <option key={u.id} value={u.id} className="text-slate-900">
+                    {u.name.split(' ')[0]}
+                  </option>
+                ))}
+              </select>
               <input
                 type="text"
+                placeholder={`Add event on ${selectedCalDate}...`}
                 value={calTitle}
-                onChange={(e) => setCalTitle(e.target.value)}
-                placeholder="Reminder or scheduled job title..."
-                className="w-full text-xs border border-slate-200 rounded-lg px-2.5 py-2 bg-white"
+                onChange={e => setCalTitle(e.target.value)}
+                className="flex-1 min-w-[160px] px-3 py-1.5 rounded-xl border text-xs font-bold bg-transparent"
               />
-              <div className="grid grid-cols-2 gap-2">
-                <select
-                  value={calType}
-                  onChange={(e) => setCalType(e.target.value)}
-                  className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white"
-                >
-                  <option value="Reminder">Reminder</option>
-                  <option value="Scheduled Job">Scheduled Job (Approval)</option>
-                </select>
-                <select
-                  value={calTarget}
-                  onChange={(e) => setCalTarget(e.target.value)}
-                  className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white"
-                >
-                  <option value="everyone">Everyone (All Staff)</option>
-                  {employees.map((emp) => (
-                    <option key={emp.id} value={emp.id}>
-                      {emp.shortName} Only
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <button
-                type="submit"
-                className="w-full py-2 rounded-lg bg-[#0F296B] text-white text-xs font-bold hover:bg-blue-900 transition"
-              >
-                Save to Calendar
+              <button type="submit" className="px-3.5 py-1.5 rounded-xl bg-amber-400 text-[#0D2B5B] font-black text-xs">
+                Add
               </button>
-            </form>
+            </div>
+          </form>
 
-            <div className="space-y-2 max-h-48 overflow-y-auto pt-1">
-              {eventsForSelectedDate.length === 0 ? (
-                <div className="text-xs text-slate-400 py-3 text-center">No items for {selectedDate}.</div>
-              ) : (
-                eventsForSelectedDate.map((ev) => (
-                  <div key={ev.id} className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70 text-xs">
-                    <div className="flex items-center justify-between gap-1">
-                      <span className="font-bold text-slate-800">{ev.title}</span>
-                      <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-900 text-[10px] font-bold">
-                        {ev.type}
-                      </span>
-                    </div>
-                    <div className="text-[10px] text-slate-500 mt-1">
-                      {ev.target === 'everyone' ? 'Visible: Everyone' : `Target: ${employees.find((e) => e.id === ev.target)?.shortName || 'Staff'}`} • {ev.approvalStatus}
+          {/* Events List for Selected Date */}
+          <div className="max-h-32 overflow-y-auto space-y-1.5">
+            {calendarEvents
+              .filter(
+                ev =>
+                  ev.date === selectedCalDate &&
+                  (ev.assignedToId === 'everyone' ||
+                    ev.assignedToId === currentUser.id ||
+                    ev.createdById === currentUser.id ||
+                    currentUser.isAdmin)
+              )
+              .map(ev => (
+                <div
+                  key={ev.id}
+                  className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-[11px] flex items-center justify-between"
+                >
+                  <div>
+                    <span className="font-extrabold">{ev.title}</span>
+                    <div className="opacity-65">
+                      {ev.type === 'scheduled_job' ? 'Scheduled Job' : 'Reminder'} •{' '}
+                      {ev.assignedToId === 'everyone'
+                        ? 'Everyone (All Staff)'
+                        : users.find(u => u.id === ev.assignedToId)?.name.split(' ')[0]}
                     </div>
                   </div>
-                ))
-              )}
-            </div>
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase ${
+                      ev.status === 'approved' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-800'
+                    }`}
+                  >
+                    {ev.status}
+                  </span>
+                </div>
+              ))}
+          </div>
+        </div>
+
+        {/* Team Strip with Brain Colors & 1-Click Direct Message */}
+        <div className={`lg:col-span-5 p-5 rounded-3xl border ${cardSurface} space-y-3`}>
+          <div className="flex items-center justify-between">
+            <span className="font-black text-sm text-[#0D2B5B] dark:text-amber-300">
+              Finance Department Team ({users.length})
+            </span>
+            <span className="text-[11px] opacity-65">Click to 1-on-1 Chat</span>
+          </div>
+          <div className="max-h-80 overflow-y-auto space-y-2 pr-1">
+            {users.map(u => (
+              <div
+                key={u.id}
+                onClick={() => u.id !== currentUser.id && onOpenDirectChat(u.id)}
+                className={`p-2.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex items-center justify-between transition ${
+                  u.id !== currentUser.id ? 'cursor-pointer hover:border-amber-400' : ''
+                }`}
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-xl bg-[#0D2B5B] text-amber-300 font-black text-xs flex items-center justify-center shrink-0">
+                    {u.name.charAt(0)}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-xs font-extrabold truncate">
+                      {u.name} {u.onLeave && <span className="text-rose-500">(On Leave)</span>}
+                    </div>
+                    <div className="text-[10px] opacity-65 truncate">{u.roleTitle}</div>
+                  </div>
+                </div>
+                <span
+                  className={`px-2 py-0.5 rounded-full border text-[10px] font-bold shrink-0 ${
+                    BRAIN_COLOR_STYLES[u.brainColor]?.badge
+                  }`}
+                >
+                  {u.brainColor}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -2451,280 +3058,351 @@ function DashboardHub({
 }
 
 // ============================================================================
-// MY JD & KPIs (DAILY VS MONTH-END, ACCEPT/HANDOVER, SUB-ITEMS & ESCALATION)
+// 6. MY CONFIDENTIAL JD & KPI TASKS WORKSPACE
 // ============================================================================
 
-function MyTasksView({
+function MyTasksWorkspace({
   currentUser,
-  employees,
+  users,
   tasks,
-  cardSurface,
+  darkMode,
+  eyeCareMode,
   onAcceptTask,
   onHandoverTask,
-  onAcknowledgeDinithi,
+  onCompleteTask,
   onToggleSubItem,
   onEscalateSubItem,
-  onUpdateTaskDetail
+  onRequestJobDetailUpdate
 }) {
-  const [scheduleFilter, setScheduleFilter] = useState('All'); // All | Daily | Month-End
-  const [handoverTarget, setHandoverTarget] = useState({});
-  const [handoverNote, setHandoverNote] = useState({});
-  const [helpReasons, setHelpReasons] = useState({});
+  const [scheduleTab, setScheduleTab] = useState('Daily');
+  const [handoverTargetByTask, setHandoverTargetByTask] = useState({});
+  const [remarkByTask, setRemarkByTask] = useState({});
   const [editingTaskId, setEditingTaskId] = useState(null);
-  const [detailDraft, setDetailDraft] = useState('');
-  const [minsDraft, setMinsDraft] = useState(0);
+  const [editTitle, setEditTitle] = useState('');
+  const [editSlot, setEditSlot] = useState('');
+  const [editNotes, setEditNotes] = useState('');
 
-  const visibleTasks = tasks.filter((t) => {
-    if (t.employeeId !== currentUser.id) return false;
-    if (scheduleFilter === 'All') return true;
-    return t.scheduleType === scheduleFilter;
-  });
-
-  const dinithiSlipTask = tasks.find((t) => t.id === 'task-dinithi-1');
+  const cardSurface = darkMode
+    ? 'bg-[#0F1B33] border-slate-800'
+    : eyeCareMode
+    ? 'bg-white border-amber-200/70 shadow-sm'
+    : 'bg-white border-slate-200 shadow-sm';
+  const filteredTasks = tasks.filter(t => (scheduleTab === 'Daily' ? t.category === 'Daily' : t.category !== 'Daily'));
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="space-y-5">
+      <div className={`p-5 rounded-3xl border ${cardSurface} flex flex-wrap items-center justify-between gap-3`}>
         <div>
-          <h1 className="text-lg font-extrabold text-[#0F296B]">My JD & KPIs — {currentUser.name}</h1>
-          <p className="text-xs text-slate-500">
-            Accept tasks, hand over to teammates, update sub-items or escalate for superior help, and submit detail updates for approval.
+          <h2 className="text-lg font-black text-[#0D2B5B] dark:text-amber-300">
+            My Confidential JD &amp; Time-Allocated KPIs
+          </h2>
+          <p className="text-xs opacity-70">
+            Visible strictly to {currentUser.name}. Accept tasks, mark complete, hand over to colleagues, or request JD updates under Superior approval.
           </p>
         </div>
-
-        <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-xl p-1">
-          {['All', 'Daily', 'Month-End'].map((tab) => (
+        <div className="flex gap-2">
+          {['Daily', 'Month End'].map(tab => (
             <button
               key={tab}
-              onClick={() => setScheduleFilter(tab)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
-                scheduleFilter === tab ? 'bg-[#0F296B] text-white' : 'text-slate-600 hover:bg-slate-100'
+              onClick={() => setScheduleTab(tab)}
+              className={`px-4 py-2 rounded-xl text-xs font-black transition ${
+                scheduleTab === tab ? 'bg-[#0D2B5B] text-amber-300' : 'bg-slate-100 dark:bg-slate-800'
               }`}
             >
-              {tab === 'Month-End' ? 'Month-End Jobs' : tab}
+              {tab} Jobs ({tasks.filter(t => (tab === 'Daily' ? t.category === 'Daily' : t.category !== 'Daily')).length})
             </button>
           ))}
         </div>
       </div>
 
-      {/* Shani Notification Banner for Dinithi Morning Payment Slips */}
-      {currentUser.id === 'emp-shani' && dinithiSlipTask?.status !== 'Completed' && (
-        <div className="p-4 rounded-2xl bg-amber-50 border border-amber-300 flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <div className="text-xs font-black text-amber-950 uppercase">
-              Incoming Handover Notification — Dinithi Perera (08:30 AM - 08:50 AM)
-            </div>
-            <div className="text-xs text-amber-900 mt-0.5">
-              Attaching Payment Slips handed over at {dinithiSlipTask?.handoverSentAt || '08:48 AM'}. Acknowledging auto-approves Dinithi’s task and starts your Daily Entries Sharing timer.
-            </div>
-          </div>
-          <button
-            onClick={onAcknowledgeDinithi}
-            className="px-4 py-2 rounded-xl bg-[#0F296B] text-amber-300 font-extrabold text-xs hover:bg-blue-900 transition"
-          >
-            Acknowledge Payment Slips Now
-          </button>
-        </div>
-      )}
-
-      {/* Task Cards */}
       <div className="space-y-3">
-        {visibleTasks.map((task) => {
-          const isEditing = editingTaskId === task.id;
-          return (
-            <div key={task.id} className={`${cardSurface} rounded-2xl p-4 space-y-3`}>
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-extrabold text-slate-900">{task.title}</span>
-                    <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold">
-                      {task.scheduleType}
-                    </span>
-                    <span
-                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                        task.status === 'Completed'
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : task.status === 'In Progress'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-amber-100 text-amber-900'
-                      }`}
-                    >
-                      {task.status}
-                    </span>
-                    <span
-                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                        task.approvalStatus === 'Approved'
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                          : task.approvalStatus === 'Rejected / Rework'
-                          ? 'bg-rose-100 text-rose-800'
-                          : 'bg-slate-100 text-slate-600'
-                      }`}
-                    >
-                      {task.approvalStatus}
-                    </span>
+        {filteredTasks.map(task => (
+          <div key={task.id} className={`p-5 rounded-3xl border ${cardSurface} space-y-3`}>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-[#0D2B5B] border border-blue-200/70 text-[10px] font-black">
+                    {task.timeSlot} • {task.allocatedMinutes} Min
+                  </span>
+                  <FourStageBadge status={task.status} />
+                </div>
+                <h3 className="font-black text-sm">{task.title}</h3>
+                {task.remark && <p className="text-xs text-blue-700 dark:text-amber-300">Note: {task.remark}</p>}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                {!task.accepted && (task.status === 'pending' || task.status === 'rejected') && (
+                  <button
+                    onClick={() => onAcceptTask(task.id)}
+                    className="px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-extrabold"
+                  >
+                    Accept Job
+                  </button>
+                )}
+
+                <button
+                  onClick={() => {
+                    setEditingTaskId(editingTaskId === task.id ? null : task.id);
+                    setEditTitle(task.title);
+                    setEditSlot(task.timeSlot);
+                    setEditNotes(task.remark || '');
+                  }}
+                  className="px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold"
+                >
+                  Update Details
+                </button>
+              </div>
+            </div>
+
+            {/* Itemized Voucher / Entry Sub-Checklist */}
+            {task.subItems && task.subItems.length > 0 && (
+              <div className="p-3 rounded-2xl bg-slate-50/80 dark:bg-slate-900/70 space-y-2">
+                <div className="text-[11px] font-extrabold uppercase opacity-70">
+                  Itemized Voucher / Entry Checklist (Mark Complete One-by-One or Escalate for Help)
+                </div>
+                {task.subItems.map(sub => (
+                  <div
+                    key={sub.id}
+                    className="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"
+                  >
+                    <label className="flex items-center gap-2 font-bold cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={sub.done}
+                        onChange={() => onToggleSubItem(task.id, sub.id)}
+                      />
+                      <span className={sub.done ? 'line-through opacity-60' : ''}>{sub.label}</span>
+                    </label>
+                    {sub.escalated ? (
+                      <span className="text-[10px] font-extrabold text-amber-600">Escalated to Superior</span>
+                    ) : (
+                      <button
+                        onClick={() => onEscalateSubItem(task.id, sub.id, 'Need superior assistance on voucher batch')}
+                        className="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 text-[10px] font-extrabold hover:bg-rose-100"
+                      >
+                        Need Help → Superior
+                      </button>
+                    )}
                   </div>
-                  <div className="text-xs text-slate-500 mt-1">
-                    Slot: <strong>{task.timeSlot}</strong> • Allocated: {task.allocatedMinutes} min • Logged: {task.actualMinutes || 0} min
-                  </div>
-                  {task.detailNotes && (
-                    <div className="text-xs text-slate-600 mt-1 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200/60">
-                      {task.detailNotes}
-                    </div>
-                  )}
-                  {task.rejectReason && (
-                    <div className="text-xs text-rose-800 mt-1 bg-rose-50 px-3 py-1.5 rounded-lg border border-rose-200 font-semibold">
-                      Send-Back Reason: {task.rejectReason}
-                    </div>
-                  )}
+                ))}
+              </div>
+            )}
+
+            {/* Request Job Detail Update Form (Under Superior Approval) */}
+            {editingTaskId === task.id && (
+              <div className="p-3 rounded-2xl border border-amber-300 bg-amber-50/50 dark:bg-slate-900 space-y-2 text-xs">
+                <div className="font-extrabold text-[#0D2B5B] dark:text-amber-300">
+                  Request Job Detail Modification (Requires Next Superior Approval)
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <input
+                    type="text"
+                    value={editTitle}
+                    onChange={e => setEditTitle(e.target.value)}
+                    className="px-3 py-1.5 rounded-xl border font-bold bg-white dark:bg-slate-800"
+                  />
+                  <input
+                    type="text"
+                    value={editSlot}
+                    onChange={e => setEditSlot(e.target.value)}
+                    className="px-3 py-1.5 rounded-xl border font-bold bg-white dark:bg-slate-800"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Reason / Notes"
+                    value={editNotes}
+                    onChange={e => setEditNotes(e.target.value)}
+                    className="px-3 py-1.5 rounded-xl border font-bold bg-white dark:bg-slate-800"
+                  />
+                </div>
+                <button
+                  onClick={() => {
+                    onRequestJobDetailUpdate({
+                      id: `jreq-${Date.now()}`,
+                      taskId: task.id,
+                      userId: currentUser.id,
+                      supervisorId: currentUser.supervisorId || 'rangika',
+                      newTitle: editTitle,
+                      newTimeSlot: editSlot,
+                      newNotes: editNotes,
+                      status: 'pending'
+                    });
+                    setEditingTaskId(null);
+                  }}
+                  className="px-4 py-1.5 rounded-xl bg-[#0D2B5B] text-amber-300 font-extrabold"
+                >
+                  Submit Update for Approval
+                </button>
+              </div>
+            )}
+
+            {/* Complete or Hand Over Controls */}
+            {(task.status === 'pending' || task.status === 'rejected') && (
+              <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2 flex-1 min-w-[220px]">
+                  <input
+                    type="text"
+                    placeholder="Completion remark..."
+                    value={remarkByTask[task.id] || ''}
+                    onChange={e => setRemarkByTask(prev => ({ ...prev, [task.id]: e.target.value }))}
+                    className="flex-1 px-3 py-1.5 rounded-xl border text-xs font-bold bg-transparent"
+                  />
+                  <button
+                    onClick={() => onCompleteTask(task.id, task.allocatedMinutes, remarkByTask[task.id] || 'Completed')}
+                    className="px-4 py-1.5 rounded-xl bg-[#0D2B5B] text-amber-300 text-xs font-black hover:bg-blue-900"
+                  >
+                    Mark Complete
+                  </button>
                 </div>
 
-                {/* Accept / Update Detail Actions */}
-                <div className="flex items-center gap-2 flex-wrap">
-                  {!task.acceptedByOwner && (
-                    <button
-                      onClick={() => onAcceptTask(task.id)}
-                      className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition"
-                    >
-                      Accept Job
-                    </button>
-                  )}
+                <div className="flex items-center gap-1.5">
+                  <select
+                    value={handoverTargetByTask[task.id] || ''}
+                    onChange={e => setHandoverTargetByTask(prev => ({ ...prev, [task.id]: e.target.value }))}
+                    className="px-2.5 py-1.5 rounded-xl border text-xs font-bold bg-transparent"
+                  >
+                    <option value="" className="text-slate-900">Hand over to...</option>
+                    {users
+                      .filter(u => u.id !== currentUser.id)
+                      .map(u => (
+                        <option key={u.id} value={u.id} className="text-slate-900">
+                          {u.name}
+                        </option>
+                      ))}
+                  </select>
                   <button
                     onClick={() => {
-                      setEditingTaskId(isEditing ? null : task.id);
-                      setDetailDraft(task.detailNotes || '');
-                      setMinsDraft(0);
+                      const target = handoverTargetByTask[task.id];
+                      if (target) onHandoverTask(task.id, target);
                     }}
-                    className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-800 text-xs font-bold hover:bg-slate-200 transition inline-flex items-center gap-1"
+                    className="px-3 py-1.5 rounded-xl bg-amber-400 text-[#0D2B5B] text-xs font-black"
                   >
-                    <Edit3 className="w-3.5 h-3.5" />
-                    <span>Update Detail</span>
+                    Hand Over
                   </button>
                 </div>
               </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
-              {/* Detail Update Form (Routes for Superior Approval) */}
-              {isEditing && (
-                <div className="p-3 rounded-xl bg-blue-50/50 border border-blue-200/70 space-y-2">
-                  <div className="text-xs font-bold text-[#0F296B]">Update Job Details (Submits for Superior Approval)</div>
-                  <textarea
-                    rows={2}
-                    value={detailDraft}
-                    onChange={(e) => setDetailDraft(e.target.value)}
-                    className="w-full text-xs border border-slate-200 rounded-lg p-2 bg-white"
-                  />
-                  <div className="flex items-center justify-between gap-2 flex-wrap">
-                    <label className="text-xs text-slate-600 flex items-center gap-1.5">
-                      <span>Add minutes spent:</span>
-                      <input
-                        type="number"
-                        min={0}
-                        value={minsDraft}
-                        onChange={(e) => setMinsDraft(e.target.value)}
-                        className="w-20 border border-slate-200 rounded-lg px-2 py-1 bg-white text-xs"
-                      />
-                    </label>
-                    <button
-                      onClick={() => {
-                        onUpdateTaskDetail(task.id, detailDraft, minsDraft);
-                        setEditingTaskId(null);
-                      }}
-                      className="px-3 py-1.5 rounded-lg bg-[#0F296B] text-white text-xs font-bold"
-                    >
-                      Save for Approval
-                    </button>
+// ============================================================================
+// 7. MONTH-END CLOSING CHECKLIST & CUT-OFF TRACKER
+// ============================================================================
+
+function MonthEndClosingPortal({ currentUser, users, monthEndItems, bankRecs, darkMode, onUpdateProgress, onAddItem }) {
+  const [newTitle, setNewTitle] = useState('');
+  const [newOwnerId, setNewOwnerId] = useState('nikeshala');
+  const [newTargetDate, setNewTargetDate] = useState('2026-11-30');
+  const [newDependency, setNewDependency] = useState('Requires Bank Reconciliations');
+
+  const cardSurface = darkMode ? 'bg-[#0F1B33] border-slate-800' : 'bg-white border-slate-200 shadow-sm';
+  const recPct = Math.round((bankRecs.filter(r => r.status === 'completed').length / bankRecs.length) * 100);
+  const overallAvg = Math.round(monthEndItems.reduce((acc, m) => acc + m.progress, 0) / monthEndItems.length);
+
+  return (
+    <div className="space-y-5">
+      <div className={`p-5 rounded-3xl border ${cardSurface} flex flex-wrap items-center justify-between gap-4`}>
+        <div>
+          <h2 className="text-lg font-black text-[#0D2B5B] dark:text-amber-300">
+            Month-End Closing Checklist &amp; Cut-Off Tracker
+          </h2>
+          <p className="text-xs opacity-70">
+            Track target dates, owners, dependencies (e.g., Bank Reconciliations before Cash Flow &amp; P&amp;L), and closing readiness.
+          </p>
+        </div>
+        <div className="flex items-center gap-4 text-xs">
+          <div className="px-3.5 py-2 rounded-2xl bg-blue-50 dark:bg-slate-800 font-extrabold text-[#0D2B5B] dark:text-amber-300">
+            81 Bank Recs: {recPct}%
+          </div>
+          <div className="px-3.5 py-2 rounded-2xl bg-emerald-50 dark:bg-slate-800 font-extrabold text-emerald-700 dark:text-emerald-400">
+            Overall Month-End: {overallAvg}%
+          </div>
+        </div>
+      </div>
+
+      {/* Add Month-End Milestone (Supervisors / HOD) */}
+      {(currentUser.isAdmin || ['mahasen', 'kanishka', 'hansi', 'nayomi'].includes(currentUser.id)) && (
+        <form
+          onSubmit={e => {
+            e.preventDefault();
+            if (!newTitle.trim()) return;
+            onAddItem({
+              id: `me-${Date.now()}`,
+              title: newTitle.trim(),
+              ownerId: newOwnerId,
+              targetDate: newTargetDate,
+              dependency: newDependency,
+              progress: 0,
+              status: 'pending'
+            });
+            setNewTitle('');
+          }}
+          className={`p-4 rounded-3xl border ${cardSurface} grid grid-cols-1 sm:grid-cols-5 gap-2 text-xs`}
+        >
+          <input
+            placeholder="Month-End Closing Deliverable..."
+            value={newTitle}
+            onChange={e => setNewTitle(e.target.value)}
+            className="sm:col-span-2 px-3 py-2 rounded-xl border font-bold bg-transparent"
+          />
+          <select
+            value={newOwnerId}
+            onChange={e => setNewOwnerId(e.target.value)}
+            className="px-3 py-2 rounded-xl border font-bold bg-transparent"
+          >
+            {users.map(u => (
+              <option key={u.id} value={u.id} className="text-slate-900">
+                Owner: {u.name.split(' ')[0]}
+              </option>
+            ))}
+          </select>
+          <input
+            type="date"
+            value={newTargetDate}
+            onChange={e => setNewTargetDate(e.target.value)}
+            className="px-3 py-2 rounded-xl border font-bold bg-transparent"
+          />
+          <button type="submit" className="px-4 py-2 rounded-xl bg-[#0D2B5B] text-amber-300 font-black">
+            + Add Milestone
+          </button>
+        </form>
+      )}
+
+      <div className="space-y-3">
+        {monthEndItems.map(item => {
+          const owner = users.find(u => u.id === item.ownerId);
+          return (
+            <div key={item.id} className={`p-5 rounded-3xl border ${cardSurface} space-y-3`}>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <div className="font-black text-sm">{item.title}</div>
+                  <div className="text-xs opacity-70 mt-0.5">
+                    Owner: <strong>{owner?.name}</strong> • Target Cut-Off: <strong>{item.targetDate}</strong> •{' '}
+                    <span className="text-amber-700 dark:text-amber-300 font-semibold">{item.dependency}</span>
                   </div>
                 </div>
-              )}
-
-              {/* Sub-Items One-by-One Complete or Transfer to Superior for Help */}
-              {task.subItems && task.subItems.length > 0 && (
-                <div className="space-y-1.5 pt-1 border-t border-slate-100">
-                  <div className="text-[11px] font-bold text-slate-500 uppercase">Itemized Sub-Steps</div>
-                  {task.subItems.map((sub) => (
-                    <div
-                      key={sub.id}
-                      className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-50/80 border border-slate-200/60 text-xs"
-                    >
-                      <button
-                        onClick={() => onToggleSubItem(task.id, sub.id)}
-                        className="flex items-center gap-2 text-left flex-1 min-w-[200px]"
-                      >
-                        {sub.done ? (
-                          <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0" />
-                        ) : (
-                          <Square className="w-4 h-4 text-slate-400 shrink-0" />
-                        )}
-                        <span className={sub.done ? 'line-through text-slate-400' : 'font-medium text-slate-800'}>
-                          {sub.label}
-                        </span>
-                      </button>
-
-                      {sub.needsHelp ? (
-                        <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[10px] font-bold">
-                          Help Escalated • {getSlaAgingLabel(sub.escalatedAt) || 'Pending'}
-                        </span>
-                      ) : (
-                        !sub.done && (
-                          <div className="flex items-center gap-1.5">
-                            <input
-                              type="text"
-                              value={helpReasons[sub.id] || ''}
-                              onChange={(e) => setHelpReasons((p) => ({ ...p, [sub.id]: e.target.value }))}
-                              placeholder="Need help reason..."
-                              className="text-[11px] border border-slate-200 rounded-lg px-2 py-1 bg-white w-36"
-                            />
-                            <button
-                              onClick={() =>
-                                onEscalateSubItem(task.id, sub.id, helpReasons[sub.id] || 'Needs superior support')
-                              }
-                              className="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-950 text-[11px] font-bold hover:bg-amber-200 transition"
-                            >
-                              Help → Superior
-                            </button>
-                          </div>
-                        )
-                      )}
-                    </div>
-                  ))}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-black text-[#0D2B5B] dark:text-amber-300">{item.progress}%</span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="5"
+                    value={item.progress}
+                    onChange={e => onUpdateProgress(item.id, Number(e.target.value))}
+                    className="accent-[#0D2B5B]"
+                  />
                 </div>
-              )}
-
-              {/* Handover Job to Another Colleague */}
-              <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center gap-2 text-xs">
-                <span className="font-bold text-slate-600 inline-flex items-center gap-1">
-                  <ArrowRightLeft className="w-3.5 h-3.5 text-[#0F296B]" />
-                  Hand Over Job:
-                </span>
-                <select
-                  value={handoverTarget[task.id] || ''}
-                  onChange={(e) => setHandoverTarget((p) => ({ ...p, [task.id]: e.target.value }))}
-                  className="border border-slate-200 rounded-lg px-2 py-1 bg-white text-xs"
-                >
-                  <option value="">Select teammate...</option>
-                  {employees
-                    .filter((e) => e.id !== currentUser.id)
-                    .map((e) => (
-                      <option key={e.id} value={e.id}>
-                        {e.name} ({e.shortName})
-                      </option>
-                    ))}
-                </select>
-                <input
-                  type="text"
-                  value={handoverNote[task.id] || ''}
-                  onChange={(e) => setHandoverNote((p) => ({ ...p, [task.id]: e.target.value }))}
-                  placeholder="Handover note..."
-                  className="border border-slate-200 rounded-lg px-2 py-1 bg-white text-xs flex-1 min-w-[140px]"
+              </div>
+              <div className="w-full h-2.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+                <div
+                  style={{ width: `${item.progress}%` }}
+                  className="h-full bg-gradient-to-r from-[#0D2B5B] to-amber-400 rounded-full transition-all"
                 />
-                <button
-                  onClick={() => {
-                    onHandoverTask(task.id, handoverTarget[task.id], handoverNote[task.id]);
-                    setHandoverNote((p) => ({ ...p, [task.id]: '' }));
-                  }}
-                  className="px-3 py-1 rounded-lg bg-[#0F296B] text-white font-bold text-xs hover:bg-blue-900 transition"
-                >
-                  Transfer
-                </button>
               </div>
             </div>
           );
@@ -2735,612 +3413,830 @@ function MyTasksView({
 }
 
 // ============================================================================
-// STATEMENT ALLOCATION (SAMPATH 09810004042 & SEYLAN 013012776905002)
+// 8. BANK RECONCILIATIONS PORTAL (81 Accounts + Variance Tags + Remarks)
 // ============================================================================
 
-function StatementAllocationView({ currentUser, employees, statements, setStatements, cardSurface, pushNotification }) {
-  const [accountKey, setAccountKey] = useState('sampath'); // sampath | seylan
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sideFilter, setSideFilter] = useState('All'); // All | Debit | Credit | Unallocated | Highlighted
-  const [minAmount, setMinAmount] = useState('');
-  const [maxAmount, setMaxAmount] = useState('');
-  const [bulkAssignee, setBulkAssignee] = useState('emp-dinithi');
-  const [selectedIds, setSelectedIds] = useState([]);
-  const [lastClickedIdx, setLastClickedIdx] = useState(null);
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [pendingReasonInput, setPendingReasonInput] = useState({});
-  const [escalationInput, setEscalationInput] = useState({});
-  const fileInputRef = useRef(null);
+function BankReconciliationPortal({
+  currentUser,
+  users,
+  bankRecs,
+  darkMode,
+  eyeCareMode,
+  onToggleRec,
+  onUpdateRemark,
+  onUpdateTag,
+  onReassignRec
+}) {
+  const [filterStaff, setFilterStaff] = useState(currentUser.isAdmin ? 'all' : currentUser.id);
+  const [filterTag, setFilterTag] = useState('all');
+  const cardSurface = darkMode
+    ? 'bg-[#0F1B33] border-slate-800'
+    : eyeCareMode
+    ? 'bg-white border-amber-200/70 shadow-sm'
+    : 'bg-white border-slate-200 shadow-sm';
 
-  const activeStmt = statements[accountKey];
-
-  const filteredEntries = useMemo(() => {
-    return activeStmt.entries.filter((row) => {
-      if (sideFilter === 'Debit' && row.side !== 'Debit') return false;
-      if (sideFilter === 'Credit' && row.side !== 'Credit') return false;
-      if (sideFilter === 'Unallocated' && row.assignedTo) return false;
-      if (sideFilter === 'Highlighted' && !row.highlighted) return false;
-
-      if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
-        const hit =
-          String(row.ref).toLowerCase().includes(q) ||
-          String(row.description).toLowerCase().includes(q) ||
-          String(row.note || '').toLowerCase().includes(q) ||
-          String(row.date).toLowerCase().includes(q);
-        if (!hit) return false;
-      }
-
-      if (minAmount && Number(row.amount) < Number(minAmount)) return false;
-      if (maxAmount && Number(row.amount) > Number(maxAmount)) return false;
-      return true;
-    });
-  }, [activeStmt.entries, sideFilter, searchQuery, minAmount, maxAmount]);
-
-  const myAssignedEntries = useMemo(() => {
-    return [...statements.sampath.entries, ...statements.seylan.entries].filter((e) => e.assignedTo === currentUser.id);
-  }, [statements, currentUser.id]);
-
-  const [mySelectedIds, setMySelectedIds] = useState([]);
-
-  const updateEntriesForAccount = (accKey, updater) => {
-    setStatements((prev) => ({
-      ...prev,
-      [accKey]: {
-        ...prev[accKey],
-        entries: updater(prev[accKey].entries)
-      }
-    }));
-  };
-
-  const handleFileUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const buffer = await file.arrayBuffer();
-    const parsedRows = parseBankStatementWorkbook(buffer, activeStmt.accountNo);
-    if (parsedRows.length > 0) {
-      setStatements((prev) => ({
-        ...prev,
-        [accountKey]: {
-          ...prev[accountKey],
-          fileName: file.name,
-          uploadedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          entries: parsedRows
-        }
-      }));
-      setSelectedIds([]);
-      pushNotification(
-        'all',
-        `Statement Uploaded: ${file.name}`,
-        `Parsed ${parsedRows.length} transactions for Account ${activeStmt.accountNo}.`
-      );
-    }
-    e.target.value = '';
-  };
-
-  const handleRowCheckbox = (idx, rowId, shiftKey) => {
-    if (shiftKey && lastClickedIdx !== null) {
-      const start = Math.min(lastClickedIdx, idx);
-      const end = Math.max(lastClickedIdx, idx);
-      const rangeIds = filteredEntries.slice(start, end + 1).map((r) => r.id);
-      setSelectedIds((prev) => Array.from(new Set([...prev, ...rangeIds])));
-    } else {
-      setSelectedIds((prev) => (prev.includes(rowId) ? prev.filter((id) => id !== rowId) : [...prev, rowId]));
-    }
-    setLastClickedIdx(idx);
-  };
-
-  const handleAssignOne = (rowId, empId) => {
-    updateEntriesForAccount(accountKey, (rows) =>
-      rows.map((r) => (r.id === rowId ? { ...r, assignedTo: empId, acknowledged: false, completed: false, approved: false } : r))
-    );
-    if (empId) {
-      pushNotification(empId, `New Statement Entry Assigned (${activeStmt.accountNo})`, 'Open Statement Allocation to acknowledge.');
-    }
-  };
-
-  const handleAssignSelected = (idsToAssign, empId) => {
-    if (!empId || idsToAssign.length === 0) return;
-    updateEntriesForAccount(accountKey, (rows) =>
-      rows.map((r) =>
-        idsToAssign.includes(r.id) ? { ...r, assignedTo: empId, acknowledged: false, completed: false, approved: false } : r
-      )
-    );
-    pushNotification(
-      empId,
-      `${idsToAssign.length} Statement Entries Assigned (${activeStmt.accountNo})`,
-      `Assigned by ${currentUser.shortName}.`
-    );
-    setSelectedIds([]);
-  };
-
-  const handleApplySuggestedAssignees = () => {
-    updateEntriesForAccount(accountKey, (rows) =>
-      rows.map((r) => {
-        if (r.assignedTo) return r;
-        const suggested = getSuggestedAssignee(r.description, r.side);
-        return { ...r, assignedTo: suggested };
-      })
-    );
-  };
-
-  const handleAssigneeBulkAction = (actionType) => {
-    const targetIds = mySelectedIds.length > 0 ? mySelectedIds : myAssignedEntries.map((e) => e.id);
-    if (targetIds.length === 0) return;
-    const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const superiorId = currentUser.supervisorId || 'emp-mahasen';
-
-    ['sampath', 'seylan'].forEach((accKey) => {
-      updateEntriesForAccount(accKey, (rows) =>
-        rows.map((r) => {
-          if (!targetIds.includes(r.id)) return r;
-          if (actionType === 'ack') return { ...r, acknowledged: true, ackAt: r.ackAt || nowTime };
-          if (actionType === 'complete') return { ...r, acknowledged: true, ackAt: r.ackAt || nowTime, completed: true };
-          if (actionType === 'escalate') {
-            return {
-              ...r,
-              escalatedToSuperior: true,
-              escalatedAt: Date.now(),
-              escalationReason: escalationInput[r.id] || 'Transferred to superior for guidance'
-            };
-          }
-          return r;
-        })
-      );
-    });
-
-    if (actionType === 'escalate') {
-      pushNotification(
-        superiorId,
-        `Entry Escalated by ${currentUser.shortName}`,
-        `${targetIds.length} statement entry/entries transferred to superior for help.`
-      );
-    }
-    setMySelectedIds([]);
-  };
-
-  const getStatusStageBadge = (row) => {
-    if (row.approved) return <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">Approved</span>;
-    if (row.completed) return <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 text-[10px] font-bold">Completed</span>;
-    if (row.acknowledged) return <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[10px] font-bold">Acknowledged</span>;
-    return <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold">Assigned</span>;
-  };
+  const visibleRecs = bankRecs.filter(r => {
+    if (filterStaff !== 'all' && r.userId !== filterStaff) return false;
+    if (filterTag !== 'all' && r.tag !== filterTag) return false;
+    return true;
+  });
+  const doneCount = visibleRecs.filter(r => r.status === 'completed').length;
 
   return (
-    <div className="space-y-4">
-      {/* Header & Account Switcher */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="space-y-5">
+      <div className={`p-5 rounded-3xl border ${cardSurface} flex flex-wrap items-center justify-between gap-3`}>
         <div>
-          <h1 className="text-lg font-extrabold text-[#0F296B]">Bank Statement Allocation</h1>
-          <p className="text-xs text-slate-500">
-            Sampath (09810004042) & Seylan (013012776905002) — Shift+Click range select, smart suggestions, 1-click filtered assign & bulk actions.
+          <h2 className="text-lg font-black text-[#0D2B5B] dark:text-amber-300">
+            Bank Reconciliations ({doneCount} / {visibleRecs.length} Completed)
+          </h2>
+          <p className="text-xs opacity-70">
+            Mark accounts complete, tag variance status ({REC_VARIANCE_TAGS.join(', ')}), and record remarks anytime.
           </p>
         </div>
-
-        <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex bg-white border border-slate-200 rounded-xl p-1">
-            <button
-              onClick={() => setAccountKey('sampath')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
-                accountKey === 'sampath' ? 'bg-[#0F296B] text-white' : 'text-slate-600'
-              }`}
-            >
-              Sampath • 09810004042
-            </button>
-            <button
-              onClick={() => setAccountKey('seylan')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
-                accountKey === 'seylan' ? 'bg-[#0F296B] text-white' : 'text-slate-600'
-              }`}
-            >
-              Seylan • 013012776905002
-            </button>
-          </div>
-
-          <input ref={fileInputRef} type="file" accept=".xlsx,.xls,.csv" onChange={handleFileUpload} className="hidden" />
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-400 text-[#0F296B] text-xs font-extrabold hover:bg-amber-300 transition"
-          >
-            <Upload className="w-3.5 h-3.5" />
-            <span>Upload Statement (.xlsx/.csv)</span>
-          </button>
-
-          <button
-            onClick={() => setPreviewOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-800 text-xs font-bold hover:bg-slate-50"
-          >
-            <Maximize2 className="w-3.5 h-3.5" />
-            <span>Full Preview</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Search, Amount Range, Quick Filters & Smart Assignee Toolbar */}
-      <div className={`${cardSurface} rounded-2xl p-4 space-y-3`}>
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-2.5">
-          <div className="md:col-span-2 relative">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search ref, narration keyword, note..."
-              className="w-full pl-8 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg bg-white"
-            />
-          </div>
-          <input
-            type="number"
-            value={minAmount}
-            onChange={(e) => setMinAmount(e.target.value)}
-            placeholder="Min Rs."
-            className="text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 bg-white"
-          />
-          <input
-            type="number"
-            value={maxAmount}
-            onChange={(e) => setMaxAmount(e.target.value)}
-            placeholder="Max Rs."
-            className="text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 bg-white"
-          />
+        <div className="flex flex-wrap gap-2">
           <select
-            value={sideFilter}
-            onChange={(e) => setSideFilter(e.target.value)}
-            className="text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 bg-white font-semibold"
+            value={filterTag}
+            onChange={e => setFilterTag(e.target.value)}
+            className="px-3 py-2 rounded-xl border text-xs font-extrabold bg-transparent"
           >
-            <option value="All">All Rows ({activeStmt.entries.length})</option>
-            <option value="Debit">Debit Only</option>
-            <option value="Credit">Credit Only</option>
-            <option value="Unallocated">Not Allocated Only</option>
-            <option value="Highlighted">Highlighted Only</option>
+            <option value="all" className="text-slate-900">All Variance Tags</option>
+            {REC_VARIANCE_TAGS.map(t => (
+              <option key={t} value={t} className="text-slate-900">{t}</option>
+            ))}
+          </select>
+          <select
+            value={filterStaff}
+            onChange={e => setFilterStaff(e.target.value)}
+            className="px-3 py-2 rounded-xl border text-xs font-extrabold bg-transparent"
+          >
+            <option value="all" className="text-slate-900">All 81 Accounts</option>
+            {users.map(u => (
+              <option key={u.id} value={u.id} className="text-slate-900">
+                {u.name} ({bankRecs.filter(r => r.userId === u.id).length})
+              </option>
+            ))}
           </select>
         </div>
-
-        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs">
-          <div className="flex items-center gap-2 flex-wrap">
-            <select
-              value={bulkAssignee}
-              onChange={(e) => setBulkAssignee(e.target.value)}
-              className="border border-slate-200 rounded-lg px-2.5 py-1.5 bg-white font-semibold"
-            >
-              {employees.map((emp) => (
-                <option key={emp.id} value={emp.id}>
-                  {emp.name}
-                </option>
-              ))}
-            </select>
-            <button
-              onClick={() => handleAssignSelected(selectedIds, bulkAssignee)}
-              className="px-3 py-1.5 rounded-lg bg-[#0F296B] text-white font-bold hover:bg-blue-900"
-            >
-              Assign Selected ({selectedIds.length})
-            </button>
-            <button
-              onClick={() => handleAssignSelected(filteredEntries.map((r) => r.id), bulkAssignee)}
-              className="px-3 py-1.5 rounded-lg bg-blue-50 text-[#0F296B] border border-blue-200 font-bold hover:bg-blue-100"
-            >
-              1-Click Assign Filtered ({filteredEntries.length})
-            </button>
-          </div>
-
-          <button
-            onClick={handleApplySuggestedAssignees}
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-amber-50 text-amber-950 border border-amber-200 font-bold hover:bg-amber-100"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-            <span>Apply Smart Suggestions</span>
-          </button>
-        </div>
       </div>
 
-      {/* Main Statement Allocation Table */}
-      <div className={`${cardSurface} rounded-2xl overflow-hidden`}>
-        <div className="px-4 py-2.5 bg-slate-50 border-b border-slate-200/70 flex items-center justify-between text-[11px] text-slate-600">
-          <span>
-            File: <strong>{activeStmt.fileName}</strong> • Uploaded: {activeStmt.uploadedAt}
-          </span>
-          <span>Tip: Hold <strong>Shift + Click</strong> on checkboxes to select a range like Excel.</span>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {visibleRecs.map(rec => {
+          const owner = users.find(u => u.id === rec.userId);
+          const isDone = rec.status === 'completed';
+          return (
+            <div
+              key={rec.id}
+              className={`p-4 rounded-2xl border ${
+                isDone ? 'border-emerald-300 bg-emerald-50/30 dark:bg-emerald-950/10' : cardSurface
+              } space-y-2.5`}
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <div className="font-black text-xs text-[#0D2B5B] dark:text-amber-300">{rec.account}</div>
+                  <div className="text-[11px] opacity-70">Assigned: {owner?.name}</div>
+                </div>
+                <button
+                  onClick={() => onToggleRec(rec.id)}
+                  className={`px-3 py-1 rounded-xl text-[11px] font-black transition ${
+                    isDone ? 'bg-emerald-600 text-white' : 'bg-amber-400 text-[#0D2B5B]'
+                  }`}
+                >
+                  {isDone ? 'Completed ✓' : 'Mark Complete'}
+                </button>
+              </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr className="bg-slate-50/70 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase">
-                <th className="p-2.5 w-8">
-                  <input
-                    type="checkbox"
-                    checked={filteredEntries.length > 0 && filteredEntries.every((r) => selectedIds.includes(r.id))}
-                    onChange={(e) =>
-                      setSelectedIds(e.target.checked ? filteredEntries.map((r) => r.id) : [])
-                    }
-                  />
-                </th>
-                <th className="p-2.5">Date & Ref</th>
-                <th className="p-2.5">Side</th>
-                <th className="p-2.5 text-right">Amount (Rs.)</th>
-                <th className="p-2.5">Transaction Description & Note</th>
-                <th className="p-2.5">Assignee (Suggested)</th>
-                <th className="p-2.5">Stage</th>
-                <th className="p-2.5 text-center">Highlight</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {filteredEntries.map((row, idx) => {
-                const isUnallocDebit = row.side === 'Debit' && !row.assignedTo;
-                const suggestedId = getSuggestedAssignee(row.description, row.side);
-                const suggestedEmp = employees.find((e) => e.id === suggestedId);
-
-                return (
-                  <tr
-                    key={row.id}
-                    className={`${
-                      row.highlighted
-                        ? 'bg-amber-50/60'
-                        : isUnallocDebit
-                        ? 'bg-rose-50/50'
-                        : 'hover:bg-slate-50/70'
+              {/* Quick Variance / Unreconciled Tag Selector */}
+              <div className="flex flex-wrap gap-1">
+                {REC_VARIANCE_TAGS.map(tag => (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => onUpdateTag(rec.id, tag)}
+                    className={`px-2 py-0.5 rounded-lg text-[10px] font-extrabold border transition ${
+                      rec.tag === tag
+                        ? 'bg-[#0D2B5B] text-amber-300 border-[#0D2B5B]'
+                        : 'border-slate-200 dark:border-slate-700 opacity-65 hover:opacity-100'
                     }`}
                   >
-                    <td className="p-2.5">
-                      <input
-                        type="checkbox"
-                        checked={selectedIds.includes(row.id)}
-                        onClick={(e) => handleRowCheckbox(idx, row.id, e.shiftKey)}
-                        onChange={() => {}}
-                      />
-                    </td>
-                    <td className="p-2.5 whitespace-nowrap">
-                      <div className="font-bold text-slate-800">{row.date}</div>
-                      <div className="text-[11px] text-slate-500">{row.ref}</div>
-                    </td>
-                    <td className="p-2.5 whitespace-nowrap">
-                      <span
-                        className={`px-2 py-0.5 rounded-md text-[11px] font-bold ${
-                          row.side === 'Debit' ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'
-                        }`}
-                      >
-                        {row.side}
-                      </span>
-                    </td>
-                    <td className="p-2.5 text-right font-extrabold text-slate-900 whitespace-nowrap">
-                      {Number(row.amount || 0).toLocaleString()}
-                    </td>
-                    <td className="p-2.5 min-w-[240px] space-y-1">
-                      <div className="font-semibold text-slate-800">{row.description}</div>
-                      {isUnallocDebit && (
-                        <div className="text-[10px] font-bold text-rose-700 flex items-center gap-1">
-                          <AlertTriangle className="w-3 h-3" />
-                          <span>Not Allocated Debit — Supervisor Alert</span>
-                        </div>
-                      )}
-                      <input
-                        type="text"
-                        value={row.note || ''}
-                        onChange={(e) =>
-                          updateEntriesForAccount(accountKey, (rows) =>
-                            rows.map((item) => (item.id === row.id ? { ...item, note: e.target.value } : item))
-                          )
-                        }
-                        placeholder="Add special note..."
-                        className="w-full text-[11px] border border-slate-200/80 rounded-md px-2 py-1 bg-white"
-                      />
-                    </td>
-                    <td className="p-2.5">
-                      <select
-                        value={row.assignedTo || ''}
-                        onChange={(e) => handleAssignOne(row.id, e.target.value)}
-                        className={`text-xs border rounded-lg px-2 py-1.5 font-semibold bg-white ${
-                          isUnallocDebit ? 'border-rose-300 text-rose-800' : 'border-slate-200 text-slate-800'
-                        }`}
-                      >
-                        <option value="">-- Not Allocated --</option>
-                        {employees.map((emp) => (
-                          <option key={emp.id} value={emp.id}>
-                            {emp.name}
-                          </option>
-                        ))}
-                      </select>
-                      {!row.assignedTo && suggestedEmp && (
-                        <button
-                          onClick={() => handleAssignOne(row.id, suggestedEmp.id)}
-                          className="block mt-1 text-[10px] font-bold text-blue-700 hover:underline"
-                        >
-                          Suggest: {suggestedEmp.shortName}
-                        </button>
-                      )}
-                    </td>
-                    <td className="p-2.5 whitespace-nowrap">
-                      <div className="space-y-1">
-                        {getStatusStageBadge(row)}
-                        {row.escalatedToSuperior && (
-                          <div className="text-[10px] font-bold text-amber-800">
-                            Escalated ({getSlaAgingLabel(row.escalatedAt) || 'Pending'})
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                    <td className="p-2.5 text-center">
-                      <button
-                        onClick={() =>
-                          updateEntriesForAccount(accountKey, (rows) =>
-                            rows.map((item) => (item.id === row.id ? { ...item, highlighted: !item.highlighted } : item))
-                          )
-                        }
-                        className={`p-1.5 rounded-lg ${row.highlighted ? 'text-amber-500 bg-amber-100/70' : 'text-slate-300 hover:text-amber-400'}`}
-                      >
-                        <Star className="w-4 h-4 fill-current" />
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Assignee Bulk & One-by-One Execution Queue */}
-      <div className={`${cardSurface} rounded-2xl p-4 space-y-3`}>
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <h2 className="text-sm font-extrabold text-[#0F296B]">
-              My Allocated Entries ({myAssignedEntries.length}) — {currentUser.shortName}
-            </h2>
-            <p className="text-xs text-slate-500">Acknowledge, mark complete, log pending reason, or transfer to superior for help.</p>
-          </div>
-          <div className="flex items-center gap-2 flex-wrap">
-            <button
-              onClick={() => handleAssigneeBulkAction('ack')}
-              className="px-3 py-1.5 rounded-lg bg-amber-400 text-[#0F296B] text-xs font-extrabold"
-            >
-              Bulk Acknowledge
-            </button>
-            <button
-              onClick={() => handleAssigneeBulkAction('complete')}
-              className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold"
-            >
-              Bulk Complete
-            </button>
-            <button
-              onClick={() => handleAssigneeBulkAction('escalate')}
-              className="px-3 py-1.5 rounded-lg bg-rose-600 text-white text-xs font-bold"
-            >
-              Transfer to Superior (Help)
-            </button>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          {myAssignedEntries.map((entry) => (
-            <div
-              key={entry.id}
-              className="p-3 rounded-xl bg-slate-50 border border-slate-200/70 flex flex-wrap items-center justify-between gap-3 text-xs"
-            >
-              <div className="flex items-start gap-2.5 min-w-[240px] flex-1">
-                <input
-                  type="checkbox"
-                  checked={mySelectedIds.includes(entry.id)}
-                  onChange={(e) =>
-                    setMySelectedIds((prev) =>
-                      e.target.checked ? [...prev, entry.id] : prev.filter((id) => id !== entry.id)
-                    )
-                  }
-                  className="mt-1"
-                />
-                <div>
-                  <div className="font-bold text-slate-800">
-                    {entry.side} • Rs. {Number(entry.amount || 0).toLocaleString()} ({entry.ref})
-                  </div>
-                  <div className="text-slate-600">{entry.description}</div>
-                  {entry.escalatedToSuperior && (
-                    <div className="text-[11px] font-bold text-rose-700 mt-0.5">
-                      Escalated to Superior • {getSlaAgingLabel(entry.escalatedAt)} — {entry.escalationReason}
-                    </div>
-                  )}
-                </div>
+                    {tag}
+                  </button>
+                ))}
               </div>
 
-              <div className="flex items-center gap-2 flex-wrap">
-                {getStatusStageBadge(entry)}
+              <input
+                type="text"
+                placeholder="Status remark / pending reason..."
+                value={rec.remark}
+                onChange={e => onUpdateRemark(rec.id, e.target.value)}
+                className="w-full px-3 py-1.5 rounded-xl border text-xs font-medium bg-transparent"
+              />
+
+              {currentUser.isAdmin && (
+                <select
+                  value={rec.userId}
+                  onChange={e => onReassignRec(rec.id, e.target.value)}
+                  className="w-full px-2.5 py-1 rounded-xl border text-[11px] font-bold bg-transparent"
+                >
+                  {users.map(u => (
+                    <option key={u.id} value={u.id} className="text-slate-900">
+                      Reassign to: {u.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// 9. DAILY ENTRIES ALLOCATION PORTAL (Search, Smart Suggest, 1-Click Assign Filtered)
+// ============================================================================
+
+function DailyEntriesAllocationPortal({
+  currentUser,
+  users,
+  darkMode,
+  eyeCareMode,
+  allocatedEntries,
+  onPublishAllocations,
+  onAcknowledgeOne,
+  onAcknowledgeAll,
+  onCompleteEntries,
+  onSetPendingReason,
+  onEscalateEntries
+}) {
+  const todayStr = '2026-11-23';
+  const [selectedBank, setSelectedBank] = useState('Sampath Bank - 09810004042 (HO Main)');
+  const [statementFile, setStatementFile] = useState('09810004042.xlsx');
+  const [showFullPreview, setShowFullPreview] = useState(false);
+
+  // Instant Search, Amount Range & Side Filters
+  const [rowFilter, setRowFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [minAmount, setMinAmount] = useState('');
+  const [maxAmount, setMaxAmount] = useState('');
+
+  const [bulkAssigneeId, setBulkAssigneeId] = useState('dinithi');
+  const [lastCheckedIdx, setLastCheckedIdx] = useState(null);
+  const [mySelectedIds, setMySelectedIds] = useState([]);
+
+  const [statementRows, setStatementRows] = useState([
+    {
+      id: 'sr-1',
+      date: todayStr,
+      ref: 'SMP-0981-01',
+      side: 'Debit',
+      amount: 145000,
+      balance: 2845000,
+      desc: 'CEFTS TRF / LOAN DISB VOUCHER 4412 - K. PERERA',
+      selected: false,
+      assigneeId: 'dinithi',
+      highlighted: true,
+      specialNote: 'Slip attached by Dinithi'
+    },
+    {
+      id: 'sr-2',
+      date: todayStr,
+      ref: 'SMP-0981-02',
+      side: 'Debit',
+      amount: 68500,
+      balance: 2776500,
+      desc: 'SLIPS PYMT / METROPOLITAN OFFICE SUPPLIES INV-892',
+      selected: false,
+      assigneeId: 'charuka',
+      highlighted: false,
+      specialNote: ''
+    },
+    {
+      id: 'sr-3',
+      date: todayStr,
+      ref: 'SMP-0981-03',
+      side: 'Debit',
+      amount: 32000,
+      balance: 2744500,
+      desc: 'IBFT DR / REF 8891 UNIDENTIFIED BRANCH TRF',
+      selected: false,
+      assigneeId: '',
+      highlighted: true,
+      specialNote: 'Verify branch before assigning'
+    },
+    {
+      id: 'sr-4',
+      date: todayStr,
+      ref: 'SEY-5002-01',
+      side: 'Debit',
+      amount: 95000,
+      balance: 4120000,
+      desc: 'RTGS / CORPORATE FD INTEREST & WHT REMITTANCE',
+      selected: false,
+      assigneeId: 'shani',
+      highlighted: false,
+      specialNote: 'Shani WHT schedule'
+    },
+    {
+      id: 'sr-5',
+      date: todayStr,
+      ref: 'SEY-5002-02',
+      side: 'Credit',
+      amount: 420000,
+      balance: 4540000,
+      desc: 'CASH DEP / KURUNEGALA BRANCH COLLECTION 0098',
+      selected: false,
+      assigneeId: 'gayodya',
+      highlighted: false,
+      specialNote: ''
+    }
+  ]);
+
+  const cardSurface = darkMode
+    ? 'bg-[#0F1B33] border-slate-800'
+    : eyeCareMode
+    ? 'bg-white border-amber-200/70 shadow-sm'
+    : 'bg-white border-slate-200 shadow-sm';
+  const canAllocate = currentUser.id === 'shani' || currentUser.isAdmin;
+  const rowPadding = eyeCareMode ? 'py-3.5 px-2.5' : 'p-2.5';
+
+  // Real Binary Excel (.xlsx) & CSV Parser via SheetJS
+  const handleStatementFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setStatementFile(file.name);
+    if (file.name.includes('013012776905002')) {
+      setSelectedBank('Seylan Bank - 013012776905002 (HO2)');
+    } else if (file.name.includes('09810004042')) {
+      setSelectedBank('Sampath Bank - 09810004042 (HO Main)');
+    }
+    try {
+      const XLSX = await import('https://cdn.sheetjs.com/xlsx-0.20.2/package/xlsx.mjs');
+      const buffer = await file.arrayBuffer();
+      const workbook = XLSX.read(buffer, { type: 'array' });
+      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rawMatrix = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: '' });
+
+      const headerRowIdx = rawMatrix.findIndex(
+        row =>
+          Array.isArray(row) &&
+          row.some(cell => /date|txn|value/i.test(String(cell))) &&
+          row.some(cell => /desc|narr|partic|detail|debit|credit|withdraw|deposit|amount/i.test(String(cell)))
+      );
+
+      let jsonRows = [];
+      if (headerRowIdx >= 0) {
+        const headers = rawMatrix[headerRowIdx].map((h, i) => String(h || `Col_${i}`).trim());
+        jsonRows = rawMatrix.slice(headerRowIdx + 1).map(r => {
+          const obj = {};
+          headers.forEach((h, i) => {
+            obj[h] = r[i] ?? '';
+          });
+          return obj;
+        });
+      } else {
+        jsonRows = XLSX.utils.sheet_to_json(firstSheet, { defval: '' });
+      }
+
+      if (jsonRows.length > 0) {
+        const parsed = jsonRows
+          .map((row, idx) => {
+            const keys = Object.keys(row);
+            const dateKey = keys.find(k => /date|value/i.test(k)) || keys[0];
+            const refKey = keys.find(k => /ref|cheque|chq|doc|no/i.test(k));
+            const descKey = keys.find(k => /desc|narr|partic|detail|remark|memo/i.test(k)) || keys[1] || keys[0];
+            const debitKey = keys.find(k => /debit|dr|withd|payment/i.test(k));
+            const creditKey = keys.find(k => /credit|cr|depos|receipt/i.test(k));
+            const balKey = keys.find(k => /bal|running/i.test(k));
+            const amtKey = keys.find(k => /amount|amt|value/i.test(k));
+
+            const rawDebit = debitKey ? Number(String(row[debitKey]).replace(/[^0-9.-]/g, '')) : 0;
+            const rawCredit = creditKey ? Number(String(row[creditKey]).replace(/[^0-9.-]/g, '')) : 0;
+            const rawAmt = amtKey ? Number(String(row[amtKey]).replace(/[^0-9.-]/g, '')) : 0;
+            const rawBal = balKey ? Number(String(row[balKey]).replace(/[^0-9.-]/g, '')) : null;
+
+            const descText = String(row[descKey] || '').replace(/[^\x20-\x7E]/g, ' ').trim();
+            if (/opening balance|closing balance|total|brought forward|carried forward/i.test(descText)) return null;
+
+            const side = rawCredit > 0 && rawDebit <= 0 ? 'Credit' : 'Debit';
+            const amount = Math.abs(rawDebit || rawCredit || rawAmt);
+            if (!descText && amount === 0) return null;
+
+            return {
+              id: `sr-xlsx-${Date.now()}-${idx}`,
+              date: String(row[dateKey] || todayStr).slice(0, 15),
+              ref: refKey && row[refKey] ? String(row[refKey]).trim() : `TXN-${100 + idx}`,
+              side,
+              amount: amount || 0,
+              balance: rawBal !== null && !Number.isNaN(rawBal) ? rawBal : null,
+              desc: descText || `Bank Transaction #${idx + 1}`,
+              selected: false,
+              assigneeId: '',
+              highlighted: false,
+              specialNote: ''
+            };
+          })
+          .filter(Boolean);
+
+        if (parsed.length > 0) {
+          setStatementRows(parsed);
+        }
+      }
+    } catch {
+      // Fallback handled silently
+    }
+  };
+
+  const visibleRows = statementRows.filter(r => {
+    if (rowFilter === 'debit' && r.side !== 'Debit') return false;
+    if (rowFilter === 'credit' && r.side !== 'Credit') return false;
+    if (rowFilter === 'unallocated' && r.assigneeId) return false;
+    if (rowFilter === 'highlighted' && !r.highlighted) return false;
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      const match =
+        r.desc.toLowerCase().includes(q) ||
+        r.ref.toLowerCase().includes(q) ||
+        (r.specialNote || '').toLowerCase().includes(q);
+      if (!match) return false;
+    }
+    if (minAmount !== '' && r.amount < Number(minAmount)) return false;
+    if (maxAmount !== '' && r.amount > Number(maxAmount)) return false;
+    return true;
+  });
+
+  const handleRowCheck = (visibleIdx, isShift) => {
+    const targetId = visibleRows[visibleIdx].id;
+    if (isShift && lastCheckedIdx !== null) {
+      const start = Math.min(lastCheckedIdx, visibleIdx);
+      const end = Math.max(lastCheckedIdx, visibleIdx);
+      const rangeIds = new Set(visibleRows.slice(start, end + 1).map(r => r.id));
+      setStatementRows(prev => prev.map(r => (rangeIds.has(r.id) ? { ...r, selected: true } : r)));
+    } else {
+      setStatementRows(prev => prev.map(r => (r.id === targetId ? { ...r, selected: !r.selected } : r)));
+      setLastCheckedIdx(visibleIdx);
+    }
+  };
+
+  const handleBulkAssignSelected = () => {
+    setStatementRows(prev =>
+      prev.map(r => (r.selected ? { ...r, assigneeId: bulkAssigneeId, selected: false } : r))
+    );
+  };
+
+  const handleAssignAllFiltered = () => {
+    const visibleIds = new Set(visibleRows.map(r => r.id));
+    setStatementRows(prev =>
+      prev.map(r => (visibleIds.has(r.id) ? { ...r, assigneeId: bulkAssigneeId, selected: false } : r))
+    );
+  };
+
+  const unallocatedDebits = statementRows.filter(r => r.side === 'Debit' && !r.assigneeId);
+  const myEntries = allocatedEntries.filter(e => e.assigneeId === currentUser.id);
+
+  return (
+    <div className="space-y-5">
+      {/* Unallocated Debit Alert Banner for Superiors */}
+      {unallocatedDebits.length > 0 && (
+        <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 text-rose-800 dark:text-rose-200 text-xs font-bold flex items-center justify-between">
+          <span>
+            Attention: {unallocatedDebits.length} Debit transaction(s) are currently NOT ALLOCATED and remain visible to Superiors until assigned.
+          </span>
+        </div>
+      )}
+
+      {/* Shani / HOD Statement Upload & Allocation Console */}
+      {canAllocate && (
+        <div className={`p-5 rounded-3xl border ${cardSurface} space-y-4`}>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-black text-[#0D2B5B] dark:text-amber-300">
+                Statement Transaction Allocation (Sampath 09810004042 &amp; Seylan 013012776905002)
+              </h2>
+              <p className="text-xs opacity-70">
+                Search by Ref/Cheque/Narration/Amount, use Smart Rule Suggestions, or assign One-by-One / Bulk (`Shift+Click` or `Assign Filtered`).
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <select
+                value={selectedBank}
+                onChange={e => setSelectedBank(e.target.value)}
+                className="px-3 py-2 rounded-xl border text-xs font-extrabold bg-transparent"
+              >
+                <option value="Sampath Bank - 09810004042 (HO Main)" className="text-slate-900">
+                  Sampath Bank - 09810004042 (HO Main)
+                </option>
+                <option value="Seylan Bank - 013012776905002 (HO2)" className="text-slate-900">
+                  Seylan Bank - 013012776905002 (HO2)
+                </option>
+              </select>
+
+              <label className="px-4 py-2 rounded-xl bg-amber-400 text-[#0D2B5B] font-black text-xs cursor-pointer hover:bg-amber-300 transition flex items-center gap-1.5">
+                <Upload className="w-3.5 h-3.5" />
+                <span>Attach Statement</span>
+                <input type="file" accept=".xlsx,.xls,.csv" onChange={handleStatementFileUpload} className="hidden" />
+              </label>
+
+              <button
+                onClick={() => setShowFullPreview(true)}
+                className="px-4 py-2 rounded-xl bg-[#0D2B5B] text-white font-extrabold text-xs hover:bg-blue-900 transition"
+              >
+                Full Preview ({statementFile})
+              </button>
+            </div>
+          </div>
+
+          {/* Search, Amount Range & Quick Filter Bar */}
+          <div className="p-3 rounded-2xl bg-slate-50/90 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 text-xs">
+              <div className="sm:col-span-5 relative">
+                <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 opacity-50" />
                 <input
                   type="text"
-                  value={pendingReasonInput[entry.id] ?? entry.pendingReason ?? ''}
-                  onChange={(e) => setPendingReasonInput((p) => ({ ...p, [entry.id]: e.target.value }))}
-                  placeholder="Pending reason..."
-                  className="border border-slate-200 rounded-lg px-2 py-1 bg-white text-[11px] w-40"
+                  placeholder="Search Ref, Cheque No, or Narration keyword..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className="w-full pl-8 pr-3 py-1.5 rounded-xl border font-bold bg-white dark:bg-slate-800"
                 />
-                <button
-                  onClick={() => {
-                    const reason = pendingReasonInput[entry.id] || '';
-                    ['sampath', 'seylan'].forEach((accKey) =>
-                      updateEntriesForAccount(accKey, (rows) =>
-                        rows.map((r) => (r.id === entry.id ? { ...r, pendingReason: reason } : r))
-                      )
-                    );
-                  }}
-                  className="px-2 py-1 rounded-lg bg-slate-200 text-slate-800 text-[11px] font-bold"
-                >
-                  Save Reason
-                </button>
-                {!entry.acknowledged && (
+              </div>
+              <div className="sm:col-span-2">
+                <input
+                  type="number"
+                  placeholder="Min Rs."
+                  value={minAmount}
+                  onChange={e => setMinAmount(e.target.value)}
+                  className="w-full px-3 py-1.5 rounded-xl border font-bold bg-white dark:bg-slate-800"
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <input
+                  type="number"
+                  placeholder="Max Rs."
+                  value={maxAmount}
+                  onChange={e => setMaxAmount(e.target.value)}
+                  className="w-full px-3 py-1.5 rounded-xl border font-bold bg-white dark:bg-slate-800"
+                />
+              </div>
+              <div className="sm:col-span-3 flex gap-1 overflow-x-auto">
+                {['all', 'debit', 'credit', 'unallocated', 'highlighted'].map(f => (
                   <button
-                    onClick={() => {
-                      const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                      ['sampath', 'seylan'].forEach((accKey) =>
-                        updateEntriesForAccount(accKey, (rows) =>
-                          rows.map((r) => (r.id === entry.id ? { ...r, acknowledged: true, ackAt: nowTime } : r))
-                        )
-                      );
-                    }}
-                    className="px-2.5 py-1 rounded-lg bg-amber-400 text-[#0F296B] text-[11px] font-extrabold"
+                    key={f}
+                    onClick={() => setRowFilter(f)}
+                    className={`px-2 py-1.5 rounded-xl font-extrabold capitalize text-[11px] ${
+                      rowFilter === f ? 'bg-[#0D2B5B] text-amber-300' : 'bg-white dark:bg-slate-800 border'
+                    }`}
                   >
-                    Acknowledge
+                    {f}
                   </button>
-                )}
-                {!entry.completed && (
-                  <button
-                    onClick={() => {
-                      const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                      ['sampath', 'seylan'].forEach((accKey) =>
-                        updateEntriesForAccount(accKey, (rows) =>
-                          rows.map((r) =>
-                            r.id === entry.id ? { ...r, acknowledged: true, ackAt: r.ackAt || nowTime, completed: true } : r
-                          )
-                        )
-                      );
-                    }}
-                    className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-[11px] font-bold"
-                  >
-                    Complete
-                  </button>
-                )}
+                ))}
               </div>
             </div>
-          ))}
+
+            {/* Bulk & 1-Click Assign Filtered Controls */}
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-200/70 dark:border-slate-800">
+              <span className="text-[11px] font-bold opacity-70">
+                Showing {visibleRows.length} row(s) • Tip: Hold Shift+Click for range selection
+              </span>
+              <div className="flex flex-wrap items-center gap-2">
+                <select
+                  value={bulkAssigneeId}
+                  onChange={e => setBulkAssigneeId(e.target.value)}
+                  className="px-3 py-1.5 rounded-xl border text-xs font-extrabold bg-white dark:bg-slate-800"
+                >
+                  {users.map(u => (
+                    <option key={u.id} value={u.id} className="text-slate-900">
+                      {u.name}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={handleBulkAssignSelected}
+                  className="px-3.5 py-1.5 rounded-xl bg-[#0D2B5B] text-amber-300 font-black text-xs"
+                >
+                  Assign Selected
+                </button>
+                <button
+                  onClick={handleAssignAllFiltered}
+                  className="px-3.5 py-1.5 rounded-xl bg-amber-400 text-[#0D2B5B] font-black text-xs"
+                >
+                  1-Click Assign Filtered ({visibleRows.length})
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Editable Statement Table with Smart Rule Suggestions */}
+          <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-50 dark:bg-slate-900 text-[10px] font-extrabold uppercase opacity-75">
+                <tr>
+                  <th className={rowPadding}>Sel</th>
+                  <th className={rowPadding}>Date</th>
+                  <th className={rowPadding}>Ref / Chq</th>
+                  <th className={rowPadding}>Statement Transaction Description &amp; Note</th>
+                  <th className={`${rowPadding} text-right`}>Debit (Rs.)</th>
+                  <th className={`${rowPadding} text-right`}>Credit (Rs.)</th>
+                  <th className={rowPadding}>Assigned Staff &amp; Smart Suggestion</th>
+                  <th className={`${rowPadding} text-center`}>Highlight</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200/70 dark:divide-slate-800">
+                {visibleRows.map((row, idx) => {
+                  const suggestion = suggestAssigneeForDescription(row.desc);
+                  const suggestedUser = suggestion ? users.find(u => u.id === suggestion.userId) : null;
+                  return (
+                    <tr key={row.id} className={row.highlighted ? 'bg-amber-50/60 dark:bg-amber-950/20' : ''}>
+                      <td className={rowPadding}>
+                        <input
+                          type="checkbox"
+                          checked={row.selected}
+                          onChange={(e) => handleRowCheck(idx, e.nativeEvent?.shiftKey)}
+                        />
+                      </td>
+                      <td className={`${rowPadding} font-mono text-[11px] whitespace-nowrap`}>{row.date}</td>
+                      <td className={`${rowPadding} font-mono text-[11px] whitespace-nowrap opacity-75`}>{row.ref}</td>
+                      <td className={`${rowPadding} space-y-1 min-w-[260px]`}>
+                        <input
+                          type="text"
+                          value={row.desc}
+                          onChange={e =>
+                            setStatementRows(prev => prev.map(x => (x.id === row.id ? { ...x, desc: e.target.value } : x)))
+                          }
+                          className="w-full font-bold bg-transparent border-b border-transparent focus:border-blue-400 focus:outline-none"
+                        />
+                        <input
+                          type="text"
+                          placeholder="+ Add special note..."
+                          value={row.specialNote}
+                          onChange={e =>
+                            setStatementRows(prev => prev.map(x => (x.id === row.id ? { ...x, specialNote: e.target.value } : x)))
+                          }
+                          className="w-full text-[11px] text-amber-700 dark:text-amber-300 bg-transparent focus:outline-none"
+                        />
+                      </td>
+                      <td className={`${rowPadding} text-right font-extrabold text-rose-600 whitespace-nowrap`}>
+                        {row.side === 'Debit' ? row.amount.toLocaleString() : '-'}
+                      </td>
+                      <td className={`${rowPadding} text-right font-extrabold text-emerald-600 whitespace-nowrap`}>
+                        {row.side === 'Credit' ? row.amount.toLocaleString() : '-'}
+                      </td>
+                      <td className={`${rowPadding} space-y-1`}>
+                        <select
+                          value={row.assigneeId}
+                          onChange={e =>
+                            setStatementRows(prev => prev.map(x => (x.id === row.id ? { ...x, assigneeId: e.target.value } : x)))
+                          }
+                          className={`px-2.5 py-1.5 rounded-xl border text-xs font-bold ${
+                            !row.assigneeId ? 'border-rose-300 bg-rose-50 text-rose-700' : 'bg-transparent'
+                          }`}
+                        >
+                          <option value="" className="text-slate-900">-- Not Allocated --</option>
+                          {users.map(u => (
+                            <option key={u.id} value={u.id} className="text-slate-900">{u.name}</option>
+                          ))}
+                        </select>
+                        {!row.assigneeId && suggestedUser && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setStatementRows(prev =>
+                                prev.map(x => (x.id === row.id ? { ...x, assigneeId: suggestedUser.id } : x))
+                              )
+                            }
+                            className="block text-[10px] font-extrabold text-blue-700 dark:text-amber-300 hover:underline"
+                          >
+                            ✨ Suggest: {suggestedUser.name.split(' ')[0]} ({suggestion.reason})
+                          </button>
+                        )}
+                      </td>
+                      <td className={`${rowPadding} text-center`}>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setStatementRows(prev => prev.map(x => (x.id === row.id ? { ...x, highlighted: !x.highlighted } : x)))
+                          }
+                          className={`p-1.5 rounded-xl ${
+                            row.highlighted ? 'bg-amber-400 text-[#0D2B5B]' : 'bg-slate-100 dark:bg-slate-800 opacity-50'
+                          }`}
+                        >
+                          <Star className="w-3.5 h-3.5" />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="flex justify-end">
+            <button
+              onClick={() =>
+                onPublishAllocations(
+                  statementRows
+                    .filter(r => r.assigneeId)
+                    .map(r => ({
+                      ...r,
+                      bank: selectedBank,
+                      acknowledged: false,
+                      ackAt: null,
+                      status: 'assigned',
+                      pendingReason: '',
+                      escalatedToId: null,
+                      escalatedMinutesAgo: 0,
+                      supervisorNote: ''
+                    }))
+                )
+              }
+              className="px-5 py-2.5 rounded-2xl bg-[#0D2B5B] text-amber-300 font-black text-xs hover:bg-blue-900 transition"
+            >
+              Publish &amp; Hand Over Allocated Entries ({statementRows.filter(r => r.assigneeId).length})
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Assignee View: My Allocated Statement Transactions (4-Stage Badges + Rework Loop) */}
+      <div className={`p-5 rounded-3xl border ${cardSurface} space-y-4`}>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 className="text-base font-black text-[#0D2B5B] dark:text-amber-300">
+              My Allocated Statement Transactions ({myEntries.length})
+            </h3>
+            <p className="text-xs opacity-70">
+              Acknowledge physical documents (Bulk or One-by-One) to start your timer, pass entries, or transfer to your Superior for help.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={onAcknowledgeAll}
+              className="px-3.5 py-2 rounded-xl bg-amber-400 text-[#0D2B5B] font-black text-xs"
+            >
+              Acknowledge All Unacknowledged
+            </button>
+            <button
+              onClick={() => onCompleteEntries(mySelectedIds.length > 0 ? mySelectedIds : myEntries.map(e => e.id))}
+              className="px-3.5 py-2 rounded-xl bg-emerald-600 text-white font-black text-xs"
+            >
+              Bulk Mark Complete ({mySelectedIds.length > 0 ? mySelectedIds.length : 'All'})
+            </button>
+            {mySelectedIds.length > 0 && (
+              <button
+                onClick={() => onEscalateEntries(mySelectedIds, 'Bulk help transfer to Superior')}
+                className="px-3.5 py-2 rounded-xl bg-rose-600 text-white font-black text-xs"
+              >
+                Transfer Selected to Superior ({mySelectedIds.length})
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-2.5">
+          {myEntries.map(entry => {
+            const isChecked = mySelectedIds.includes(entry.id);
+            return (
+              <div
+                key={entry.id}
+                className={`p-4 rounded-2xl border ${
+                  entry.status === 'rejected'
+                    ? 'border-rose-300 bg-rose-50/40 dark:bg-rose-950/15'
+                    : entry.highlighted
+                    ? 'border-amber-300 bg-amber-50/40 dark:bg-amber-950/10'
+                    : 'border-slate-200 dark:border-slate-800'
+                } flex flex-wrap items-center justify-between gap-3`}
+              >
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={() =>
+                      setMySelectedIds(prev =>
+                        prev.includes(entry.id) ? prev.filter(x => x !== entry.id) : [...prev, entry.id]
+                      )
+                    }
+                    className="mt-1"
+                  />
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2 text-xs">
+                      <span
+                        className={`px-2 py-0.5 rounded-md font-black ${
+                          entry.side === 'Debit' ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        }`}
+                      >
+                        {entry.side} • Rs. {entry.amount.toLocaleString()}
+                      </span>
+                      <FourStageBadge status={entry.status} />
+                      <span className="font-bold opacity-70">{entry.bank}</span>
+                      {entry.acknowledged && (
+                        <span className="px-2 py-0.5 rounded-full bg-blue-50 text-[#0D2B5B] text-[10px] font-extrabold">
+                          Ack: {entry.ackAt}
+                        </span>
+                      )}
+                      {entry.escalatedToId && (
+                        <span className="px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 text-[10px] font-black">
+                          SLA Aging: {entry.escalatedMinutesAgo || 15}m escalated
+                        </span>
+                      )}
+                    </div>
+                    <div className="font-black text-sm mt-1">{entry.desc}</div>
+                    {entry.specialNote && <div className="text-xs text-amber-700 font-bold">Note: {entry.specialNote}</div>}
+                    {entry.supervisorNote && (
+                      <div className="text-xs text-rose-600 font-extrabold mt-0.5">
+                        Supervisor Send-Back Reason: {entry.supervisorNote}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  {!entry.acknowledged && (
+                    <button
+                      onClick={() => onAcknowledgeOne(entry.id)}
+                      className="px-3 py-1.5 rounded-xl bg-amber-400 text-[#0D2B5B] text-xs font-black"
+                    >
+                      Acknowledge
+                    </button>
+                  )}
+                  {entry.status !== 'completed' && entry.status !== 'approved' ? (
+                    <>
+                      <input
+                        type="text"
+                        placeholder="If pending, add reason..."
+                        value={entry.pendingReason}
+                        onChange={e => onSetPendingReason(entry.id, e.target.value)}
+                        className="px-2.5 py-1.5 rounded-xl border text-xs font-bold bg-transparent"
+                      />
+                      <button
+                        onClick={() => onCompleteEntries([entry.id])}
+                        className="px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-black"
+                      >
+                        Complete
+                      </button>
+                      <button
+                        onClick={() => onEscalateEntries([entry.id], entry.pendingReason || 'Need superior help')}
+                        className="px-3 py-1.5 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 text-xs font-extrabold"
+                      >
+                        Help → Superior
+                      </button>
+                    </>
+                  ) : null}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
       {/* Full Statement Preview Modal */}
-      {previewOpen && (
-        <div className="fixed inset-0 bg-slate-900/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl border border-slate-200 max-w-5xl w-full max-h-[85vh] overflow-hidden flex flex-col">
-            <div className="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between">
+      {showFullPreview && (
+        <div className="fixed inset-0 z-50 bg-slate-950/65 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-5xl max-h-[85vh] overflow-y-auto rounded-3xl bg-white dark:bg-[#0F1B33] border border-slate-200 dark:border-slate-700 p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-extrabold text-[#0F296B]">
-                  Full Statement Preview — {activeStmt.bankName} ({activeStmt.accountNo})
+                <h3 className="text-lg font-black text-[#0D2B5B] dark:text-amber-300">
+                  Full Statement Preview — {selectedBank}
                 </h3>
-                <p className="text-xs text-slate-500">{activeStmt.fileName}</p>
+                <p className="text-xs opacity-70">File: {statementFile} • Exact Statement Ledger Columns</p>
               </div>
-              <button onClick={() => setPreviewOpen(false)} className="p-1.5 rounded-lg hover:bg-slate-100">
+              <button
+                onClick={() => setShowFullPreview(false)}
+                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800"
+              >
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="p-4 overflow-auto text-xs">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-100 text-[11px] uppercase text-slate-600">
-                    <th className="p-2">Date</th>
-                    <th className="p-2">Ref</th>
-                    <th className="p-2">Description</th>
-                    <th className="p-2">Side</th>
-                    <th className="p-2 text-right">Amount</th>
-                    <th className="p-2">Assigned</th>
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="bg-[#0D2B5B] text-amber-300">
+                  <th className="p-2.5">Date</th>
+                  <th className="p-2.5">Ref / Chq</th>
+                  <th className="p-2.5">Description</th>
+                  <th className="p-2.5 text-right">Debit (Rs.)</th>
+                  <th className="p-2.5 text-right">Credit (Rs.)</th>
+                  <th className="p-2.5 text-right">Balance (Rs.)</th>
+                  <th className="p-2.5">Allocated To</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+                {statementRows.map(r => (
+                  <tr key={r.id}>
+                    <td className="p-2.5 whitespace-nowrap">{r.date}</td>
+                    <td className="p-2.5 whitespace-nowrap">{r.ref}</td>
+                    <td className="p-2.5">{r.desc}</td>
+                    <td className="p-2.5 text-right font-extrabold text-rose-600">
+                      {r.side === 'Debit' ? r.amount.toLocaleString() : '-'}
+                    </td>
+                    <td className="p-2.5 text-right font-extrabold text-emerald-600">
+                      {r.side === 'Credit' ? r.amount.toLocaleString() : '-'}
+                    </td>
+                    <td className="p-2.5 text-right font-mono">
+                      {typeof r.balance === 'number' ? r.balance.toLocaleString() : '-'}
+                    </td>
+                    <td className="p-2.5 font-bold">{users.find(u => u.id === r.assigneeId)?.name || 'Not Allocated'}</td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {activeStmt.entries.map((r) => (
-                    <tr key={r.id}>
-                      <td className="p-2">{r.date}</td>
-                      <td className="p-2">{r.ref}</td>
-                      <td className="p-2 font-medium">{r.description}</td>
-                      <td className="p-2">{r.side}</td>
-                      <td className="p-2 text-right font-bold">{Number(r.amount || 0).toLocaleString()}</td>
-                      <td className="p-2">{employees.find((e) => e.id === r.assignedTo)?.shortName || 'Unallocated'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
@@ -3349,323 +4245,689 @@ function StatementAllocationView({ currentUser, employees, statements, setStatem
 }
 
 // ============================================================================
-// 81 BANK RECONCILIATIONS (REMARKS BOX ALWAYS AVAILABLE + VARIANCE TAGS)
+// 10. TEAM TREE VIEW, APPROVALS (WITH SEND-BACK REASON & SLA AGING) & LEAVE
 // ============================================================================
 
-function ReconciliationsView({ currentUser, employees, reconciliations, setReconciliations, cardSurface }) {
-  const [filterMode, setFilterMode] = useState('mine'); // mine | all | pending | completed
-  const [searchText, setSearchText] = useState('');
-
-  const list = reconciliations.filter((r) => {
-    if (filterMode === 'mine' && r.ownerId !== currentUser.id) return false;
-    if (filterMode === 'pending' && r.completed) return false;
-    if (filterMode === 'completed' && !r.completed) return false;
-    if (searchText.trim() && !r.accountName.toLowerCase().includes(searchText.toLowerCase())) return false;
-    return true;
-  });
-
-  const toggleRecComplete = (id) => {
-    const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    setReconciliations((prev) =>
-      prev.map((r) =>
-        r.id === id
-          ? {
-              ...r,
-              completed: !r.completed,
-              varianceTag: !r.completed ? 'Matched' : r.varianceTag,
-              updatedAt: nowTime
-            }
-          : r
-      )
-    );
-  };
-
-  return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-lg font-extrabold text-[#0F296B]">81 Bank Reconciliations</h1>
-          <p className="text-xs text-slate-500">
-            Completed: {reconciliations.filter((r) => r.completed).length} / 81 • Remarks box stays editable whether pending or completed.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2 flex-wrap">
-          <input
-            type="text"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            placeholder="Search account..."
-            className="text-xs border border-slate-200 rounded-lg px-3 py-1.5 bg-white"
-          />
-          {['mine', 'all', 'pending', 'completed'].map((m) => (
-            <button
-              key={m}
-              onClick={() => setFilterMode(m)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold capitalize ${
-                filterMode === m ? 'bg-[#0F296B] text-white' : 'bg-white border border-slate-200 text-slate-600'
-              }`}
-            >
-              {m}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {list.map((rec) => {
-          const owner = employees.find((e) => e.id === rec.ownerId);
-          return (
-            <div key={rec.id} className={`${cardSurface} rounded-2xl p-4 space-y-2.5`}>
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <div className="text-xs font-extrabold text-slate-900">{rec.accountName}</div>
-                  <div className="text-[11px] text-slate-500">
-                    Owner: <strong>{owner?.shortName}</strong> • Updated: {rec.updatedAt}
-                  </div>
-                </div>
-                <button
-                  onClick={() => toggleRecComplete(rec.id)}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold ${
-                    rec.completed
-                      ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
-                      : 'bg-amber-100 text-amber-900 hover:bg-amber-200'
-                  }`}
-                >
-                  {rec.completed ? 'Completed ✓' : 'Mark Complete'}
-                </button>
-              </div>
-
-              <div className="flex items-center gap-2 text-xs">
-                <span className="text-[11px] font-semibold text-slate-500">Variance Tag:</span>
-                <select
-                  value={rec.varianceTag || 'Matched'}
-                  onChange={(e) =>
-                    setReconciliations((prev) =>
-                      prev.map((item) => (item.id === rec.id ? { ...item, varianceTag: e.target.value } : item))
-                    )
-                  }
-                  className="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white font-semibold"
-                >
-                  <option value="Matched">Matched</option>
-                  <option value="Timing Difference">Timing Difference</option>
-                  <option value="Missing Slip">Missing Slip</option>
-                  <option value="CRO / Bank Query">CRO / Bank Query</option>
-                </select>
-              </div>
-
-              {/* Persistent Remarks Box (Always available) */}
-              <input
-                type="text"
-                value={rec.remark || ''}
-                onChange={(e) =>
-                  setReconciliations((prev) =>
-                    prev.map((item) =>
-                      item.id === rec.id
-                        ? { ...item, remark: e.target.value, updatedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }
-                        : item
-                    )
-                  )
-                }
-                placeholder="Update reconciliation status remark..."
-                className="w-full text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 bg-white"
-              />
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-// ============================================================================
-// MONTH-END CLOSING CHECKLIST & CUT-OFF TRACKER
-// ============================================================================
-
-function MonthEndView({ employees, monthEndItems, setMonthEndItems, cardSurface }) {
-  const avgProgress = Math.round(
-    monthEndItems.reduce((acc, item) => acc + Number(item.progress || 0), 0) / Math.max(1, monthEndItems.length)
-  );
-
-  return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-lg font-extrabold text-[#0F296B]">Month-End Closing Checklist & Cut-Off Tracker</h1>
-          <p className="text-xs text-slate-500">Track target dates, owners, dependency readiness, and completion %.</p>
-        </div>
-        <div className="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-extrabold text-[#0F296B]">
-          Overall Month-End Readiness: {avgProgress}%
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        {monthEndItems.map((item) => {
-          const owner = employees.find((e) => e.id === item.ownerId);
-          return (
-            <div key={item.id} className={`${cardSurface} rounded-2xl p-4 space-y-2.5`}>
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div>
-                  <div className="text-sm font-extrabold text-slate-900">{item.task}</div>
-                  <div className="text-xs text-slate-500">
-                    Owner: <strong>{owner?.name}</strong> • Target Date: <strong>{item.targetDate}</strong>
-                  </div>
-                </div>
-                <span
-                  className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${
-                    item.dependencyMet ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'
-                  }`}
-                >
-                  {item.dependency}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  value={item.progress}
-                  onChange={(e) => {
-                    const val = Number(e.target.value);
-                    setMonthEndItems((prev) =>
-                      prev.map((m) =>
-                        m.id === item.id
-                          ? { ...m, progress: val, status: val === 100 ? 'Completed' : 'In Progress' }
-                          : m
-                      )
-                    );
-                  }}
-                  className="flex-1 accent-[#0F296B]"
-                />
-                <span className="text-xs font-black text-[#0F296B] w-10 text-right">{item.progress}%</span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-// ============================================================================
-// HIERARCHICAL TEAM TREE & SUPERVISOR APPROVALS (WITH SEND-BACK REASON & SLA)
-// ============================================================================
-
-function ApprovalsTreeView({
+function TeamTreeApprovalView({
   currentUser,
-  employees,
+  users,
+  subordinateIds,
   tasks,
-  calendarEvents,
-  setCalendarEvents,
+  bankRecs,
+  allocatedEntries,
+  profileRequests,
+  jobUpdateRequests,
+  darkMode,
   onApproveTask,
   onRejectTask,
-  cardSurface
+  onApproveEntry,
+  onSendBackEntry,
+  onApproveProfileReq,
+  onApproveJobDetailReq,
+  onToggleLeaveCoverage
 }) {
-  const [rejectReasons, setRejectReasons] = useState({});
+  const [selectedStaffId, setSelectedStaffId] = useState(subordinateIds[0] || currentUser.id);
+  const [coverIdByStaff, setCoverIdByStaff] = useState({});
+  const [rejectReasonById, setRejectReasonById] = useState({});
+  const cardSurface = darkMode ? 'bg-[#0F1B33] border-slate-800' : 'bg-white border-slate-200 shadow-sm';
+  const canManageLeave = ['rangika', 'mahasen', 'kanishka'].includes(currentUser.id);
 
-  const pendingTasks = tasks.filter((t) => t.approvalStatus === 'Pending Approval');
-  const pendingCalJobs = calendarEvents.filter((c) => c.approvalStatus === 'Pending Approval');
+  const visibleStaff = users.filter(u => u.id === currentUser.id || subordinateIds.includes(u.id));
+  const pendingTaskApprovals = tasks.filter(
+    t => subordinateIds.includes(t.userId) && t.status === 'completed_pending_approval'
+  );
+  const pendingEntryApprovals = allocatedEntries.filter(
+    e => subordinateIds.includes(e.assigneeId) && (e.status === 'completed' || e.escalatedToId === currentUser.id)
+  );
+  const myProfileReqs = profileRequests.filter(r => r.supervisorId === currentUser.id && r.status === 'pending');
+  const myJobReqs = jobUpdateRequests.filter(r => r.supervisorId === currentUser.id && r.status === 'pending');
+
+  const totalQueue =
+    pendingTaskApprovals.length + pendingEntryApprovals.length + myProfileReqs.length + myJobReqs.length;
 
   return (
     <div className="space-y-5">
-      <div>
-        <h1 className="text-lg font-extrabold text-[#0F296B]">Hierarchical Team Tree & Approvals</h1>
-        <p className="text-xs text-slate-500">
-          Reporting structure, task & scheduled-job approvals, and send-back rework loop with reason.
-        </p>
+      {/* Pending Supervisor Approvals & SLA Escalation Queue */}
+      <div className={`p-5 rounded-3xl border ${cardSurface} space-y-3`}>
+        <h2 className="text-lg font-black text-[#0D2B5B] dark:text-amber-300">
+          Supervisor Approval &amp; Escalation Queue ({totalQueue})
+        </h2>
+
+        {totalQueue === 0 && (
+          <p className="text-xs opacity-70">No pending approvals or escalated entries waiting in your queue right now.</p>
+        )}
+
+        {pendingTaskApprovals.map(t => {
+          const emp = users.find(u => u.id === t.userId);
+          return (
+            <div
+              key={t.id}
+              className="p-3.5 rounded-2xl border border-amber-200 bg-amber-50/40 dark:bg-slate-900 flex flex-wrap items-center justify-between gap-3 text-xs"
+            >
+              <div>
+                <div className="font-black">
+                  {emp?.name} — {t.title}
+                </div>
+                <div className="opacity-70">
+                  Allocated: {t.allocatedMinutes}m • Actual: {t.actualMinutes}m • {t.remark}
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <input
+                  type="text"
+                  placeholder="Rework / Send-back reason..."
+                  value={rejectReasonById[t.id] || ''}
+                  onChange={e => setRejectReasonById(prev => ({ ...prev, [t.id]: e.target.value }))}
+                  className="px-2.5 py-1.5 rounded-xl border text-xs font-bold bg-white dark:bg-slate-800"
+                />
+                <button
+                  onClick={() => onApproveTask(t.id)}
+                  className="px-3.5 py-1.5 rounded-xl bg-emerald-600 text-white font-black"
+                >
+                  Approve
+                </button>
+                <button
+                  onClick={() => onRejectTask(t.id, rejectReasonById[t.id] || 'Please verify figures and re-submit')}
+                  className="px-3.5 py-1.5 rounded-xl bg-rose-600 text-white font-black"
+                >
+                  Send Back
+                </button>
+              </div>
+            </div>
+          );
+        })}
+
+        {/* Escalated or Completed Bank Entries Queue with SLA Aging Indicator */}
+        {pendingEntryApprovals.map(e => {
+          const emp = users.find(u => u.id === e.assigneeId);
+          return (
+            <div
+              key={e.id}
+              className="p-3.5 rounded-2xl border border-rose-200 bg-rose-50/35 dark:bg-slate-900 flex flex-wrap items-center justify-between gap-3 text-xs"
+            >
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-black">{emp?.name} — {e.desc}</span>
+                  {e.escalatedToId && (
+                    <span className="px-2 py-0.5 rounded-full bg-rose-600 text-white text-[10px] font-black">
+                      Escalated SLA: {e.escalatedMinutesAgo || 45} mins overdue
+                    </span>
+                  )}
+                </div>
+                <div className="opacity-70 mt-0.5">
+                  {e.bank} • Rs. {e.amount.toLocaleString()} • {e.pendingReason || 'Submitted for approval'}
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <input
+                  type="text"
+                  placeholder="Send-back reason..."
+                  value={rejectReasonById[e.id] || ''}
+                  onChange={ev => setRejectReasonById(prev => ({ ...prev, [e.id]: ev.target.value }))}
+                  className="px-2.5 py-1.5 rounded-xl border text-xs font-bold bg-white dark:bg-slate-800"
+                />
+                <button
+                  onClick={() => onApproveEntry(e.id)}
+                  className="px-3.5 py-1.5 rounded-xl bg-emerald-600 text-white font-black"
+                >
+                  Approve Entry
+                </button>
+                <button
+                  onClick={() => onSendBackEntry(e.id, rejectReasonById[e.id] || 'Verify ledger code & re-submit')}
+                  className="px-3.5 py-1.5 rounded-xl bg-rose-600 text-white font-black"
+                >
+                  Send Back
+                </button>
+              </div>
+            </div>
+          );
+        })}
+
+        {myProfileReqs.map(req => {
+          const emp = users.find(u => u.id === req.userId);
+          return (
+            <div
+              key={req.id}
+              className="p-3.5 rounded-2xl border border-blue-200 bg-blue-50/40 dark:bg-slate-900 flex items-center justify-between text-xs"
+            >
+              <div>
+                <span className="font-black">{emp?.name}</span> requested profile/CV/health updates.
+              </div>
+              <button
+                onClick={() => onApproveProfileReq(req.id)}
+                className="px-3.5 py-1.5 rounded-xl bg-[#0D2B5B] text-amber-300 font-black"
+              >
+                Approve Profile Update
+              </button>
+            </div>
+          );
+        })}
+
+        {myJobReqs.map(req => {
+          const emp = users.find(u => u.id === req.userId);
+          return (
+            <div
+              key={req.id}
+              className="p-3.5 rounded-2xl border border-purple-200 bg-purple-50/40 dark:bg-slate-900 flex items-center justify-between text-xs"
+            >
+              <div>
+                <span className="font-black">{emp?.name}</span> requested JD detail change: <strong>{req.newTitle}</strong> ({req.newTimeSlot})
+              </div>
+              <button
+                onClick={() => onApproveJobDetailReq(req.id)}
+                className="px-3.5 py-1.5 rounded-xl bg-[#0D2B5B] text-amber-300 font-black"
+              >
+                Approve JD Change
+              </button>
+            </div>
+          );
+        })}
       </div>
 
-      {/* Hierarchy Tree */}
-      <div className={`${cardSurface} rounded-2xl p-4`}>
-        <h2 className="text-xs font-extrabold uppercase text-slate-500 mb-3">Finance Reporting Hierarchy</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
-          {employees.map((emp) => {
-            const sup = employees.find((s) => s.id === emp.supervisorId);
+      {/* Hierarchical Team Tree & Leave Reassignment */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <div className={`lg:col-span-5 p-5 rounded-3xl border ${cardSurface} space-y-2.5`}>
+          <h3 className="font-black text-sm text-[#0D2B5B] dark:text-amber-300">
+            Reporting Tree ({visibleStaff.length} Members)
+          </h3>
+          {visibleStaff.map(u => {
+            const sup = users.find(s => s.id === u.supervisorId);
             return (
-              <div key={emp.id} className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-xs">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-[#0F296B] text-amber-300 font-bold flex items-center justify-center shrink-0">
-                    {emp.avatar}
+              <div
+                key={u.id}
+                onClick={() => setSelectedStaffId(u.id)}
+                className={`p-3 rounded-2xl border cursor-pointer transition ${
+                  selectedStaffId === u.id
+                    ? 'border-amber-400 bg-blue-50/70 dark:bg-slate-800'
+                    : 'border-slate-200 dark:border-slate-800'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-xs font-black">
+                      {u.name} {u.onLeave && <span className="text-rose-500">(ON LEAVE)</span>}
+                    </div>
+                    <div className="text-[10px] opacity-65">
+                      {u.roleTitle} • Reports to: {sup?.name.split(' ')[0] || 'Board'}
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <div className="font-bold text-slate-900 truncate">{emp.shortName}</div>
-                    <div className="text-[10px] text-slate-500 truncate">{emp.grade}</div>
+                  <span className={`px-2 py-0.5 rounded-full border text-[10px] font-bold ${BRAIN_COLOR_STYLES[u.brainColor]?.badge}`}>
+                    {u.brainColor}
+                  </span>
+                </div>
+
+                {canManageLeave && u.id !== currentUser.id && (
+                  <div className="mt-2 pt-2 border-t border-slate-200/70 dark:border-slate-700 flex items-center gap-1.5">
+                    <select
+                      value={coverIdByStaff[u.id] || ''}
+                      onChange={e => setCoverIdByStaff(prev => ({ ...prev, [u.id]: e.target.value }))}
+                      onClick={e => e.stopPropagation()}
+                      className="flex-1 px-2 py-1 rounded-lg border text-[10px] font-bold bg-transparent"
+                    >
+                      <option value="" className="text-slate-900">Select covering officer...</option>
+                      {users
+                        .filter(x => x.id !== u.id)
+                        .map(x => (
+                          <option key={x.id} value={x.id} className="text-slate-900">
+                            {x.name.split(' ')[0]}
+                          </option>
+                        ))}
+                    </select>
+                    <button
+                      onClick={e => {
+                        e.stopPropagation();
+                        onToggleLeaveCoverage(u.id, !u.onLeave, coverIdByStaff[u.id] || 'hansi');
+                      }}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-black ${
+                        u.onLeave ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'
+                      }`}
+                    >
+                      {u.onLeave ? 'Mark Present' : 'Mark Leave & Reassign'}
+                    </button>
                   </div>
-                </div>
-                <div className="text-[10px] text-slate-500 mt-2">
-                  Reports to: <strong>{sup ? sup.shortName : 'Executive Board'}</strong>
-                </div>
+                )}
               </div>
             );
           })}
         </div>
-      </div>
 
-      {/* Pending Task Approvals */}
-      <div className={`${cardSurface} rounded-2xl p-4 space-y-3`}>
-        <h2 className="text-sm font-extrabold text-[#0F296B]">Pending Task Approvals ({pendingTasks.length})</h2>
-        {pendingTasks.length === 0 ? (
-          <div className="text-xs text-slate-400 py-3">All submitted tasks have been reviewed.</div>
-        ) : (
-          pendingTasks.map((t) => {
-            const owner = employees.find((e) => e.id === t.employeeId);
+        {/* Selected Subordinate Live Status */}
+        <div className={`lg:col-span-7 p-5 rounded-3xl border ${cardSurface} space-y-3`}>
+          {(() => {
+            const target = users.find(u => u.id === selectedStaffId) || currentUser;
+            const sTasks = tasks.filter(t => t.userId === target.id);
+            const sRecs = bankRecs.filter(r => r.userId === target.id);
             return (
-              <div key={t.id} className="p-3 rounded-xl bg-slate-50 border border-slate-200/70 flex flex-wrap items-center justify-between gap-3 text-xs">
-                <div>
-                  <div className="font-bold text-slate-900">
-                    {t.title} — <span className="text-[#0F296B]">{owner?.name}</span>
+              <>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-base font-black">{target.name}</h3>
+                    <p className="text-xs opacity-70">
+                      {target.roleTitle} • FLI Tenure: {calculateTenure(target.joiningDate)}
+                    </p>
                   </div>
-                  <div className="text-slate-600 mt-0.5">{t.detailNotes}</div>
+                  <span className="text-xs font-extrabold text-emerald-600">
+                    Recs Done: {sRecs.filter(r => r.status === 'completed').length}/{sRecs.length}
+                  </span>
                 </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <button
-                    onClick={() => onApproveTask(t.id)}
-                    className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold"
-                  >
-                    Approve
-                  </button>
-                  <input
-                    type="text"
-                    value={rejectReasons[t.id] || ''}
-                    onChange={(e) => setRejectReasons((p) => ({ ...p, [t.id]: e.target.value }))}
-                    placeholder="Reason to send back..."
-                    className="border border-slate-200 rounded-lg px-2 py-1 bg-white w-40"
-                  />
-                  <button
-                    onClick={() => onRejectTask(t.id, rejectReasons[t.id] || 'Please revise and resubmit.')}
-                    className="px-3 py-1.5 rounded-lg bg-rose-600 text-white font-bold"
-                  >
-                    Send Back
-                  </button>
+                <div className="space-y-2">
+                  {sTasks.map(t => (
+                    <div
+                      key={t.id}
+                      className="p-3 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs"
+                    >
+                      <div>
+                        <div className="font-bold">{t.title}</div>
+                        <div className="text-[11px] opacity-65">{t.timeSlot}</div>
+                      </div>
+                      <FourStageBadge status={t.status} />
+                    </div>
+                  ))}
                 </div>
-              </div>
+              </>
             );
-          })
-        )}
+          })()}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// 11. REPORTS & ANALYTICS PORTAL (Standardized Day-End Handover PDF + CSV)
+// ============================================================================
+
+function ReportsAnalyticsPortal({ currentUser, users, tasks, bankRecs, allocatedEntries, dutyInRecords, darkMode }) {
+  const todayStr = '2026-11-23';
+  const [fromDate, setFromDate] = useState(todayStr);
+  const [toDate, setToDate] = useState(todayStr);
+  const [selectedEmpId, setSelectedEmpId] = useState(currentUser.id);
+  const cardSurface = darkMode ? 'bg-[#0F1B33] border-slate-800' : 'bg-white border-slate-200 shadow-sm';
+
+  const handlePrintEmployeeDayEndPdf = () => {
+    const emp = users.find(u => u.id === selectedEmpId) || currentUser;
+    const empTasks = tasks.filter(t => t.userId === emp.id);
+    const empRecs = bankRecs.filter(r => r.userId === emp.id);
+    const empEntries = allocatedEntries.filter(e => e.assigneeId === emp.id);
+
+    const win = window.open('', '_blank', 'width=920,height=740');
+    if (!win) return;
+    win.document.write(`
+      <html>
+        <head>
+          <title>FLi Pinnacle - Standardized Day-End Handover Report (${emp.name})</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 28px; color: #0f172a; }
+            .header { border-bottom: 3px solid #0D2B5B; padding-bottom: 12px; margin-bottom: 18px; display: flex; justify-content: space-between; }
+            .badge { background: #FACC15; color: #0D2B5B; padding: 4px 10px; font-weight: bold; border-radius: 6px; font-size: 12px; }
+            h2 { color: #0D2B5B; font-size: 14px; margin-top: 20px; border-left: 4px solid #FACC15; padding-left: 8px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12px; }
+            th { background: #0D2B5B; color: #FACC15; text-align: left; padding: 8px; }
+            td { border: 1px solid #cbd5e1; padding: 7px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div>
+              <div style="font-size:20px;font-weight:900;color:#0D2B5B;">FLi Pinnacle — Future Life Investments Limited</div>
+              <div style="font-size:13px;font-weight:bold;margin-top:4px;">Standardized Day-End Handover &amp; Activity Report</div>
+            </div>
+            <div style="text-align:right;font-size:12px;">
+              <span class="badge">${emp.empCode}</span><br/>
+              <strong>${emp.name}</strong> (${emp.roleTitle})<br/>
+              Period: ${fromDate} to ${toDate} | Duty In: ${dutyInRecords[emp.id] || '08:30 AM'}
+            </div>
+          </div>
+
+          <h2>1. Completed &amp; Pending Tasks with Reasons (${empTasks.length})</h2>
+          <table>
+            <thead><tr><th>KPI / Task</th><th>Time Slot</th><th>Allocated</th><th>Actual</th><th>Status</th><th>Remarks / Reason</th></tr></thead>
+            <tbody>
+              ${empTasks
+                .map(
+                  t =>
+                    `<tr><td>${t.title}</td><td>${t.timeSlot}</td><td>${t.allocatedMinutes}m</td><td>${
+                      t.actualMinutes || 0
+                    }m</td><td>${t.status}</td><td>${t.remark || '-'}</td></tr>`
+                )
+                .join('')}
+            </tbody>
+          </table>
+
+          <h2>2. Bank Reconciliations Status (${empRecs.filter(r => r.status === 'completed').length}/${empRecs.length} Completed)</h2>
+          <table>
+            <thead><tr><th>Bank Account</th><th>Variance Tag</th><th>Status</th><th>Remarks</th></tr></thead>
+            <tbody>
+              ${empRecs
+                .map(r => `<tr><td>${r.account}</td><td>${r.tag || '-'}</td><td>${r.status}</td><td>${r.remark || '-'}</td></tr>`)
+                .join('')}
+            </tbody>
+          </table>
+
+          <h2>3. Entries Handled / Escalated (${empEntries.length})</h2>
+          <table>
+            <thead><tr><th>Bank</th><th>Description</th><th>Amount (Rs.)</th><th>Status</th><th>Escalation / Pending Reason</th></tr></thead>
+            <tbody>
+              ${empEntries
+                .map(
+                  e =>
+                    `<tr><td>${e.bank}</td><td>${e.desc}</td><td>${e.amount.toLocaleString()}</td><td>${e.status}</td><td>${
+                      e.pendingReason || '-'
+                    }</td></tr>`
+                )
+                .join('')}
+            </tbody>
+          </table>
+          <script>window.onload = function() { window.print(); };</script>
+        </body>
+      </html>
+    `);
+    win.document.close();
+  };
+
+  const downloadCsv = (filename, rows) => {
+    const csv = rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+  };
+
+  return (
+    <div className="space-y-5">
+      <div className={`p-5 rounded-3xl border ${cardSurface} flex flex-wrap items-center justify-between gap-3`}>
+        <div>
+          <h2 className="text-lg font-black text-[#0D2B5B] dark:text-amber-300">
+            Reports &amp; Analytics Center (Standardized Day-End Handover PDF &amp; CSV)
+          </h2>
+          <p className="text-xs opacity-70">
+            Export Duty In, Completed/Pending Tasks with Reasons, Entries Handled/Escalated, and Bank Reconciliations for any date period.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <input
+            type="date"
+            value={fromDate}
+            onChange={e => setFromDate(e.target.value)}
+            className="px-3 py-1.5 rounded-xl border font-bold bg-transparent"
+          />
+          <span>to</span>
+          <input
+            type="date"
+            value={toDate}
+            onChange={e => setToDate(e.target.value)}
+            className="px-3 py-1.5 rounded-xl border font-bold bg-transparent"
+          />
+          <select
+            value={selectedEmpId}
+            onChange={e => setSelectedEmpId(e.target.value)}
+            className="px-3 py-1.5 rounded-xl border font-extrabold bg-transparent"
+          >
+            {users.map(u => (
+              <option key={u.id} value={u.id} className="text-slate-900">
+                {u.name}
+              </option>
+            ))}
+          </select>
+          <button
+            onClick={handlePrintEmployeeDayEndPdf}
+            className="px-4 py-2 rounded-xl bg-[#0D2B5B] text-amber-300 font-black flex items-center gap-1.5"
+          >
+            <Printer className="w-4 h-4" />
+            <span>Day-End Handover PDF</span>
+          </button>
+        </div>
       </div>
 
-      {/* Pending Scheduled Calendar Jobs */}
-      {pendingCalJobs.length > 0 && (
-        <div className={`${cardSurface} rounded-2xl p-4 space-y-2`}>
-          <h2 className="text-sm font-extrabold text-[#0F296B]">Pending Scheduled Calendar Jobs ({pendingCalJobs.length})</h2>
-          {pendingCalJobs.map((ev) => (
-            <div key={ev.id} className="p-3 rounded-xl bg-amber-50/60 border border-amber-200 flex items-center justify-between text-xs">
-              <div>
-                <strong>{ev.title}</strong> ({ev.date})
-              </div>
-              <button
-                onClick={() =>
-                  setCalendarEvents((prev) =>
-                    prev.map((c) => (c.id === ev.id ? { ...c, approvalStatus: 'Approved' } : c))
-                  )
-                }
-                className="px-3 py-1 rounded-lg bg-[#0F296B] text-white font-bold"
-              >
-                Approve Job
-              </button>
+      {/* Quick CSV Report Exports */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          {
+            title: 'Standardized Day-End Handover CSV',
+            desc: 'Duty In, Completed/Pending KPIs, Entries & Recs per staff',
+            action: () =>
+              downloadCsv(`FLi_DayEnd_Handover_${fromDate}.csv`, [
+                ['Employee', 'Duty In', 'KPIs Done', 'Pending KPIs', 'Recs Done', 'Entries Handled/Escalated'],
+                ...users.map(u => [
+                  u.name,
+                  dutyInRecords[u.id] || 'Pending',
+                  tasks.filter(t => t.userId === u.id && t.status !== 'pending').length,
+                  tasks.filter(t => t.userId === u.id && t.status === 'pending').length,
+                  `${bankRecs.filter(r => r.userId === u.id && r.status === 'completed').length}/${bankRecs.filter(r => r.userId === u.id).length}`,
+                  allocatedEntries.filter(e => e.assigneeId === u.id).length
+                ])
+              ])
+          },
+          {
+            title: 'Duty-In & Attendance Report',
+            desc: 'First login Duty-In timestamps across all 13 staff',
+            action: () =>
+              downloadCsv(`FLi_Attendance_${fromDate}_to_${toDate}.csv`, [
+                ['Emp Code', 'Name', 'Role', 'Duty In Time', 'Leave Status'],
+                ...users.map(u => [
+                  u.empCode,
+                  u.name,
+                  u.roleTitle,
+                  dutyInRecords[u.id] || 'Absent/Pending',
+                  u.onLeave ? 'On Leave' : 'Present'
+                ])
+              ])
+          },
+          {
+            title: 'Time Allocated vs Actual',
+            desc: 'Planned KPI minutes vs actual time spent',
+            action: () =>
+              downloadCsv(`FLi_Time_Analysis_${fromDate}.csv`, [
+                ['Employee', 'KPI', 'Time Slot', 'Allocated (Min)', 'Actual (Min)', 'Status'],
+                ...tasks.map(t => [
+                  users.find(u => u.id === t.userId)?.name,
+                  t.title,
+                  t.timeSlot,
+                  t.allocatedMinutes,
+                  t.actualMinutes,
+                  t.status
+                ])
+              ])
+          },
+          {
+            title: 'Bank Reconciliations (81) Audit',
+            desc: 'Complete variance tags & remarks for all 81 accounts',
+            action: () =>
+              downloadCsv(`FLi_Bank_Reconciliations_${fromDate}.csv`, [
+                ['Account', 'Assigned Officer', 'Variance Tag', 'Status', 'Remarks'],
+                ...bankRecs.map(r => [r.account, users.find(u => u.id === r.userId)?.name, r.tag, r.status, r.remark])
+              ])
+          }
+        ].map((rep, idx) => (
+          <div key={idx} className={`p-4 rounded-3xl border ${cardSurface} flex flex-col justify-between space-y-3`}>
+            <div>
+              <div className="font-black text-sm text-[#0D2B5B] dark:text-amber-300">{rep.title}</div>
+              <p className="text-xs opacity-70 mt-1">{rep.desc}</p>
             </div>
-          ))}
+            <button
+              onClick={rep.action}
+              className="w-full py-2 rounded-xl bg-amber-400 text-[#0D2B5B] font-black text-xs flex items-center justify-center gap-1.5"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Download CSV</span>
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// 12. EMPLOYEE PROFILE, HEALTH, AUTO TENURE & CV (View Mode + Edit Mode)
+// ============================================================================
+
+function EmployeeProfileSettings({ currentUser, users, darkMode, onSubmitProfileUpdate }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [name, setName] = useState(currentUser.name);
+  const [phone, setPhone] = useState(currentUser.phone);
+  const [bio, setBio] = useState(currentUser.bio);
+  const [photoUrl, setPhotoUrl] = useState(currentUser.photoUrl || '');
+  const [heightCm, setHeightCm] = useState(currentUser.health?.heightCm || 165);
+  const [weightKg, setWeightKg] = useState(currentUser.health?.weightKg || 60);
+  const [bloodGroup, setBloodGroup] = useState(currentUser.health?.bloodGroup || 'O+');
+  const [healthNotes, setHealthNotes] = useState(currentUser.health?.notes || '');
+
+  const [newExpCompany, setNewExpCompany] = useState('');
+  const [newExpRole, setNewExpRole] = useState('');
+  const [newQualTitle, setNewQualTitle] = useState('');
+  const [newQualInst, setNewQualInst] = useState('');
+
+  const cardSurface = darkMode ? 'bg-[#0F1B33] border-slate-800' : 'bg-white border-slate-200 shadow-sm';
+  const superior = users.find(u => u.id === currentUser.supervisorId);
+  const waterMl = Math.round(Number(weightKg || 60) * 35);
+
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => setPhotoUrl(String(reader.result));
+    reader.readAsDataURL(file);
+  };
+
+  return (
+    <div className="space-y-5">
+      <div className={`p-6 rounded-3xl border ${cardSurface} flex flex-wrap items-center justify-between gap-4`}>
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-2xl bg-[#0D2B5B] text-amber-300 border-2 border-amber-400 font-black text-2xl flex items-center justify-center overflow-hidden">
+            {photoUrl ? <img src={photoUrl} alt={name} className="w-full h-full object-cover" /> : name.charAt(0)}
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-black">{currentUser.name}</h2>
+              <span className={`px-2.5 py-0.5 rounded-full border text-[10px] font-bold ${BRAIN_COLOR_STYLES[currentUser.brainColor]?.badge}`}>
+                {currentUser.brainColor} Brain
+              </span>
+            </div>
+            <p className="text-xs opacity-75">
+              {currentUser.roleTitle} • Reports to: {superior?.name || 'Board (HOD)'} • FLI Tenure:{' '}
+              <strong>{calculateTenure(currentUser.joiningDate)}</strong> (Joined {currentUser.joiningDate})
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => setIsEditing(!isEditing)}
+          className="px-4 py-2 rounded-2xl bg-[#0D2B5B] text-amber-300 font-black text-xs flex items-center gap-1.5"
+        >
+          <Edit3 className="w-3.5 h-3.5" />
+          <span>{isEditing ? 'Switch to View Mode' : 'Edit Profile & Health'}</span>
+        </button>
+      </div>
+
+      {!isEditing ? (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className={`p-5 rounded-3xl border ${cardSurface} space-y-2 text-xs`}>
+            <div className="font-black text-sm text-[#0D2B5B] dark:text-amber-300">Personal &amp; Contact</div>
+            <div><strong>Employee Code:</strong> {currentUser.empCode}</div>
+            <div><strong>Corporate Email:</strong> {currentUser.email}</div>
+            <div><strong>Contact:</strong> {currentUser.phone}</div>
+            <div><strong>Bio:</strong> {currentUser.bio}</div>
+          </div>
+
+          <div className={`p-5 rounded-3xl border ${cardSurface} space-y-2 text-xs`}>
+            <div className="font-black text-sm text-blue-700 dark:text-blue-300 flex items-center gap-1.5">
+              <Heart className="w-4 h-4 text-rose-500" /> Health &amp; Hydration Profile
+            </div>
+            <div><strong>Height:</strong> {heightCm} cm • <strong>Weight:</strong> {weightKg} kg</div>
+            <div><strong>Blood Group:</strong> {bloodGroup}</div>
+            <div><strong>Recommended Daily Water:</strong> {waterMl} ml ({Math.round(waterMl / 250)} glasses)</div>
+            <div><strong>Wellness Note:</strong> {healthNotes || 'Active'}</div>
+          </div>
+
+          <div className={`p-5 rounded-3xl border ${cardSurface} space-y-2 text-xs`}>
+            <div className="font-black text-sm text-[#0D2B5B] dark:text-amber-300">Experience &amp; Qualifications</div>
+            <div><strong>FLI Auto-Tenure:</strong> {calculateTenure(currentUser.joiningDate)}</div>
+            {currentUser.experiences?.map(ex => (
+              <div key={ex.id}>• {ex.role} at {ex.company} ({ex.period})</div>
+            ))}
+            {currentUser.qualifications?.map(q => (
+              <div key={q.id}>• {q.title} — {q.institute} ({q.year})</div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className={`p-6 rounded-3xl border ${cardSurface} space-y-4 text-xs`}>
+          <div className="font-black text-sm text-[#0D2B5B] dark:text-amber-300">
+            Modify Profile, Health Status, Experience &amp; Qualifications (Submitted to {superior?.name || 'HOD'} for Approval)
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label className="font-bold block mb-1">Display Name</label>
+              <input value={name} onChange={e => setName(e.target.value)} className="w-full px-3 py-2 rounded-xl border font-bold bg-transparent" />
+            </div>
+            <div>
+              <label className="font-bold block mb-1">Phone Number</label>
+              <input value={phone} onChange={e => setPhone(e.target.value)} className="w-full px-3 py-2 rounded-xl border font-bold bg-transparent" />
+            </div>
+            <div>
+              <label className="font-bold block mb-1">Profile Photo</label>
+              <input type="file" accept="image/*" onChange={handlePhotoUpload} className="w-full text-xs" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            <div>
+              <label className="font-bold block mb-1">Height (cm)</label>
+              <input type="number" value={heightCm} onChange={e => setHeightCm(Number(e.target.value))} className="w-full px-3 py-2 rounded-xl border font-bold bg-transparent" />
+            </div>
+            <div>
+              <label className="font-bold block mb-1">Weight (kg) — Auto Water Calc</label>
+              <input type="number" value={weightKg} onChange={e => setWeightKg(Number(e.target.value))} className="w-full px-3 py-2 rounded-xl border font-bold bg-transparent" />
+            </div>
+            <div>
+              <label className="font-bold block mb-1">Blood Group</label>
+              <input value={bloodGroup} onChange={e => setBloodGroup(e.target.value)} className="w-full px-3 py-2 rounded-xl border font-bold bg-transparent" />
+            </div>
+            <div>
+              <label className="font-bold block mb-1">Health Notes</label>
+              <input value={healthNotes} onChange={e => setHealthNotes(e.target.value)} className="w-full px-3 py-2 rounded-xl border font-bold bg-transparent" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="flex gap-2">
+              <input placeholder="Previous Company" value={newExpCompany} onChange={e => setNewExpCompany(e.target.value)} className="flex-1 px-3 py-2 rounded-xl border bg-transparent" />
+              <input placeholder="Role" value={newExpRole} onChange={e => setNewExpRole(e.target.value)} className="flex-1 px-3 py-2 rounded-xl border bg-transparent" />
+            </div>
+            <div className="flex gap-2">
+              <input placeholder="Qualification Title" value={newQualTitle} onChange={e => setNewQualTitle(e.target.value)} className="flex-1 px-3 py-2 rounded-xl border bg-transparent" />
+              <input placeholder="Institute" value={newQualInst} onChange={e => setNewQualInst(e.target.value)} className="flex-1 px-3 py-2 rounded-xl border bg-transparent" />
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              const updatedExp = newExpCompany
+                ? [...(currentUser.experiences || []), { id: `ex-${Date.now()}`, company: newExpCompany, role: newExpRole || 'Officer', period: 'Previous', status: 'approved' }]
+                : currentUser.experiences;
+              const updatedQual = newQualTitle
+                ? [...(currentUser.qualifications || []), { id: `ql-${Date.now()}`, title: newQualTitle, institute: newQualInst || 'Institute', year: '2025', status: 'approved' }]
+                : currentUser.qualifications;
+              onSubmitProfileUpdate({
+                name,
+                phone,
+                bio,
+                photoUrl,
+                health: { heightCm, weightKg, bloodGroup, notes: healthNotes },
+                experiences: updatedExp,
+                qualifications: updatedQual
+              });
+              setIsEditing(false);
+            }}
+            className="px-5 py-2.5 rounded-2xl bg-[#0D2B5B] text-amber-300 font-black"
+          >
+            Submit Profile &amp; Health Changes for Approval
+          </button>
         </div>
       )}
     </div>
@@ -3673,1065 +4935,792 @@ function ApprovalsTreeView({
 }
 
 // ============================================================================
-// OUR PLEDGE (8 PRINCIPLES — SELECTIVE STARS OR DEDUCTION MARKS)
+// 13. RANGIKA'S HOD CONTROL CENTER (Staff, JDs, Reporting Lines & Live Status)
 // ============================================================================
 
-function OurPledgeView({ currentUser, employees, pledgeRatings, setPledgeRatings, cardSurface }) {
-  const [targetId, setTargetId] = useState(employees[1]?.id || 'emp-mahasen');
-  const [scoresByPrinciple, setScoresByPrinciple] = useState({});
-  const [comment, setComment] = useState('');
+function ManagerAdminPanel({ users, tasks, dutyInRecords, bankRecs, darkMode, onUpdateUser, onAddTask, onUpdateTask }) {
+  const [selectedStaffId, setSelectedStaffId] = useState('dinithi');
+  const [newKpiTitle, setNewKpiTitle] = useState('');
+  const [newKpiSlot, setNewKpiSlot] = useState('03:00 PM - 03:30 PM');
+  const [newKpiMins, setNewKpiMins] = useState(30);
+  const [newKpiCat, setNewKpiCat] = useState('Daily');
+  const cardSurface = darkMode ? 'bg-[#0F1B33] border-slate-800' : 'bg-white border-slate-200 shadow-sm';
 
-  const handleSetScore = (pId, val) => {
-    setScoresByPrinciple((prev) => {
-      if (prev[pId] === val) {
-        const next = { ...prev };
-        delete next[pId];
-        return next;
-      }
-      return { ...prev, [pId]: val };
-    });
-  };
-
-  const handleSubmitPledge = (e) => {
-    e.preventDefault();
-    const entries = Object.entries(scoresByPrinciple);
-    if (entries.length === 0) return;
-
-    const newRecords = entries.map(([pId, sc]) => ({
-      id: `pr-${Date.now()}-${pId}-${Math.random().toString(36).slice(2, 5)}`,
-      raterId: currentUser.id,
-      targetId,
-      principleId: Number(pId),
-      score: Number(sc),
-      comment: comment.trim()
-    }));
-
-    setPledgeRatings((prev) => [...newRecords, ...prev]);
-    setScoresByPrinciple({});
-    setComment('');
-  };
+  const selectedStaff = users.find(u => u.id === selectedStaffId) || users[0];
+  const staffTasks = tasks.filter(t => t.userId === selectedStaff.id);
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-lg font-extrabold text-[#0F296B]">Our Pledge — 8 Guiding Principles</h1>
-        <p className="text-xs text-slate-500">
-          Starts unselected. Score only the principles you choose (1–5★) or apply negative deduction marks (-1, -2, -3).
+    <div className="space-y-5">
+      <div className={`p-5 rounded-3xl border ${cardSurface}`}>
+        <h2 className="text-lg font-black text-[#0D2B5B] dark:text-amber-300">
+          Rangika’s HOD Control Center — Reporting Tree, JDs &amp; Live Attendance
+        </h2>
+        <p className="text-xs opacity-70">
+          Modify reporting supervisors, Brain Colors, confidential JDs/KPIs, and inspect real-time attendance &amp; completion rates.
         </p>
       </div>
 
-      <form onSubmit={handleSubmitPledge} className={`${cardSurface} rounded-2xl p-4 space-y-3`}>
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-xs">
-            <span className="font-bold text-slate-700">Evaluate Colleague:</span>
-            <select
-              value={targetId}
-              onChange={(e) => setTargetId(e.target.value)}
-              className="border border-slate-200 rounded-lg px-2.5 py-1.5 bg-white font-semibold"
-            >
-              {employees
-                .filter((e) => e.id !== currentUser.id)
-                .map((e) => (
-                  <option key={e.id} value={e.id}>
-                    {e.name}
-                  </option>
-                ))}
-            </select>
-          </div>
-          <button type="submit" className="px-4 py-1.5 rounded-xl bg-[#0F296B] text-amber-300 text-xs font-extrabold">
-            Submit Pledge Score
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-          {PLEDGE_PRINCIPLES.map((p) => {
-            const currentVal = scoresByPrinciple[p.id];
-            return (
-              <div key={p.id} className="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-2">
-                <div>
-                  <div className="text-xs font-extrabold text-slate-900">
-                    {p.id}. {p.title}
-                  </div>
-                  <div className="text-[11px] text-slate-500">{p.desc}</div>
-                </div>
-                <div className="flex items-center gap-1 flex-wrap">
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <button
-                      type="button"
-                      key={s}
-                      onClick={() => handleSetScore(p.id, s)}
-                      className={`px-2 py-1 rounded-md text-[11px] font-bold ${
-                        currentVal === s ? 'bg-amber-400 text-[#0F296B]' : 'bg-white border border-slate-200 text-slate-600'
-                      }`}
-                    >
-                      {s}★
-                    </button>
-                  ))}
-                  {[-1, -2, -3].map((neg) => (
-                    <button
-                      type="button"
-                      key={neg}
-                      onClick={() => handleSetScore(p.id, neg)}
-                      className={`px-2 py-1 rounded-md text-[11px] font-bold ${
-                        currentVal === neg ? 'bg-rose-600 text-white' : 'bg-white border border-rose-200 text-rose-700'
-                      }`}
-                    >
-                      {neg}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        <input
-          type="text"
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          placeholder="Optional note or reason..."
-          className="w-full text-xs border border-slate-200 rounded-lg px-3 py-2 bg-white"
-        />
-      </form>
-
-      <div className={`${cardSurface} rounded-2xl p-4 space-y-2`}>
-        <h2 className="text-xs font-extrabold uppercase text-slate-500">Recent Pledge Evaluations</h2>
-        {pledgeRatings.slice(0, 8).map((r) => {
-          const target = employees.find((e) => e.id === r.targetId);
-          const rater = employees.find((e) => e.id === r.raterId);
-          const pr = PLEDGE_PRINCIPLES.find((p) => p.id === r.principleId);
-          return (
-            <div key={r.id} className="p-2.5 rounded-xl bg-slate-50 flex items-center justify-between text-xs">
-              <div>
-                <strong>{target?.shortName}</strong> • <span className="text-slate-600">{pr?.title}</span>
-                {r.comment && <div className="text-[11px] text-slate-500">“{r.comment}” by {rater?.shortName}</div>}
-              </div>
-              <span className={`font-black ${r.score < 0 ? 'text-rose-600' : 'text-amber-600'}`}>
-                {r.score > 0 ? `+${r.score}★` : `${r.score} pts`}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-// ============================================================================
-// SEPARATE NEW IDEA HUB & FEEDBACK BOX (WITH CUSTOM CATEGORIES)
-// ============================================================================
-
-function IdeaHubView({ currentUser, employees, ideas, setIdeas, cardSurface }) {
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('Bank & Entries Automation');
-  const [customCat, setCustomCat] = useState('');
-  const [desc, setDesc] = useState('');
-
-  const finalCat = category === 'Other / Custom' && customCat.trim() ? customCat.trim() : category;
-
-  const addIdea = (e) => {
-    e.preventDefault();
-    if (!title.trim()) return;
-    setIdeas((prev) => [
-      {
-        id: `idea-${Date.now()}`,
-        title: title.trim(),
-        category: finalCat,
-        authorId: currentUser.id,
-        desc: desc.trim(),
-        votes: 1
-      },
-      ...prev
-    ]);
-    setTitle('');
-    setCustomCat('');
-    setDesc('');
-  };
-
-  return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-lg font-extrabold text-[#0F296B]">FLi Pinnacle New Idea Hub</h1>
-        <p className="text-xs text-slate-500">Share process improvements and custom category ideas for the finance team.</p>
-      </div>
-
-      <form onSubmit={addIdea} className={`${cardSurface} rounded-2xl p-4 space-y-2.5`}>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Idea title..."
-            className="md:col-span-2 text-xs border border-slate-200 rounded-lg px-3 py-2 bg-white"
-          />
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="text-xs border border-slate-200 rounded-lg px-2.5 py-2 bg-white font-semibold"
-          >
-            <option value="Bank & Entries Automation">Bank & Entries Automation</option>
-            <option value="Month-End & Audit">Month-End & Audit</option>
-            <option value="Team Productivity">Team Productivity</option>
-            <option value="Other / Custom">Other / Custom</option>
-          </select>
-        </div>
-        {category === 'Other / Custom' && (
-          <input
-            type="text"
-            value={customCat}
-            onChange={(e) => setCustomCat(e.target.value)}
-            placeholder="Enter custom idea category..."
-            className="w-full text-xs border border-amber-300 rounded-lg px-3 py-1.5 bg-amber-50/40"
-          />
-        )}
-        <textarea
-          rows={2}
-          value={desc}
-          onChange={(e) => setDesc(e.target.value)}
-          placeholder="How does this help daily work?"
-          className="w-full text-xs border border-slate-200 rounded-lg p-2.5 bg-white"
-        />
-        <button type="submit" className="px-4 py-2 rounded-xl bg-[#0F296B] text-amber-300 text-xs font-extrabold">
-          Publish Idea
-        </button>
-      </form>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {ideas.map((item) => (
-          <div key={item.id} className={`${cardSurface} rounded-2xl p-4 flex flex-col justify-between gap-3`}>
-            <div>
-              <span className="px-2 py-0.5 rounded-full bg-blue-50 text-[#0F296B] text-[10px] font-bold">
-                {item.category}
-              </span>
-              <div className="text-sm font-extrabold text-slate-900 mt-1.5">{item.title}</div>
-              <p className="text-xs text-slate-600 mt-1">{item.desc}</p>
-            </div>
-            <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-100">
-              <span className="text-slate-500">By {employees.find((e) => e.id === item.authorId)?.shortName}</span>
-              <button
-                onClick={() =>
-                  setIdeas((prev) => prev.map((x) => (x.id === item.id ? { ...x, votes: x.votes + 1 } : x)))
-                }
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-100 text-amber-950 font-bold"
-              >
-                <ThumbsUp className="w-3.5 h-3.5" />
-                <span>{item.votes}</span>
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function FeedbackBoxView({ currentUser, employees, feedbacks, setFeedbacks, cardSurface }) {
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('Workflow & Timings');
-  const [customCat, setCustomCat] = useState('');
-  const [desc, setDesc] = useState('');
-
-  const finalCat = category === 'Other / Custom' && customCat.trim() ? customCat.trim() : category;
-
-  const submitFeedback = (e) => {
-    e.preventDefault();
-    if (!title.trim()) return;
-    setFeedbacks((prev) => [
-      {
-        id: `fb-${Date.now()}`,
-        title: title.trim(),
-        category: finalCat,
-        authorId: currentUser.id,
-        desc: desc.trim(),
-        status: 'Submitted'
-      },
-      ...prev
-    ]);
-    setTitle('');
-    setCustomCat('');
-    setDesc('');
-  };
-
-  return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-lg font-extrabold text-[#0F296B]">Feedback Box</h1>
-        <p className="text-xs text-slate-500">Dedicated feedback channel with custom categories.</p>
-      </div>
-
-      <form onSubmit={submitFeedback} className={`${cardSurface} rounded-2xl p-4 space-y-2.5`}>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Feedback subject..."
-            className="md:col-span-2 text-xs border border-slate-200 rounded-lg px-3 py-2 bg-white"
-          />
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="text-xs border border-slate-200 rounded-lg px-2.5 py-2 bg-white font-semibold"
-          >
-            <option value="Workflow & Timings">Workflow & Timings</option>
-            <option value="Tools & Access">Tools & Access</option>
-            <option value="Other / Custom">Other / Custom</option>
-          </select>
-        </div>
-        {category === 'Other / Custom' && (
-          <input
-            type="text"
-            value={customCat}
-            onChange={(e) => setCustomCat(e.target.value)}
-            placeholder="Enter custom feedback category..."
-            className="w-full text-xs border border-amber-300 rounded-lg px-3 py-1.5 bg-amber-50/40"
-          />
-        )}
-        <textarea
-          rows={2}
-          value={desc}
-          onChange={(e) => setDesc(e.target.value)}
-          placeholder="Your feedback details..."
-          className="w-full text-xs border border-slate-200 rounded-lg p-2.5 bg-white"
-        />
-        <button type="submit" className="px-4 py-2 rounded-xl bg-[#0F296B] text-white text-xs font-bold">
-          Submit Feedback
-        </button>
-      </form>
-
-      <div className="space-y-2.5">
-        {feedbacks.map((fb) => (
-          <div key={fb.id} className={`${cardSurface} rounded-2xl p-4 text-xs`}>
-            <div className="flex items-center justify-between">
-              <span className="font-extrabold text-slate-900 text-sm">{fb.title}</span>
-              <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-bold">{fb.category}</span>
-            </div>
-            <p className="text-slate-600 mt-1">{fb.desc}</p>
-            <div className="text-[11px] text-slate-400 mt-1.5">
-              By {employees.find((e) => e.id === fb.authorId)?.shortName} • {fb.status}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ============================================================================
-// WI-FI LAN FILE DROP (POPOVER + FULL VIEW WITH OTHER/CUSTOM & VISIBILITY)
-// ============================================================================
-
-function LanQuickDropPopover({ employees, currentUser, lanFiles, onAddFile, onClose, onOpenFull }) {
-  const [fileName, setFileName] = useState('');
-  const [category, setCategory] = useState('Bank Statements');
-  const [customCat, setCustomCat] = useState('');
-  const [visibility, setVisibility] = useState('everyone'); // everyone | selected
-  const [targetId, setTargetId] = useState(employees[1]?.id || 'emp-mahasen');
-
-  const handleDropSubmit = (e) => {
-    e.preventDefault();
-    if (!fileName.trim()) return;
-    onAddFile({
-      id: `lan-${Date.now()}`,
-      name: fileName.trim(),
-      category: category === 'Other / Custom' && customCat.trim() ? customCat.trim() : category,
-      visibility,
-      targetId: visibility === 'selected' ? targetId : null,
-      uploadedBy: currentUser.id,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      size: '84 KB'
-    });
-    setFileName('');
-    setCustomCat('');
-  };
-
-  return (
-    <div className="absolute right-0 mt-2 w-80 bg-white border border-slate-200 rounded-2xl shadow-xl p-3.5 z-40 space-y-2.5 text-xs">
-      <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-        <span className="font-extrabold text-[#0F296B]">Office Wi-Fi Speed File Drop</span>
-        <button onClick={onClose}>
-          <X className="w-4 h-4 text-slate-400" />
-        </button>
-      </div>
-
-      <form onSubmit={handleDropSubmit} className="space-y-2">
-        <input
-          type="text"
-          value={fileName}
-          onChange={(e) => setFileName(e.target.value)}
-          placeholder="File name (e.g. Voucher_Batch.xlsx)..."
-          className="w-full border border-slate-200 rounded-lg px-2.5 py-1.5"
-        />
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="w-full border border-slate-200 rounded-lg px-2.5 py-1.5 font-semibold"
-        >
-          <option value="Bank Statements">Bank Statements</option>
-          <option value="Vouchers & Slips">Vouchers & Slips</option>
-          <option value="Other / Custom">Other / Custom</option>
-        </select>
-        {category === 'Other / Custom' && (
-          <input
-            type="text"
-            value={customCat}
-            onChange={(e) => setCustomCat(e.target.value)}
-            placeholder="Custom category..."
-            className="w-full border border-amber-300 rounded-lg px-2.5 py-1.5 bg-amber-50/40"
-          />
-        )}
-        <div className="grid grid-cols-2 gap-1.5">
-          <select
-            value={visibility}
-            onChange={(e) => setVisibility(e.target.value)}
-            className="border border-slate-200 rounded-lg px-2 py-1.5 font-semibold"
-          >
-            <option value="everyone">Visible: Everyone</option>
-            <option value="selected">Selected Person Only</option>
-          </select>
-          {visibility === 'selected' && (
-            <select
-              value={targetId}
-              onChange={(e) => setTargetId(e.target.value)}
-              className="border border-slate-200 rounded-lg px-2 py-1.5"
-            >
-              {employees.map((emp) => (
-                <option key={emp.id} value={emp.id}>
-                  {emp.shortName}
-                </option>
-              ))}
-            </select>
-          )}
-        </div>
-        <button type="submit" className="w-full py-1.5 rounded-lg bg-[#0F296B] text-white font-bold">
-          Drop File
-        </button>
-      </form>
-
-      <div className="space-y-1 max-h-28 overflow-y-auto pt-1 border-t border-slate-100">
-        {lanFiles
-          .filter((f) => f.visibility === 'everyone' || f.targetId === currentUser.id || f.uploadedBy === currentUser.id)
-          .slice(0, 4)
-          .map((f) => (
-            <div key={f.id} className="flex items-center justify-between text-[11px] py-1">
-              <span className="font-semibold text-slate-700 truncate">{f.name}</span>
-              <span className="text-[10px] text-slate-400">{f.category}</span>
-            </div>
-          ))}
-      </div>
-
-      <button onClick={onOpenFull} className="w-full text-center text-[11px] font-bold text-blue-700 hover:underline">
-        Open Full LAN File Share →
-      </button>
-    </div>
-  );
-}
-
-function LanFilesView({ currentUser, employees, lanFiles, onAddFile, cardSurface }) {
-  const [name, setName] = useState('');
-  const [category, setCategory] = useState('Bank Statements');
-  const [customCat, setCustomCat] = useState('');
-  const [visibility, setVisibility] = useState('everyone');
-  const [targetId, setTargetId] = useState(employees[1]?.id || 'emp-mahasen');
-
-  const visibleFiles = lanFiles.filter(
-    (f) => f.visibility === 'everyone' || f.targetId === currentUser.id || f.uploadedBy === currentUser.id
-  );
-
-  const handleAdd = (e) => {
-    e.preventDefault();
-    if (!name.trim()) return;
-    onAddFile({
-      id: `lan-${Date.now()}`,
-      name: name.trim(),
-      category: category === 'Other / Custom' && customCat.trim() ? customCat.trim() : category,
-      visibility,
-      targetId: visibility === 'selected' ? targetId : null,
-      uploadedBy: currentUser.id,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      size: '112 KB'
-    });
-    setName('');
-    setCustomCat('');
-  };
-
-  return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-lg font-extrabold text-[#0F296B]">Office Wi-Fi Speed File Drop</h1>
-        <p className="text-xs text-slate-500">Share files with everyone or a selected person, with custom categories.</p>
-      </div>
-
-      <form onSubmit={handleAdd} className={`${cardSurface} rounded-2xl p-4 grid grid-cols-1 md:grid-cols-5 gap-2.5 text-xs`}>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Document or spreadsheet name..."
-          className="md:col-span-2 border border-slate-200 rounded-lg px-3 py-2 bg-white"
-        />
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="border border-slate-200 rounded-lg px-2.5 py-2 bg-white font-semibold"
-        >
-          <option value="Bank Statements">Bank Statements</option>
-          <option value="Vouchers & Slips">Vouchers & Slips</option>
-          <option value="Other / Custom">Other / Custom</option>
-        </select>
-        <select
-          value={visibility}
-          onChange={(e) => setVisibility(e.target.value)}
-          className="border border-slate-200 rounded-lg px-2.5 py-2 bg-white font-semibold"
-        >
-          <option value="everyone">Visible: Everyone</option>
-          <option value="selected">Selected Person Only</option>
-        </select>
-        <button type="submit" className="rounded-lg bg-[#0F296B] text-amber-300 font-extrabold py-2">
-          Share File
-        </button>
-
-        {category === 'Other / Custom' && (
-          <input
-            type="text"
-            value={customCat}
-            onChange={(e) => setCustomCat(e.target.value)}
-            placeholder="Custom category name..."
-            className="md:col-span-2 border border-amber-300 rounded-lg px-3 py-1.5 bg-amber-50/40"
-          />
-        )}
-        {visibility === 'selected' && (
-          <select
-            value={targetId}
-            onChange={(e) => setTargetId(e.target.value)}
-            className="md:col-span-2 border border-slate-200 rounded-lg px-2.5 py-1.5 bg-white"
-          >
-            {employees.map((emp) => (
-              <option key={emp.id} value={emp.id}>
-                Recipient: {emp.name}
-              </option>
-            ))}
-          </select>
-        )}
-      </form>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {visibleFiles.map((f) => (
-          <div key={f.id} className={`${cardSurface} rounded-2xl p-4 flex items-center justify-between text-xs`}>
-            <div>
-              <div className="font-extrabold text-slate-900">{f.name}</div>
-              <div className="text-[11px] text-slate-500 mt-0.5">
-                {f.category} • By {employees.find((e) => e.id === f.uploadedBy)?.shortName} • {f.time}
-              </div>
-            </div>
-            <span className="px-2.5 py-1 rounded-full bg-blue-50 text-[#0F296B] font-bold">
-              {f.visibility === 'everyone'
-                ? 'Everyone'
-                : `Only ${employees.find((e) => e.id === f.targetId)?.shortName || 'Selected'}`}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ============================================================================
-// REPORTS & ANALYTICS + PRINTABLE/PDF DAY-END HANDOVER EXPORT + CSV DOWNLOAD
-// ============================================================================
-
-function ReportsAnalyticsView({ currentUser, employees, dutyInMap, tasks, statements, reconciliations, cardSurface }) {
-  const [selectedEmpId, setSelectedEmpId] = useState(currentUser.id);
-  const [periodFrom, setPeriodFrom] = useState('2026-11-01');
-  const [periodTo, setPeriodTo] = useState('2026-11-25');
-
-  const targetEmp = employees.find((e) => e.id === selectedEmpId) || currentUser;
-
-  const downloadCsvSummary = () => {
-    const headers = ['Employee', 'Role', 'Duty In', 'Total Tasks', 'Completed Tasks', 'Logged Minutes', 'Reconciliations Done'];
-    const rows = employees.map((emp) => {
-      const empTasks = tasks.filter((t) => t.employeeId === emp.id);
-      const recsDone = reconciliations.filter((r) => r.ownerId === emp.id && r.completed).length;
-      const mins = empTasks.reduce((a, b) => a + (b.actualMinutes || 0), 0);
-      return [
-        emp.name,
-        emp.role,
-        dutyInMap[emp.id] || '08:30 AM',
-        empTasks.length,
-        empTasks.filter((t) => t.status === 'Completed').length,
-        mins,
-        recsDone
-      ];
-    });
-
-    const csvContent =
-      'data:text/csv;charset=utf-8,' +
-      [headers, ...rows].map((e) => e.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `FLi_Pinnacle_Report_${periodFrom}_to_${periodTo}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-lg font-extrabold text-[#0F296B]">Reports & Analytics</h1>
-          <p className="text-xs text-slate-500">
-            Date-period filters, CSV exports, and standardized Day-End PDF handover reports per employee.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2 flex-wrap">
-          <input
-            type="date"
-            value={periodFrom}
-            onChange={(e) => setPeriodFrom(e.target.value)}
-            className="text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 bg-white"
-          />
-          <input
-            type="date"
-            value={periodTo}
-            onChange={(e) => setPeriodTo(e.target.value)}
-            className="text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 bg-white"
-          />
-          <button
-            onClick={downloadCsvSummary}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-800 text-xs font-bold hover:bg-slate-50"
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span>Download CSV</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Standardized Day-End Handover & Activity PDF Generator */}
-      <div className={`${cardSurface} rounded-2xl p-5 space-y-3`}>
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="text-sm font-extrabold text-[#0F296B]">Employee Day-End Handover & Activity PDF</h2>
-            <p className="text-xs text-slate-500">
-              Includes Duty In, completed/pending tasks with reasons, handled/escalated entries, and reconciliations.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <select
-              value={selectedEmpId}
-              onChange={(e) => setSelectedEmpId(e.target.value)}
-              className="text-xs border border-slate-200 rounded-lg px-3 py-2 bg-white font-semibold"
-            >
-              {employees.map((emp) => (
-                <option key={emp.id} value={emp.id}>
-                  {emp.name}
-                </option>
-              ))}
-            </select>
-            <button
-              onClick={() =>
-                exportDayEndReportPdf(targetEmp, dutyInMap[targetEmp.id], tasks, statements, reconciliations, employees)
-              }
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0F296B] text-amber-300 text-xs font-extrabold hover:bg-blue-900"
-            >
-              <Printer className="w-3.5 h-3.5" />
-              <span>Generate Day-End PDF</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Department Summary Table */}
-      <div className={`${cardSurface} rounded-2xl overflow-hidden`}>
-        <table className="w-full text-left border-collapse text-xs">
-          <thead>
-            <tr className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase text-slate-500">
-              <th className="p-3">Staff Member</th>
-              <th className="p-3">Duty In</th>
-              <th className="p-3">Tasks Done</th>
-              <th className="p-3">Time Logged</th>
-              <th className="p-3">Reconciliations Done</th>
+      {/* Live Attendance & As-At-Time Snapshot */}
+      <div className={`p-5 rounded-3xl border ${cardSurface} overflow-x-auto`}>
+        <h3 className="text-sm font-black mb-3">Live As-At-Time Attendance &amp; Work Status</h3>
+        <table className="w-full text-left text-xs">
+          <thead className="bg-slate-50 dark:bg-slate-900 text-[10px] font-extrabold uppercase">
+            <tr>
+              <th className="p-2.5">Staff Member</th>
+              <th className="p-2.5">Duty In</th>
+              <th className="p-2.5">Reports To</th>
+              <th className="p-2.5">Brain Color</th>
+              <th className="p-2.5">KPIs Done</th>
+              <th className="p-2.5">Bank Recs</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
-            {employees.map((emp) => {
-              const empTasks = tasks.filter((t) => t.employeeId === emp.id);
-              const doneTasks = empTasks.filter((t) => t.status === 'Completed').length;
-              const mins = empTasks.reduce((a, b) => a + (b.actualMinutes || 0), 0);
-              const recsDone = reconciliations.filter((r) => r.ownerId === emp.id && r.completed).length;
+          <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+            {users.map(u => {
+              const uTasks = tasks.filter(t => t.userId === u.id);
+              const uRecs = bankRecs.filter(r => r.userId === u.id);
               return (
-                <tr key={emp.id}>
-                  <td className="p-3 font-bold text-slate-900">
-                    {emp.name} <span className="text-slate-400 font-normal">({emp.grade})</span>
+                <tr key={u.id}>
+                  <td className="p-2.5 font-extrabold">{u.name}</td>
+                  <td className="p-2.5 font-mono text-emerald-600 font-bold">{dutyInRecords[u.id] || 'Not Logged In'}</td>
+                  <td className="p-2.5">
+                    <select
+                      value={u.supervisorId || ''}
+                      onChange={e => onUpdateUser(u.id, { supervisorId: e.target.value || null })}
+                      className="px-2 py-1 rounded-lg border text-xs font-bold bg-transparent"
+                    >
+                      <option value="" className="text-slate-900">Board (HOD)</option>
+                      {users
+                        .filter(s => s.id !== u.id)
+                        .map(s => (
+                          <option key={s.id} value={s.id} className="text-slate-900">
+                            {s.name}
+                          </option>
+                        ))}
+                    </select>
                   </td>
-                  <td className="p-3">{dutyInMap[emp.id] || '08:30 AM'}</td>
-                  <td className="p-3">
-                    {doneTasks} / {empTasks.length}
+                  <td className="p-2.5">
+                    <select
+                      value={u.brainColor}
+                      onChange={e => onUpdateUser(u.id, { brainColor: e.target.value })}
+                      className="px-2 py-1 rounded-lg border text-xs font-bold bg-transparent"
+                    >
+                      {['Red', 'Green', 'Purple', 'Blue'].map(c => (
+                        <option key={c} value={c} className="text-slate-900">{c}</option>
+                      ))}
+                    </select>
                   </td>
-                  <td className="p-3">{mins} mins</td>
-                  <td className="p-3">{recsDone}</td>
+                  <td className="p-2.5 font-bold">
+                    {uTasks.filter(t => t.status !== 'pending').length} / {uTasks.length}
+                  </td>
+                  <td className="p-2.5 font-bold">
+                    {uRecs.filter(r => r.status === 'completed').length} / {uRecs.length}
+                  </td>
                 </tr>
               );
             })}
           </tbody>
         </table>
       </div>
-    </div>
-  );
-}
 
-// ============================================================================
-// SIMPLE, CLEAN BREAK-TIME MINI-GAMES
-// ============================================================================
-
-function BreakTimeGamesView({ cardSurface }) {
-  const [gameTab, setGameTab] = useState('reflex'); // reflex | math
-  const [score, setScore] = useState(0);
-  const [activeTile, setActiveTile] = useState(2);
-  const [mathA, setMathA] = useState(24);
-  const [mathB, setMathB] = useState(18);
-  const [mathAnswer, setMathAnswer] = useState('');
-  const [mathFeedback, setMathFeedback] = useState('');
-
-  const handleTileHit = (idx) => {
-    if (idx === activeTile) {
-      setScore((s) => s + 10);
-      setActiveTile((prev) => (prev + 3) % 9);
-    }
-  };
-
-  const handleCheckMath = (e) => {
-    e.preventDefault();
-    if (Number(mathAnswer) === mathA + mathB) {
-      setScore((s) => s + 15);
-      setMathFeedback('Correct! +15 pts');
-      const nextA = Math.floor(Math.random() * 50) + 10;
-      const nextB = Math.floor(Math.random() * 50) + 10;
-      setMathA(nextA);
-      setMathB(nextB);
-      setMathAnswer('');
-    } else {
-      setMathFeedback(`Try again (${mathA} + ${mathB})`);
-    }
-  };
-
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <div>
-          <h1 className="text-lg font-extrabold text-[#0F296B]">Break-Time Mini-Games</h1>
-          <p className="text-xs text-slate-500">Quick, calm refreshers during scheduled breaks.</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="px-3 py-1.5 rounded-xl bg-amber-100 text-amber-950 text-xs font-extrabold">
-            Score: {score} pts
-          </span>
-          <button
-            onClick={() => setGameTab('reflex')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold ${
-              gameTab === 'reflex' ? 'bg-[#0F296B] text-white' : 'bg-white border border-slate-200'
-            }`}
-          >
-            Quick Tile Tap
-          </button>
-          <button
-            onClick={() => setGameTab('math')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold ${
-              gameTab === 'math' ? 'bg-[#0F296B] text-white' : 'bg-white border border-slate-200'
-            }`}
-          >
-            Mental Math Sprint
-          </button>
-        </div>
-      </div>
-
-      {gameTab === 'reflex' ? (
-        <div className={`${cardSurface} rounded-2xl p-6 max-w-md mx-auto text-center space-y-4`}>
-          <div className="text-xs font-bold text-slate-600">Tap the highlighted gold tile to score</div>
-          <div className="grid grid-cols-3 gap-2.5">
-            {Array.from({ length: 9 }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => handleTileHit(i)}
-                className={`h-20 rounded-xl font-extrabold text-xs transition ${
-                  i === activeTile ? 'bg-amber-400 text-[#0F296B] shadow-sm' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'
-                }`}
-              >
-                {i === activeTile ? 'TAP!' : ''}
-              </button>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div className={`${cardSurface} rounded-2xl p-6 max-w-md mx-auto text-center space-y-4`}>
-          <div className="text-2xl font-black text-[#0F296B]">
-            {mathA} + {mathB} = ?
-          </div>
-          <form onSubmit={handleCheckMath} className="flex items-center justify-center gap-2">
-            <input
-              type="number"
-              value={mathAnswer}
-              onChange={(e) => setMathAnswer(e.target.value)}
-              placeholder="Answer"
-              className="w-28 border border-slate-200 rounded-xl px-3 py-2 text-center font-bold text-sm"
-            />
-            <button type="submit" className="px-4 py-2 rounded-xl bg-[#0F296B] text-white text-xs font-bold">
-              Check
-            </button>
-          </form>
-          {mathFeedback && <div className="text-xs font-bold text-emerald-700">{mathFeedback}</div>}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ============================================================================
-// PROFILE & HEALTH STATUS (HYDRATION CALCULATOR + WELLNESS DETAILS)
-// ============================================================================
-
-function ProfileHealthView({ currentUser, dutyInMap, dailyWaterTargetMl, dailyWaterGlassesTarget, cardSurface, onUpdateProfile }) {
-  const [editMode, setEditMode] = useState(false);
-  const [heightCm, setHeightCm] = useState(currentUser.heightCm || 170);
-  const [weightKg, setWeightKg] = useState(currentUser.weightKg || 65);
-  const [bloodGroup, setBloodGroup] = useState(currentUser.bloodGroup || 'O+');
-  const [healthNotes, setHealthNotes] = useState(currentUser.healthNotes || '');
-
-  useEffect(() => {
-    setHeightCm(currentUser.heightCm || 170);
-    setWeightKg(currentUser.weightKg || 65);
-    setBloodGroup(currentUser.bloodGroup || 'O+');
-    setHealthNotes(currentUser.healthNotes || '');
-    setEditMode(false);
-  }, [currentUser]);
-
-  const handleSave = (e) => {
-    e.preventDefault();
-    onUpdateProfile({
-      heightCm: Number(heightCm) || 170,
-      weightKg: Number(weightKg) || 65,
-      bloodGroup,
-      healthNotes
-    });
-    setEditMode(false);
-  };
-
-  return (
-    <div className="space-y-4 max-w-3xl">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-lg font-extrabold text-[#0F296B]">My Profile & Health Status</h1>
-          <p className="text-xs text-slate-500">View profile details or switch to Edit Mode to update health & hydration targets.</p>
-        </div>
-        <button
-          onClick={() => setEditMode((v) => !v)}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#0F296B] text-white text-xs font-bold"
-        >
-          <Edit3 className="w-3.5 h-3.5" />
-          <span>{editMode ? 'Cancel Edit' : 'Edit Profile & Health'}</span>
-        </button>
-      </div>
-
-      <div className={`${cardSurface} rounded-2xl p-5 space-y-4`}>
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#0F296B] text-amber-300 font-black text-lg flex items-center justify-center">
-            {currentUser.avatar}
-          </div>
-          <div>
-            <div className="text-base font-extrabold text-slate-900">{currentUser.name}</div>
-            <div className="text-xs text-slate-500">{currentUser.role} • Duty In: {dutyInMap[currentUser.id] || '08:30 AM'}</div>
-            <div className="text-xs text-slate-600 mt-1">
-              Daily Water Target: <strong>{dailyWaterTargetMl} ml</strong> (~{dailyWaterGlassesTarget} glasses of 250 ml)
-            </div>
-          </div>
-        </div>
-
-        {!editMode ? (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 border-t border-slate-100 text-xs">
-            <div className="p-3 rounded-xl bg-slate-50">
-              <div className="text-slate-400 text-[10px] uppercase font-bold">Height</div>
-              <div className="font-extrabold text-slate-800 mt-0.5">{currentUser.heightCm} cm</div>
-            </div>
-            <div className="p-3 rounded-xl bg-slate-50">
-              <div className="text-slate-400 text-[10px] uppercase font-bold">Weight</div>
-              <div className="font-extrabold text-slate-800 mt-0.5">{currentUser.weightKg} kg</div>
-            </div>
-            <div className="p-3 rounded-xl bg-slate-50">
-              <div className="text-slate-400 text-[10px] uppercase font-bold">Blood Group</div>
-              <div className="font-extrabold text-slate-800 mt-0.5">{currentUser.bloodGroup}</div>
-            </div>
-            <div className="p-3 rounded-xl bg-slate-50">
-              <div className="text-slate-400 text-[10px] uppercase font-bold">Water Today</div>
-              <div className="font-extrabold text-slate-800 mt-0.5">{currentUser.waterGlassesToday || 0} glasses</div>
-            </div>
-            <div className="col-span-2 sm:col-span-4 p-3 rounded-xl bg-slate-50">
-              <div className="text-slate-400 text-[10px] uppercase font-bold">Health & Wellness Note</div>
-              <div className="text-slate-700 mt-0.5">{currentUser.healthNotes || 'None'}</div>
-            </div>
-          </div>
-        ) : (
-          <form onSubmit={handleSave} className="space-y-3 pt-2 border-t border-slate-100 text-xs">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div>
-                <label className="block font-bold text-slate-600 mb-1">Height (cm)</label>
-                <input
-                  type="number"
-                  value={heightCm}
-                  onChange={(e) => setHeightCm(e.target.value)}
-                  className="w-full border border-slate-200 rounded-lg px-3 py-2 bg-white"
-                />
-              </div>
-              <div>
-                <label className="block font-bold text-slate-600 mb-1">Weight (kg)</label>
-                <input
-                  type="number"
-                  value={weightKg}
-                  onChange={(e) => setWeightKg(e.target.value)}
-                  className="w-full border border-slate-200 rounded-lg px-3 py-2 bg-white"
-                />
-              </div>
-              <div>
-                <label className="block font-bold text-slate-600 mb-1">Blood Group</label>
-                <input
-                  type="text"
-                  value={bloodGroup}
-                  onChange={(e) => setBloodGroup(e.target.value)}
-                  className="w-full border border-slate-200 rounded-lg px-3 py-2 bg-white"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block font-bold text-slate-600 mb-1">Wellness / Break Note</label>
-              <input
-                type="text"
-                value={healthNotes}
-                onChange={(e) => setHealthNotes(e.target.value)}
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 bg-white"
-              />
-            </div>
-            <button type="submit" className="px-4 py-2 rounded-xl bg-[#0F296B] text-amber-300 font-extrabold">
-              Save Profile & Recalculate Hydration
-            </button>
-          </form>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ============================================================================
-// INSTANT CHAT (GROUP CHANNEL + 1-ON-1 DIRECT MESSAGES)
-// ============================================================================
-
-function InstantChatBox({ currentUser, employees, messages, onSend, onClose }) {
-  const [mode, setMode] = useState('group'); // group | dm
-  const [dmTargetId, setDmTargetId] = useState('emp-shani');
-  const [draft, setDraft] = useState('');
-
-  const filteredMsgs = messages.filter((m) => {
-    if (mode === 'group') return m.channelType === 'group';
-    return (
-      m.channelType === 'dm' &&
-      ((m.senderId === currentUser.id && m.channelId === dmTargetId) ||
-        (m.senderId === dmTargetId && m.channelId === currentUser.id))
-    );
-  });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!draft.trim()) return;
-    onSend({
-      id: `msg-${Date.now()}`,
-      channelType: mode,
-      channelId: mode === 'group' ? 'finance-all' : dmTargetId,
-      senderId: currentUser.id,
-      text: draft.trim(),
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    });
-    setDraft('');
-  };
-
-  return (
-    <div className="w-80 bg-white border border-slate-200 rounded-2xl shadow-2xl overflow-hidden flex flex-col text-xs">
-      <div className="bg-[#0F296B] text-white px-3.5 py-2.5 flex items-center justify-between">
-        <span className="font-extrabold">FLi Team Chat</span>
-        <button onClick={onClose}>
-          <X className="w-4 h-4 text-blue-200 hover:text-white" />
-        </button>
-      </div>
-
-      <div className="p-2 bg-slate-50 border-b border-slate-200 flex items-center gap-1.5">
-        <button
-          onClick={() => setMode('group')}
-          className={`flex-1 py-1 rounded-lg font-bold ${
-            mode === 'group' ? 'bg-[#0F296B] text-white' : 'bg-white text-slate-600 border border-slate-200'
-          }`}
-        >
-          Group
-        </button>
-        <button
-          onClick={() => setMode('dm')}
-          className={`flex-1 py-1 rounded-lg font-bold ${
-            mode === 'dm' ? 'bg-[#0F296B] text-white' : 'bg-white text-slate-600 border border-slate-200'
-          }`}
-        >
-          1-on-1 DM
-        </button>
-      </div>
-
-      {mode === 'dm' && (
-        <div className="px-2 py-1.5 border-b border-slate-100 bg-white">
+      {/* Staff JD & KPI Editor */}
+      <div className={`p-5 rounded-3xl border ${cardSurface} space-y-4`}>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-sm font-black">Edit Staff Confidential JD &amp; Time Allocations</h3>
           <select
-            value={dmTargetId}
-            onChange={(e) => setDmTargetId(e.target.value)}
-            className="w-full border border-slate-200 rounded-lg px-2 py-1 text-xs font-semibold"
+            value={selectedStaffId}
+            onChange={e => setSelectedStaffId(e.target.value)}
+            className="px-3 py-1.5 rounded-xl border text-xs font-extrabold bg-transparent"
           >
-            {employees
-              .filter((e) => e.id !== currentUser.id)
-              .map((emp) => (
-                <option key={emp.id} value={emp.id}>
-                  {emp.name}
+            {users.map(u => (
+              <option key={u.id} value={u.id} className="text-slate-900">
+                {u.name} ({u.roleTitle})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <form
+          onSubmit={e => {
+            e.preventDefault();
+            if (!newKpiTitle.trim()) return;
+            onAddTask({
+              id: `t-hod-${Date.now()}`,
+              userId: selectedStaff.id,
+              title: newKpiTitle.trim(),
+              category: newKpiCat,
+              timeSlot: newKpiSlot,
+              allocatedMinutes: Number(newKpiMins) || 30,
+              actualMinutes: 0,
+              status: 'pending',
+              accepted: false,
+              remark: 'Assigned by HOD Rangika',
+              subItems: []
+            });
+            setNewKpiTitle('');
+          }}
+          className="grid grid-cols-1 sm:grid-cols-5 gap-2 text-xs"
+        >
+          <input
+            placeholder="New KPI / Job Title..."
+            value={newKpiTitle}
+            onChange={e => setNewKpiTitle(e.target.value)}
+            className="sm:col-span-2 px-3 py-2 rounded-xl border font-bold bg-transparent"
+          />
+          <input
+            placeholder="Time Slot"
+            value={newKpiSlot}
+            onChange={e => setNewKpiSlot(e.target.value)}
+            className="px-3 py-2 rounded-xl border font-bold bg-transparent"
+          />
+          <select
+            value={newKpiCat}
+            onChange={e => setNewKpiCat(e.target.value)}
+            className="px-3 py-2 rounded-xl border font-bold bg-transparent"
+          >
+            <option value="Daily" className="text-slate-900">Daily</option>
+            <option value="Month End" className="text-slate-900">Month End</option>
+          </select>
+          <button type="submit" className="px-4 py-2 rounded-xl bg-[#0D2B5B] text-amber-300 font-black">
+            + Assign KPI ({newKpiMins}m)
+          </button>
+        </form>
+
+        <div className="space-y-2">
+          {staffTasks.map(t => (
+            <div key={t.id} className="p-3 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div className="font-bold">{t.title}</div>
+              <div className="flex items-center gap-2">
+                <span className="opacity-70">{t.timeSlot}</span>
+                <input
+                  type="number"
+                  value={t.allocatedMinutes}
+                  onChange={e => onUpdateTask(t.id, { allocatedMinutes: Number(e.target.value) })}
+                  className="w-16 px-2 py-1 rounded-lg border font-bold bg-transparent"
+                />
+                <span>min</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// 14. OUR PLEDGE RATING, IDEA HUB, FEEDBACK BOX, NOTEPAD, LAN DROP & GAMES
+// ============================================================================
+
+function OurPledgeRatingPortal({ currentUser, users, topPledge, darkMode, onSubmitRating }) {
+  const [targetUserId, setTargetUserId] = useState(users.find(u => u.id !== currentUser.id)?.id || 'mahasen');
+  const [selectedScores, setSelectedScores] = useState({});
+  const [comment, setComment] = useState('');
+  const cardSurface = darkMode ? 'bg-[#0F1B33] border-slate-800' : 'bg-white border-slate-200 shadow-sm';
+
+  const setPrincipleScore = (pId, val) => {
+    setSelectedScores(prev => {
+      const next = { ...prev };
+      if (next[pId] === val) delete next[pId];
+      else next[pId] = val;
+      return next;
+    });
+  };
+
+  return (
+    <div className="space-y-5">
+      <div className={`p-5 rounded-3xl border-2 border-amber-300 ${cardSurface} flex flex-wrap items-center justify-between gap-3`}>
+        <div>
+          <span className="text-[10px] font-black uppercase text-amber-600">Department Our Pledge Leader</span>
+          <h2 className="text-xl font-black text-[#0D2B5B] dark:text-amber-300">
+            {topPledge.user.name} — ★ {topPledge.avg} / 5.0
+          </h2>
+          <p className="text-xs opacity-70">
+            Select only the specific Guiding Principle(s) observed (+1★ to +5★) or apply deduction marks (-1 to -3) if violated.
+          </p>
+        </div>
+      </div>
+
+      <div className={`p-5 rounded-3xl border ${cardSurface} space-y-4`}>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h3 className="text-sm font-black">Evaluate a Colleague</h3>
+          <select
+            value={targetUserId}
+            onChange={e => setTargetUserId(e.target.value)}
+            className="px-3 py-2 rounded-xl border text-xs font-extrabold bg-transparent"
+          >
+            {users
+              .filter(u => u.id !== currentUser.id)
+              .map(u => (
+                <option key={u.id} value={u.id} className="text-slate-900">
+                  {u.name} ({u.roleTitle})
                 </option>
               ))}
           </select>
         </div>
-      )}
 
-      <div className="p-3 space-y-2 h-56 overflow-y-auto bg-slate-50/40">
-        {filteredMsgs.map((m) => {
-          const sender = employees.find((e) => e.id === m.senderId);
-          const mine = m.senderId === currentUser.id;
-          return (
-            <div key={m.id} className={`flex flex-col ${mine ? 'items-end' : 'items-start'}`}>
-              <span className="text-[10px] text-slate-400 mb-0.5">
-                {sender?.shortName} • {m.time}
-              </span>
-              <div
-                className={`px-3 py-1.5 rounded-xl max-w-[220px] ${
-                  mine ? 'bg-[#0F296B] text-white' : 'bg-white border border-slate-200 text-slate-800'
-                }`}
-              >
-                {m.text}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {FLI_GUIDING_PRINCIPLES.map(p => {
+            const val = selectedScores[p.id];
+            return (
+              <div key={p.id} className="p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="font-black text-xs text-[#0D2B5B] dark:text-amber-300">
+                      #{p.id} {p.title}
+                    </div>
+                    <div className="text-[11px] opacity-65">{p.subtitle}</div>
+                  </div>
+                  <span className="text-xs font-black">
+                    {typeof val === 'number' ? (val > 0 ? `+${val} ★` : `${val} Pts`) : 'Not Selected'}
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap gap-1">
+                  {[-3, -2, -1].map(neg => (
+                    <button
+                      key={neg}
+                      type="button"
+                      onClick={() => setPrincipleScore(p.id, neg)}
+                      className={`px-2 py-1 rounded-lg text-[10px] font-black ${
+                        val === neg ? 'bg-rose-600 text-white' : 'bg-rose-50 text-rose-700'
+                      }`}
+                    >
+                      {neg}
+                    </button>
+                  ))}
+                  {[1, 2, 3, 4, 5].map(pos => (
+                    <button
+                      key={pos}
+                      type="button"
+                      onClick={() => setPrincipleScore(p.id, pos)}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-black ${
+                        val === pos ? 'bg-amber-400 text-[#0D2B5B]' : 'bg-slate-100 dark:bg-slate-800'
+                      }`}
+                    >
+                      {pos}★
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          <input
+            type="text"
+            placeholder="Recognition or coaching note..."
+            value={comment}
+            onChange={e => setComment(e.target.value)}
+            className="flex-1 min-w-[220px] px-3 py-2 rounded-xl border text-xs font-bold bg-transparent"
+          />
+          <button
+            onClick={() => {
+              if (Object.keys(selectedScores).length === 0) return;
+              onSubmitRating({
+                id: `pr-${Date.now()}`,
+                toUserId: targetUserId,
+                fromUserId: currentUser.id,
+                scores: selectedScores,
+                comment
+              });
+              setSelectedScores({});
+              setComment('');
+            }}
+            className="px-5 py-2 rounded-xl bg-[#0D2B5B] text-amber-300 font-black text-xs"
+          >
+            Submit Pledge Evaluation
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function IdeaHubPortal({ currentUser, users, ideas, categories, darkMode, onAddCategory, onAddIdea, onVoteIdea }) {
+  const [title, setTitle] = useState('');
+  const [desc, setDesc] = useState('');
+  const [category, setCategory] = useState(categories[0]);
+  const [customCat, setCustomCat] = useState('');
+  const cardSurface = darkMode ? 'bg-[#0F1B33] border-slate-800' : 'bg-white border-slate-200 shadow-sm';
+
+  return (
+    <div className="space-y-5">
+      <div className={`p-5 rounded-3xl border ${cardSurface} space-y-3`}>
+        <h2 className="text-lg font-black text-[#0D2B5B] dark:text-amber-300">FLi Pinnacle New Idea Hub</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+          <input placeholder="Idea Title..." value={title} onChange={e => setTitle(e.target.value)} className="px-3 py-2 rounded-xl border font-bold bg-transparent" />
+          <select value={category} onChange={e => setCategory(e.target.value)} className="px-3 py-2 rounded-xl border font-bold bg-transparent">
+            {categories.map(c => (
+              <option key={c} value={c} className="text-slate-900">{c}</option>
+            ))}
+          </select>
+          <div className="flex gap-1">
+            <input placeholder="+ Custom Category" value={customCat} onChange={e => setCustomCat(e.target.value)} className="flex-1 px-3 py-2 rounded-xl border bg-transparent" />
+            <button
+              onClick={() => {
+                if (customCat.trim()) {
+                  onAddCategory(customCat.trim());
+                  setCategory(customCat.trim());
+                  setCustomCat('');
+                }
+              }}
+              className="px-3 py-2 rounded-xl bg-amber-400 text-[#0D2B5B] font-black"
+            >
+              Add
+            </button>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <input placeholder="Describe how this improves Future Life Investments Limited..." value={desc} onChange={e => setDesc(e.target.value)} className="flex-1 px-3 py-2 rounded-xl border text-xs bg-transparent" />
+          <button
+            onClick={() => {
+              if (!title.trim()) return;
+              onAddIdea({ id: `id-${Date.now()}`, title, desc, category, authorId: currentUser.id, votes: 1 });
+              setTitle('');
+              setDesc('');
+            }}
+            className="px-5 py-2 rounded-xl bg-[#0D2B5B] text-amber-300 font-black text-xs"
+          >
+            Post Idea
+          </button>
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-2 border-t border-slate-200 flex items-center gap-1.5 bg-white">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {ideas.map(idea => (
+          <div key={idea.id} className={`p-4 rounded-3xl border ${cardSurface} flex items-center justify-between gap-3`}>
+            <div>
+              <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-black">{idea.category}</span>
+              <div className="font-black text-sm mt-1">{idea.title}</div>
+              <p className="text-xs opacity-75">{idea.desc}</p>
+              <div className="text-[10px] opacity-60 mt-1">By {users.find(u => u.id === idea.authorId)?.name}</div>
+            </div>
+            <button onClick={() => onVoteIdea(idea.id)} className="px-3 py-2 rounded-2xl bg-[#0D2B5B] text-amber-300 font-black text-xs">
+              ▲ {idea.votes}
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function FeedbackBoxPortal({ currentUser, users, feedbacks, categories, darkMode, onAddCategory, onAddFeedback }) {
+  const [text, setText] = useState('');
+  const [category, setCategory] = useState(categories[0]);
+  const [customCat, setCustomCat] = useState('');
+  const [anonymous, setAnonymous] = useState(false);
+  const cardSurface = darkMode ? 'bg-[#0F1B33] border-slate-800' : 'bg-white border-slate-200 shadow-sm';
+
+  return (
+    <div className="space-y-5">
+      <div className={`p-5 rounded-3xl border ${cardSurface} space-y-3`}>
+        <h2 className="text-lg font-black text-[#0D2B5B] dark:text-amber-300">Department Feedback Box</h2>
+        <div className="flex flex-wrap gap-2 text-xs">
+          <select value={category} onChange={e => setCategory(e.target.value)} className="px-3 py-2 rounded-xl border font-bold bg-transparent">
+            {categories.map(c => (
+              <option key={c} value={c} className="text-slate-900">{c}</option>
+            ))}
+          </select>
+          <input placeholder="+ Custom Category" value={customCat} onChange={e => setCustomCat(e.target.value)} className="px-3 py-2 rounded-xl border bg-transparent" />
+          <button
+            onClick={() => {
+              if (customCat.trim()) {
+                onAddCategory(customCat.trim());
+                setCategory(customCat.trim());
+                setCustomCat('');
+              }
+            }}
+            className="px-3 py-2 rounded-xl bg-amber-400 text-[#0D2B5B] font-black"
+          >
+            Add Category
+          </button>
+          <label className="flex items-center gap-1.5 font-bold ml-auto">
+            <input type="checkbox" checked={anonymous} onChange={e => setAnonymous(e.target.checked)} />
+            <span>Submit Anonymously</span>
+          </label>
+        </div>
+        <div className="flex gap-2">
+          <input placeholder="Write your feedback or shoutout..." value={text} onChange={e => setText(e.target.value)} className="flex-1 px-3 py-2 rounded-xl border text-xs bg-transparent" />
+          <button
+            onClick={() => {
+              if (!text.trim()) return;
+              onAddFeedback({ id: `fb-${Date.now()}`, category, text, authorId: currentUser.id, anonymous });
+              setText('');
+            }}
+            className="px-5 py-2 rounded-xl bg-[#0D2B5B] text-amber-300 font-black text-xs"
+          >
+            Send Feedback
+          </button>
+        </div>
+      </div>
+
+      <div className="space-y-2.5">
+        {feedbacks.map(f => (
+          <div key={f.id} className={`p-4 rounded-2xl border ${cardSurface} text-xs`}>
+            <div className="flex items-center justify-between mb-1">
+              <span className="px-2 py-0.5 rounded-full bg-blue-50 text-[#0D2B5B] border border-blue-200 font-black text-[10px]">{f.category}</span>
+              <span className="opacity-60">{f.anonymous ? 'Anonymous Staff' : users.find(u => u.id === f.authorId)?.name}</span>
+            </div>
+            <p className="font-medium">{f.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PersonalNotepadPortal({ currentUser, notes, darkMode, onUpdateNotes }) {
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const cardSurface = darkMode ? 'bg-[#0F1B33] border-slate-800' : 'bg-white border-slate-200 shadow-sm';
+
+  return (
+    <div className="space-y-5">
+      <div className={`p-5 rounded-3xl border ${cardSurface} space-y-3`}>
+        <h2 className="text-lg font-black text-[#0D2B5B] dark:text-amber-300">
+          Personal Private Scratchpad ({currentUser.name})
+        </h2>
+        <div className="flex flex-wrap gap-2 text-xs">
+          <input
+            placeholder="Note title..."
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            className="w-56 px-3 py-2 rounded-xl border font-bold bg-transparent"
+          />
+          <input
+            placeholder="Write private reconciliation reminders or cheque numbers..."
+            value={body}
+            onChange={e => setBody(e.target.value)}
+            className="flex-1 min-w-[200px] px-3 py-2 rounded-xl border bg-transparent"
+          />
+          <button
+            onClick={() => {
+              if (!title.trim() && !body.trim()) return;
+              onUpdateNotes([{ id: `n-${Date.now()}`, title: title || 'Quick Note', body }, ...notes]);
+              setTitle('');
+              setBody('');
+            }}
+            className="px-4 py-2 rounded-xl bg-[#0D2B5B] text-amber-300 font-black"
+          >
+            + Save Note
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {notes.map(n => (
+          <div key={n.id} className={`p-4 rounded-2xl border ${cardSurface} text-xs space-y-1.5`}>
+            <div className="flex items-center justify-between">
+              <span className="font-black">{n.title}</span>
+              <button
+                onClick={() => onUpdateNotes(notes.filter(x => x.id !== n.id))}
+                className="text-rose-500 text-[10px] font-bold"
+              >
+                Delete
+              </button>
+            </div>
+            <p className="opacity-80 whitespace-pre-wrap">{n.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function WifiQuickDropForm({ users, currentUser, wifiFiles, onUpload }) {
+  const [category, setCategory] = useState('Cashflow');
+  const [customCategory, setCustomCategory] = useState('');
+  const [visibility, setVisibility] = useState('everyone');
+  const [targetUserId, setTargetUserId] = useState(users.find(u => u.id !== currentUser.id)?.id || '');
+
+  const visibleFiles = wifiFiles.filter(
+    f => f.visibility === 'everyone' || f.targetUserId === currentUser.id || f.uploadedById === currentUser.id
+  );
+
+  return (
+    <div className="space-y-2.5 text-xs">
+      <div className="grid grid-cols-2 gap-1.5">
+        <select value={category} onChange={e => setCategory(e.target.value)} className="px-2 py-1.5 rounded-xl border font-bold bg-transparent">
+          {['Cashflow', 'Bank Statement', 'Voucher Scan', 'Other'].map(c => (
+            <option key={c} value={c} className="text-slate-900">{c}</option>
+          ))}
+        </select>
+        <select value={visibility} onChange={e => setVisibility(e.target.value)} className="px-2 py-1.5 rounded-xl border font-bold bg-transparent">
+          <option value="everyone" className="text-slate-900">Visible: Everyone</option>
+          <option value="selected" className="text-slate-900">Selected Person Only</option>
+        </select>
+      </div>
+
+      {category === 'Other' && (
         <input
-          type="text"
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          placeholder="Type message..."
-          className="flex-1 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs"
+          placeholder="Custom file category..."
+          value={customCategory}
+          onChange={e => setCustomCategory(e.target.value)}
+          className="w-full px-2.5 py-1.5 rounded-xl border font-bold bg-transparent"
         />
-        <button type="submit" className="p-2 rounded-lg bg-[#0F296B] text-amber-300">
-          <Send className="w-3.5 h-3.5" />
-        </button>
-      </form>
+      )}
+
+      {visibility === 'selected' && (
+        <select
+          value={targetUserId}
+          onChange={e => setTargetUserId(e.target.value)}
+          className="w-full px-2.5 py-1.5 rounded-xl border font-bold bg-transparent"
+        >
+          {users
+            .filter(u => u.id !== currentUser.id)
+            .map(u => (
+              <option key={u.id} value={u.id} className="text-slate-900">
+                Recipient: {u.name}
+              </option>
+            ))}
+        </select>
+      )}
+
+      <label className="block w-full py-2 rounded-xl bg-[#0D2B5B] text-amber-300 font-black text-center cursor-pointer">
+        + Drop File on Office LAN
+        <input
+          type="file"
+          className="hidden"
+          onChange={e => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            onUpload({
+              id: `wf-${Date.now()}`,
+              name: file.name,
+              size: `${Math.max(1, Math.round(file.size / 1024))} KB`,
+              category: category === 'Other' && customCategory.trim() ? customCategory.trim() : category,
+              visibility,
+              targetUserId: visibility === 'selected' ? targetUserId : '',
+              uploadedById: currentUser.id,
+              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            });
+          }}
+        />
+      </label>
+
+      <div className="max-h-36 overflow-y-auto space-y-1">
+        {visibleFiles.slice(0, 5).map(f => (
+          <div key={f.id} className="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-between">
+            <span className="truncate font-bold max-w-[175px]">{f.name}</span>
+            <span className="text-[10px] opacity-65">{f.category}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ChatInputBox({ onSend }) {
+  const [val, setVal] = useState('');
+  return (
+    <form
+      onSubmit={e => {
+        e.preventDefault();
+        if (!val.trim()) return;
+        onSend(val);
+        setVal('');
+      }}
+      className="p-2.5 border-t border-slate-200 dark:border-slate-800 flex gap-1.5"
+    >
+      <input
+        type="text"
+        placeholder="Type message..."
+        value={val}
+        onChange={e => setVal(e.target.value)}
+        className="flex-1 px-3 py-1.5 rounded-xl border text-xs font-medium bg-transparent"
+      />
+      <button type="submit" className="p-2 rounded-xl bg-[#0D2B5B] text-amber-300">
+        <Send className="w-3.5 h-3.5" />
+      </button>
+    </form>
+  );
+}
+
+function BreakTimeGamePortal({ darkMode }) {
+  const [activeGame, setActiveGame] = useState('math');
+  const [mathNums, setMathNums] = useState([45, 78]);
+  const [mathAns, setMathAns] = useState('');
+  const [mathScore, setMathScore] = useState(0);
+
+  const [secretNum, setSecretNum] = useState(() => Math.floor(Math.random() * 20) + 1);
+  const [guessVal, setGuessVal] = useState('');
+  const [guessMsg, setGuessMsg] = useState('Guess a number between 1 and 20');
+
+  const [jumpScore, setJumpScore] = useState(0);
+  const [isJumping, setIsJumping] = useState(false);
+
+  const [snakeScore, setSnakeScore] = useState(0);
+  const [memoryFlipped, setMemoryFlipped] = useState([]);
+  const [memoryMatched, setMemoryMatched] = useState([]);
+  const memorySymbols = ['Rs', 'FD', 'GL', 'JV', 'Rs', 'FD', 'GL', 'JV'];
+
+  const cardSurface = darkMode ? 'bg-[#0F1B33] border-slate-800' : 'bg-white border-slate-200 shadow-sm';
+
+  return (
+    <div className="space-y-5">
+      <div className={`p-5 rounded-3xl border ${cardSurface} flex flex-wrap items-center justify-between gap-3`}>
+        <div>
+          <h2 className="text-lg font-black text-[#0D2B5B] dark:text-amber-300">FLi Pinnacle Break-Time Arcade</h2>
+          <p className="text-xs opacity-70">5 simple brain-refresh games for your scheduled break.</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { id: 'math', label: '1. Ledger Speed Math' },
+            { id: 'snake', label: '2. Golden Snake' },
+            { id: 'jump', label: '3. Hurdle Jump Runner' },
+            { id: 'memory', label: '4. Icon Memory Match' },
+            { id: 'guess', label: '5. Number Guess' }
+          ].map(g => (
+            <button
+              key={g.id}
+              onClick={() => setActiveGame(g.id)}
+              className={`px-3 py-2 rounded-xl text-xs font-black ${
+                activeGame === g.id ? 'bg-[#0D2B5B] text-amber-300' : 'bg-slate-100 dark:bg-slate-800'
+              }`}
+            >
+              {g.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {activeGame === 'math' && (
+        <div className={`p-6 rounded-3xl border ${cardSurface} max-w-md space-y-3 text-center`}>
+          <div className="text-xs font-black uppercase text-amber-600">Score: {mathScore}</div>
+          <div className="text-3xl font-black">
+            {mathNums[0]} + {mathNums[1]} = ?
+          </div>
+          <div className="flex gap-2 justify-center">
+            <input
+              type="number"
+              value={mathAns}
+              onChange={e => setMathAns(e.target.value)}
+              className="w-28 px-3 py-2 rounded-xl border text-center font-black bg-transparent"
+            />
+            <button
+              onClick={() => {
+                if (Number(mathAns) === mathNums[0] + mathNums[1]) setMathScore(s => s + 10);
+                setMathNums([Math.floor(Math.random() * 90) + 10, Math.floor(Math.random() * 90) + 10]);
+                setMathAns('');
+              }}
+              className="px-4 py-2 rounded-xl bg-[#0D2B5B] text-amber-300 font-black text-xs"
+            >
+              Check
+            </button>
+          </div>
+        </div>
+      )}
+
+      {activeGame === 'snake' && (
+        <div className={`p-6 rounded-3xl border ${cardSurface} max-w-md space-y-3 text-center`}>
+          <div className="text-xs font-black uppercase text-amber-600">Golden Snake Score: {snakeScore}</div>
+          <div className="grid grid-cols-5 gap-1.5 max-w-[220px] mx-auto p-3 rounded-2xl bg-slate-900">
+            {Array.from({ length: 25 }).map((_, i) => (
+              <div
+                key={i}
+                onClick={() => setSnakeScore(s => s + 5)}
+                className={`h-8 rounded-lg cursor-pointer flex items-center justify-center text-xs font-black ${
+                  i === (snakeScore / 5) % 25 ? 'bg-amber-400 text-[#0D2B5B]' : 'bg-slate-800 text-slate-600'
+                }`}
+              >
+                {i === (snakeScore / 5) % 25 ? '★' : ''}
+              </div>
+            ))}
+          </div>
+          <p className="text-xs opacity-70">Tap the golden target node to grow your snake streak!</p>
+        </div>
+      )}
+
+      {activeGame === 'jump' && (
+        <div className={`p-6 rounded-3xl border ${cardSurface} max-w-md space-y-4 text-center`}>
+          <div className="text-xs font-black uppercase text-emerald-600">Coins Collected: {jumpScore}</div>
+          <div className="h-28 rounded-2xl bg-blue-50 dark:bg-slate-900 border relative overflow-hidden flex items-end justify-center pb-3">
+            <div
+              className={`w-10 h-10 rounded-xl bg-[#0D2B5B] text-amber-300 font-black flex items-center justify-center transition-transform duration-300 ${
+                isJumping ? '-translate-y-12' : 'translate-y-0'
+              }`}
+            >
+              FLi
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              if (isJumping) return;
+              setIsJumping(true);
+              setJumpScore(s => s + 1);
+              setTimeout(() => setIsJumping(false), 350);
+            }}
+            className="px-6 py-2.5 rounded-2xl bg-[#0D2B5B] text-amber-300 font-black text-xs"
+          >
+            Jump &amp; Collect Coin!
+          </button>
+        </div>
+      )}
+
+      {activeGame === 'memory' && (
+        <div className={`p-6 rounded-3xl border ${cardSurface} max-w-md space-y-3 text-center`}>
+          <div className="text-xs font-black uppercase text-[#0D2B5B] dark:text-amber-300">
+            Matched Pairs: {memoryMatched.length / 2} / 4
+          </div>
+          <div className="grid grid-cols-4 gap-2">
+            {memorySymbols.map((sym, idx) => {
+              const isOpen = memoryFlipped.includes(idx) || memoryMatched.includes(idx);
+              return (
+                <button
+                  key={idx}
+                  onClick={() => {
+                    if (isOpen || memoryFlipped.length >= 2) return;
+                    const next = [...memoryFlipped, idx];
+                    setMemoryFlipped(next);
+                    if (next.length === 2) {
+                      if (memorySymbols[next[0]] === memorySymbols[next[1]]) {
+                        setMemoryMatched(m => [...m, next[0], next[1]]);
+                      }
+                      setTimeout(() => setMemoryFlipped([]), 500);
+                    }
+                  }}
+                  className={`h-14 rounded-2xl font-black text-sm border ${
+                    isOpen ? 'bg-amber-400 text-[#0D2B5B]' : 'bg-[#0D2B5B] text-white'
+                  }`}
+                >
+                  {isOpen ? sym : '?'}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {activeGame === 'guess' && (
+        <div className={`p-6 rounded-3xl border ${cardSurface} max-w-md space-y-3 text-center`}>
+          <div className="text-sm font-black">{guessMsg}</div>
+          <div className="flex gap-2 justify-center">
+            <input
+              type="number"
+              value={guessVal}
+              onChange={e => setGuessVal(e.target.value)}
+              className="w-24 px-3 py-2 rounded-xl border text-center font-black bg-transparent"
+            />
+            <button
+              onClick={() => {
+                const g = Number(guessVal);
+                if (g === secretNum) {
+                  setGuessMsg(`Correct! It was ${secretNum}! New number ready.`);
+                  setSecretNum(Math.floor(Math.random() * 20) + 1);
+                } else {
+                  setGuessMsg(g < secretNum ? 'Too low — try higher!' : 'Too high — try lower!');
+                }
+                setGuessVal('');
+              }}
+              className="px-4 py-2 rounded-xl bg-amber-400 text-[#0D2B5B] font-black text-xs"
+            >
+              Guess
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
